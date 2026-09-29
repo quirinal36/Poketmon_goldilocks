@@ -1,0 +1,32 @@
+{
+  "name": "pokemon-study-adventure",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "e2e": "playwright test",
+    "data:pokemon": "node scripts/build-pokemon-data.mjs",
+    "data:sprites": "node scripts/fetch-sprites.mjs",
+    "data:questions": "node scripts/generate-questions.mjs",
+    "db:seed": "node scripts/seed-supabase.mjs",
+    "zip:lounge": "node scripts/make-lounge-zip.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.117.2",
+    "galmuri": "^2.40.3"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^26.6.3",
+    "jszip": "^3.10.2",
+    "sharp": "^0.35.5",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.1",
+    "vitest": "^5.0.2"
+  }
+}

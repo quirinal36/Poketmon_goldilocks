@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Snake — One more bite</title>
+  <style>
+    :root { color-scheme: dark; font-family: ui-sans-serif, system-ui, sans-serif; background: #101712; color: #edf3e7; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100svh; display: grid; place-items: center; padding: 28px 18px; background: radial-gradient(ellipse at 50% 0, #253723, transparent 65%); }
+    main { width: min(100%, 520px); }
+    header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 26px; }
+    .eyebrow { color: #adc68e; font: 11px ui-monospace, monospace; letter-spacing: 3px; text-transform: uppercase; }
+    h1 { font-size: 52px; letter-spacing: -3px; line-height: 1; margin: 10px 0; }
+    .tagline, footer { color: #8f9b89; font-size: 13px; }
+    .scores { display: flex; gap: 20px; text-align: right; }
+    .scores span { display: block; font-size: 10px; letter-spacing: 2px; color: #8f9b89; margin-bottom: 7px; }
+    .scores strong { font: 28px ui-monospace, monospace; }
+    .board { position: relative; padding: 10px; background: #1b251c; border: 1px solid #35432e; border-radius: 18px; box-shadow: 0 25px 70px #0005; }
+    canvas { display: block; width: 100%; aspect-ratio: 1; background: #111a13; border-radius: 9px; }
+    .overlay { position: absolute; inset: 10px; display: grid; place-content: center; text-align: center; border-radius: 9px; background: #111a13df; padding: 20px; }
+    .overlay[hidden] { display: none; }
+    .icon { color: #b9ee79; font-size: 42px; margin-bottom: 12px; }
+    h2 { margin: 0 0 8px; font-size: 30px; letter-spacing: -1px; }
+    .overlay p { color: #a4b19a; font-size: 14px; margin: 0 0 24px; }
+    button { font: inherit; cursor: pointer; border: 1px solid #3c4c34; border-radius: 9px; padding: 12px 18px; background: #243020; color: #edf3e7; touch-action: manipulation; }
+    button:hover { background: #34422c; }
+    button:focus-visible { outline: 3px solid #b9ee79; outline-offset: 3px; }
+    .primary { background: #b9ee79; color: #182310; border-color: #b9ee79; font-weight: 700; }
+    .primary:hover { background: #cef99c; }
+    .toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 18px; }
+    #status { color: #a6b29c; font-size: 13px; }
+    .actions { display: flex; gap: 8px; }
+    .actions button { font-size: 12px; padding: 9px 13px; }
+    .dpad { display: grid; grid-template-columns: repeat(3, 48px); gap: 5px; justify-content: center; margin: 22px auto; }
+    .dpad button { padding: 10px; font-size: 20px; }
+    .dpad button:first-child { grid-column: 2; }
+    .dpad button:nth-child(2) { grid-column: 1; }
+    footer { text-align: center; line-height: 1.8; margin-top: 24px; font-size: 11px; }
+    kbd { font-family: inherit; color: #c0ccb6; }
+    @media (max-width: 380px) { h1 { font-size: 42px; } .scores { gap: 12px; } }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div><div class="eyebrow">The classics / 001</div><h1>snake<span style="color:#b9ee79">.</span></h1><div class="tagline">Small moves. One more bite.</div></div>
+      <div class="scores"><div><span>SCORE</span><strong id="score">00</strong></div><div><span>BEST</span><strong id="best">00</strong></div></div>
+    </header>
+    <div class="board">
+      <canvas id="game" width="500" height="500" role="img" aria-label="Snake game board. Use arrow keys or WASD to collect food and avoid walls and yourself."></canvas>
+      <div class="overlay" id="overlay">
+        <div class="icon" aria-hidden="true">↳</div><h2 id="title">Follow your appetite.</h2>
+        <p id="message">Grab a bite. Grow a little. Keep going.</p>
+        <button class="primary" id="play">Let’s play →</button>
+      </div>
+    </div>
+    <div class="toolbar"><span id="status" role="status">Ready when you are</span><div class="actions"><button id="pause">Pause</button><button id="restart">Restart ↻</button></div></div>
+    <div class="dpad" aria-label="Direction controls"><button data-dir="up" aria-label="Move up">↑</button><button data-dir="left" aria-label="Move left">←</button><button data-dir="down" aria-label="Move down">↓</button><button data-dir="right" aria-label="Move right">→</button></div>
+    <footer><kbd>↑ ↓ ← →</kbd> or <kbd>W A S D</kbd> to move · <kbd>Space</kbd> to pause<br>Eat the coral dots. Don’t hit the wall. Or yourself.</footer>
+  </main>
+  <script>
+    const $ = id => document.getElementById(id);
+    const ctx = $('game').getContext('2d');
+    const size = 20, cell = 25;
+    const directions = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] };
+    let snake, direction, nextDirection, food, score, state = 'ready', timer, best = 0;
+    try { best = Number(localStorage.getItem('snake-best')) || 0; } catch {}
+    $('best').textContent = String(best).padStart(2, '0');
+
+    function placeFood() {
+      const empty = [];
+      for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
+        if (!snake.some(p => p.x === x && p.y === y)) empty.push({ x, y });
+      }
+      return empty[Math.floor(Math.random() * empty.length)];
+    }
+    function draw() {
+      ctx.clearRect(0, 0, 500, 500);
+      ctx.fillStyle = '#223023';
+      for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) ctx.fillRect(x * cell + 12, y * cell + 12, 1, 1);
+      if (food) {
+        ctx.fillStyle = '#f38d78'; ctx.beginPath();
+        ctx.arc(food.x * cell + 12.5, food.y * cell + 12.5, 8, 0, Math.PI * 2); ctx.fill();
+      }
+      snake.forEach((p, i) => {
+        ctx.fillStyle = i === 0 ? '#d4ffa2' : '#9ac963';
+        ctx.beginPath(); ctx.roundRect(p.x * cell + 2, p.y * cell + 2, 21, 21, 5); ctx.fill();
+      });
+      const head = snake[0];
+      ctx.fillStyle = '#25391b';
+      for (const side of [-1, 1]) {
+        ctx.beginPath(); ctx.arc(head.x * cell + 12.5 + direction[0] * 5 + direction[1] * side * 4,
+          head.y * cell + 12.5 + direction[1] * 5 + direction[0] * side * 4, 2, 0, Math.PI * 2); ctx.fill();
+      }
+    }
+    function showOverlay(title, message, button) {
+      $('title').textContent = title; $('message').textContent = message;
+      $('play').textContent = button; $('overlay').hidden = false;
+    }
+    function reset() {
+      clearTimeout(timer); snake = [{ x: 8, y: 10 }, { x: 7, y: 10 }, { x: 6, y: 10 }];
+      direction = nextDirection = directions.right; score = 0; food = placeFood();
+      $('score').textContent = '00'; draw();
+    }
+    function start() {
+      reset(); state = 'running'; $('overlay').hidden = true;
+      $('pause').textContent = 'Pause'; $('status').textContent = 'One bite at a time'; schedule();
+    }
+    function schedule() { timer = setTimeout(tick, Math.max(65, 145 - score * 3)); }
+    function finish(won) {
+      state = 'over'; clearTimeout(timer);
+      $('status').textContent = won ? 'A perfect run' : 'There’s always another round';
+      showOverlay(won ? 'You filled the board!' : 'A good run.', `You scored ${score}. Ready for another bite?`, 'Play again →');
+    }
+    function tick() {
+      if (state !== 'running') return;
+      direction = nextDirection;
+      const head = { x: snake[0].x + direction[0], y: snake[0].y + direction[1] };
+      const eating = head.x === food.x && head.y === food.y;
+      const body = eating ? snake : snake.slice(0, -1);
+      if (head.x < 0 || head.x >= size || head.y < 0 || head.y >= size || body.some(p => p.x === head.x && p.y === head.y)) { finish(false); return; }
+      snake.unshift(head);
+      if (eating) {
+        score++; $('score').textContent = String(score).padStart(2, '0');
+        if (score > best) {
+          best = score; $('best').textContent = String(best).padStart(2, '0');
+          try { localStorage.setItem('snake-best', best); } catch {}
+        }
+        food = placeFood();
+      } else snake.pop();
+      draw();
+      if (!food) { finish(true); return; }
+      schedule();
+    }
+    function turn(name) {
+      const candidate = directions[name];
+      if (state === 'running' && nextDirection === direction && (candidate[0] !== -direction[0] || candidate[1] !== -direction[1])) nextDirection = candidate;
+    }
+    function pause() {
+      if (state === 'running') {
+        state = 'paused'; clearTimeout(timer); $('pause').textContent = 'Resume';
+        $('status').textContent = 'Take a breather'; showOverlay('A little breather.', 'Your next bite can wait.', 'Keep going →');
+      } else if (state === 'paused') {
+        state = 'running'; $('overlay').hidden = true; $('pause').textContent = 'Pause';
+        $('status').textContent = 'One bite at a time'; schedule();
+      }
+    }
+    $('play').onclick = () => state === 'paused' ? pause() : start();
+    $('restart').onclick = start; $('pause').onclick = pause;
+    document.querySelectorAll('[data-dir]').forEach(button => button.onclick = () => turn(button.dataset.dir));
+    document.addEventListener('keydown', event => {
+      const name = { ArrowUp: 'up', w: 'up', ArrowDown: 'down', s: 'down', ArrowLeft: 'left', a: 'left', ArrowRight: 'right', d: 'right' }[event.key];
+      if (name) { event.preventDefault(); turn(name); }
+      if (event.code === 'Space' && event.target.tagName !== 'BUTTON') {
+        event.preventDefault(); if (event.repeat) return;
+        if (state === 'ready' || state === 'over') start(); else pause();
+      }
+    });
+    document.addEventListener('visibilitychange', () => { if (document.hidden && state === 'running') pause(); });
+    reset();
+  </script>
+</body>
+</html>
