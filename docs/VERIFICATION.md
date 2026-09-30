@@ -133,3 +133,9 @@ Supabase 실제 익명 로그인·RLS·코드 이전·오프라인 재연결은 
 `npm run build`, `npm test`(7파일·95개), `npm run check:maps`(25맵·8계약), `npm run check:pokemon`(251종·753 아틀라스 셀), `npm run check:questions`(6,906문제·266레슨)가 통과했습니다. `npm run e2e`는 30개 통과, 중복 화면 실행 10개 생략입니다. 새 대화·전투·배지·지도는 1024×768, 768×1024, 1280×800, 820×1180, 375×667에서 화면 경계를 검사하고 이미지로 확인했습니다. Playwright 터치 에뮬레이션에서는 짧은 방향키 탭, 연구원 선택, A 버튼 대화를 확인했습니다. 짧은 탭의 이동 누락과 연속 터치가 선택 버튼 클릭을 막는 결함을 발견해 수정했습니다.
 
 Aside CLI/Aside Browser에서 로컬 게임 시작 화면과 새 게임 진입을 확인했고, [라운지 Play](https://lounge.letscoding.kr/works/leco/poke)가 [운영 주소](https://poke.letscoding.kr/)를 새 탭으로 여는 것을 확인했습니다. 실제 터치 기기와 운영 카카오·라운지 로그인, 계정 저장의 다른 브라우저 복구는 자동·모의 검사로 대체하지 않습니다. 현재 공유 Supabase 프로젝트는 익명 로그인이 꺼져 있어 게스트는 기기 저장을 사용합니다. 새 장 배포 결과와 현장 확인은 아래에 별도로 기록합니다.
+
+### 운영 배포와 남은 현장 확인
+
+[PR #54](https://github.com/quirinal36/Poketmon_goldilocks/pull/54)를 `main`에 병합한 기능 커밋은 `6ae4a3275c49a882b7dd684510e7c24fef38ed15`입니다. Vercel Preview `dpl_GzdUtbAuqfTnpJxE7PfkP1F9udZr`는 `Ready`였고, Aside Browser에서 저장된 첫 배지 모험으로 블루시티·블루체육관·블루배지 화면을 확인했습니다. 이 기능 커밋의 Production `dpl_4NPi477kY6176RTo5Deoe7LoxkqA`가 `Ready`로 배포되어 `poke.letscoding.kr` 별칭에 연결됐습니다. 운영 주소의 블루배지 SVG는 HTTP 200을 반환했습니다. 분리된 새 Chromium 브라우저에서 블루체육관 위치 저장을 복구하고 실제 문제 카드 정답 수가 0→1로 오른 뒤 새로고침해 위치와 기록을 다시 복구했습니다. Aside Browser에서 라운지 Play를 눌러 운영 주소가 새 탭으로 열리는 것도 확인했습니다. ZIP 업로드는 하지 않았습니다.
+
+라운지 작품 페이지의 기존 소개 문구는 아직 회색배지까지만 설명합니다. 작품 편집 권한으로 로그인해 두 번째 장 내용을 고쳐야 합니다. 운영 카카오·라운지 계정의 실로그인·이름·다른 브라우저 계정 저장, 실제 터치 기기의 조작·읽어주기·음량은 확인되지 않았으므로 각각 T43·T41 범위로 남깁니다.
