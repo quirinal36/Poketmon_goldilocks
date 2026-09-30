@@ -21,6 +21,10 @@ for (const [width,height] of sizes) test(`10 screens fit ${width}x${height}`, as
         panels: panels.some(e => e.scrollWidth > e.clientWidth + 2 || e.getBoundingClientRect().right > innerWidth + 1) };
     });
     expect(overflow, name).toEqual({ page: false, stage: false, panels: false });
+    const smallTargets = await page.evaluate(() => [...document.querySelectorAll<HTMLButtonElement>('.game-screen:not([hidden]) button, .qc-card button, .battle-screen button')]
+      .filter(e => { const r = e.getBoundingClientRect(); return r.width > 0 && r.height > 0 && (r.width < 56 || r.height < 56); })
+      .map(e => e.className || e.textContent?.trim()));
+    expect(smallTargets, `${name} touch targets`).toEqual([]);
     if (name === 'battle') { const bounds = await page.locator('.battle-screen').evaluate(e => ({ height: e.clientHeight, content: e.scrollHeight })); expect(bounds.content).toBeLessThanOrEqual(bounds.height + 1); }
   }
   await shot('title');
