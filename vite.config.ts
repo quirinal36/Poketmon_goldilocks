@@ -1,7 +1,7 @@
 import { defineConfig, loadEnv } from 'vite';
 import { resolve } from 'node:path';
 
-// base './' — 모든 자산을 상대경로로 만든다 (렛츠코딩 라운지 ZIP 업로드 규칙: 루트 절대경로 금지).
+// base './' — 모든 자산을 상대경로로 만들어 배포 경로와 무관하게 불러온다.
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   // Only the public URL and anon key may enter the browser bundle.

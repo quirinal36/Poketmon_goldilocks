@@ -14,6 +14,7 @@ export const TILE_INFO: Record<TileId, TileInfo> = {
   water: S(true, { water: true, animated: true, autotile: true, family: 'water' }), ledge: S(true, { ledge: 'down' }),
   fence: S(true), sign: S(true), mailbox: S(true), rock: S(true), bridge: S(false), stairs_out: S(false), cave: S(false),
   pond_lily: S(true, { water: true, animated: true }), black: S(true),
+  cave_floor: S(false, { grass: true }), cave_wall: S(true),
   floor_wood: S(false), floor_tile: S(false), floor_lab: S(false), floor_gym: S(false), wall: S(true), wall_window: S(true),
   wall_poster: S(true), wall_clock: S(true), bookshelf: S(true), pc: S(true), tv: S(true), bed_top: S(true), bed_bottom: S(false),
   table: S(true), table_ball: S(true), chair: S(false), plant: S(true), stairs_up: S(false), stairs_down: S(false), mat: S(false),
@@ -139,6 +140,19 @@ const builders: Record<TileId, Builder> = {
     p.fill(C.sand);
     const dots: [number, number][] = [[2, 3], [9, 1], [13, 6], [5, 9], [11, 12], [1, 13]];
     for (const [x, y] of dots) { p.px(x, y, C.sandD); p.px(x + 1, y + 1, C.sandL); }
+  },
+
+  cave_floor: (p) => {
+    p.fill('#807c88');
+    for (const [x, y] of [[2, 3], [11, 2], [7, 9], [13, 12], [3, 14]]) {
+      p.px(x, y, '#a39daa'); p.px(x + 1, y + 1, '#5d5967');
+    }
+  },
+  cave_wall: (p) => {
+    p.fill('#464351');
+    p.hline(0, 0, 16, '#a39daa'); p.hline(0, 14, 16, '#27242f');
+    p.hline(2, 5, 12, '#666170'); p.vline(8, 1, 4, '#666170');
+    p.hline(0, 10, 9, '#666170'); p.vline(5, 6, 4, '#666170');
   },
 
   water: (p, frame, mask) => waterTile(p, frame, mask),

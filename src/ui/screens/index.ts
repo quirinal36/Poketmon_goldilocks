@@ -198,6 +198,7 @@ export async function openTrainerCard(): Promise<void> {
       el('p', {}, `잡은 포켓몬 ${d.dex.caught.length}마리 · 정답 ${d.stats.correct}개`), el('p', {}, `모험한 시간 ${Math.floor(d.playTimeSec / 60)}분`));
     if (d.player.badges.includes('boulder')) body.append(el('img', { class: 'badge', src: asset('assets/img/badge_boulder.png'), alt: '회색배지' }));
     else body.append(el('p', {}, '회색체육관에서 첫 배지에 도전해 보세요.'));
+    if (d.player.badges.includes('cascade')) body.append(el('img', { class: 'badge', src: asset('assets/img/badge_cascade.svg'), alt: '블루배지' }));
   }, null);
 }
 export async function openDailyPlan(): Promise<void> {
@@ -353,9 +354,11 @@ function pickPokemon(title: string, options: number[]): Promise<number> {
 }
 export function pickStarter(options: number[] = STARTERS): Promise<number> { return pickPokemon('첫 친구를 골라 주세요', options); }
 export function pickEvolution(options: number[]): Promise<number> { return pickPokemon('어떤 모습으로 자랄까요?', options); }
-export async function showBadge(_badgeId: string): Promise<void> {
-  await screen('회색배지를 받았어요!', (body, done) => {
-    body.append(el('img', { class: 'badge badge-reveal', src: asset('assets/img/badge_boulder.png'), alt: '회색배지' }), el('p', {}, '매일 공부한 힘이 모여 멋진 배지가 되었어요!'), button('모험 계속하기', () => done(null), 'primary'));
+export async function showBadge(badgeId: string): Promise<void> {
+  const cascade = badgeId === 'cascade';
+  const name = cascade ? '블루배지' : '회색배지';
+  await screen(`${name}를 받았어요!`, (body, done) => {
+    body.append(el('img', { class: 'badge badge-reveal', src: asset(`assets/img/badge_${cascade ? 'cascade.svg' : 'boulder.png'}`), alt: name }), el('p', {}, '매일 공부한 힘이 모여 멋진 배지가 되었어요!'), button('모험 계속하기', () => done(null), 'primary'));
     void G.audio.jingle('badge');
   });
 }

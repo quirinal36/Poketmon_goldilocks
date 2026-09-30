@@ -41,15 +41,9 @@ Cloudflare DNS 연결값 (2026-09-30 Vercel 확인):
 
 ## 0. 한눈에 보기
 
-게임은 **설정이 비어 있으면 그대로 오프라인**으로 동작합니다(문제는 내장, 저장은 기기에). Supabase 주소와 anon 키를 넣으면 클라우드 기능이 켜집니다.
+현재 운영 주소는 [poke.letscoding.kr](https://poke.letscoding.kr/)입니다. [라운지 게임 페이지](https://lounge.letscoding.kr/works/leco/poke)의 **Play** 버튼이 이 주소를 새 탭으로 엽니다. ZIP 업로드는 사용하지 않습니다.
 
-| 배포 방법 | 클라우드 저장 · 문제 갱신 · 학습 기록 · 이어하기 코드 | 비고 |
-|---|---|---|
-| **Vercel** 에 올리고 그 주소를 사용 | ✅ 모두 동작 | 권장 |
-| 렛츠코딩 라운지 → **외부 링크**로 Vercel 주소 등록 | ✅ 모두 동작 | 라운지 목록에서 바로 열림 |
-| 렛츠코딩 라운지 → **ZIP 업로드** | ❌ 오프라인 모드 | 라운지 샌드박스 보안 정책(CSP `connect-src 'self'`)이 외부 통신을 막음. 게임은 정상, 저장은 기기에만 |
-
-전체 순서: **Supabase 프로젝트 만들기 → 스키마 올리기 → 익명 로그인 켜기 → 문제 데이터 넣기 → `public/config.js` 채우기 → 빌드 → Vercel 배포 → 라운지 등록**.
+현재 운영 순서: **코드 검증 → GitHub `main` push → Vercel 배포 확인 → 라운지 Play 이동 확인 → 로그인·저장 확인**. 로그인하지 않은 게스트는 기기 저장을, 카카오·라운지 로그인 계정은 계정 저장을 사용합니다. 아래 1~8단계는 새 전용 Supabase 프로젝트를 만드는 경우의 참고 절차이며, 공유 프로젝트의 익명 로그인 설정을 바꾸지 않습니다.
 
 ## 1. 준비물
 
@@ -57,7 +51,7 @@ Cloudflare DNS 연결값 (2026-09-30 Vercel 확인):
 - Supabase 계정 (https://supabase.com — 무료 요금제로 충분, 무료 프로젝트는 계정당 2개까지)
 - Supabase CLI: `npm install -g supabase` (또는 macOS `brew install supabase/tap/supabase`) → `supabase --version`
 - Vercel 계정 + CLI: `npm install -g vercel`
-- 렛츠코딩 라운지(play.letscoding.kr) 교사 계정
+- 렛츠코딩 라운지 계정(운영 Play 링크 확인용)
 
 ## 2. Supabase 프로젝트 만들기
 
@@ -102,7 +96,7 @@ supabase db push
 
 ## 5. 익명 로그인 켜기
 
-게임은 이메일 없이 **익명 로그인**으로 아이마다 계정을 만듭니다. 기본값은 꺼져 있으므로 반드시 켜야 합니다.
+새 전용 프로젝트에서 이어하기 코드가 필요하다면 **익명 로그인**을 켤 수 있습니다. 현재 공유 프로젝트에서는 꺼져 있고, 로그인하지 않은 게스트는 기기 저장을 사용합니다.
 
 - CLI: `supabase config push` (config.toml 의 `enable_anonymous_sign_ins = true` 가 반영됨. 바뀌는 항목을 보여주고 확인을 묻습니다.)
 - 또는 대시보드: **Authentication → Sign In / Providers → Anonymous sign-ins** 를 **ON**
@@ -146,33 +140,15 @@ window.__APP_CONFIG__ = {
 npm run build          # 타입 검사 + dist/ 생성
 npm run preview        # http://localhost:4173 에서 확인 (태블릿은 같은 와이파이에서 --host 주소로)
 ```
-브라우저 개발자 도구 콘솔에 `[net] online as …` 가 보이면 클라우드 연결 성공, `[net] offline` 이면 7단계 설정을 다시 확인하세요.
+브라우저 개발자 도구 콘솔에 `[net] online as …`가 보이면 클라우드 연결 성공입니다. 현재 공유 프로젝트에서 게스트의 `[net] offline`은 익명 로그인이 꺼져 있어서 나타날 수 있으며, 이 경우 기기 저장으로 플레이합니다. 로그인 계정에서도 오프라인이라면 설정과 네트워크를 확인하세요.
 
 ## 9. Vercel 배포
 
-```bash
-vercel login
-vercel deploy --prod
-```
-처음 한 번 묻는 항목: 새 프로젝트 → 이름 `pokemon-study` → **Framework Preset: Vite** (자동 감지) → Build Command `npm run build`, Output Directory `dist` (기본값 그대로). 끝나면 `https://pokemon-study-xxxx.vercel.app` 주소가 나옵니다.
-
-- 이 주소를 `supabase/config.toml` 의 `site_url` 에 넣고 `supabase config push` 해 두면 깔끔합니다(필수는 아님).
-- 이후 업데이트는 코드 수정 → `vercel deploy --prod` 만 반복.
-- Vercel 대시보드에서 GitHub 저장소를 연결해 두면 `git push` 마다 자동 배포됩니다.
+현재 Vercel 프로젝트 `letscodings-projects/poke-du`는 GitHub 저장소의 `main`과 연결되어 있습니다. 검증한 코드를 `main`에 push한 뒤 Vercel의 배포 상태와 `https://poke.letscoding.kr/`의 새 장 진입을 확인합니다. 별도 `vercel deploy --prod`는 필요하지 않습니다.
 
 ## 10. 렛츠코딩 라운지 등록
 
-### 10-A. 외부 링크 (클라우드 기능 전부 사용 — 권장)
-라운지 교사 화면 → **웹 게임 등록 → 외부 링크** → 9단계의 Vercel 주소 입력. 아이들은 라운지 목록에서 눌러 새 창/프레임으로 게임을 엽니다.
-
-### 10-B. ZIP 업로드 (오프라인 모드)
-```bash
-npm run build
-npm run zip:lounge     # → pokemon-study-lounge.zip (상대경로, 500개 이하 파일)
-```
-라운지 → **웹 게임 등록 → ZIP 업로드**. 라운지 샌드박스는 외부 통신을 막으므로(CSP) 게임은 오프라인 모드로 들어갑니다: 내장 문제 + 기기 저장, 이어하기 코드 없음. ZIP 생성 스크립트가 압축 안의 `config.js`를 자동으로 비워 외부 연결 시도를 막습니다.
-
-> 메뉴 이름은 라운지 개편에 따라 조금 다를 수 있습니다. "웹 게임", "외부 링크/URL", "ZIP/파일 업로드" 를 찾으세요.
+[라운지 등록 페이지](https://lounge.letscoding.kr/works/leco/poke)의 **Play** 버튼은 `https://poke.letscoding.kr/`을 새 탭으로 엽니다. 새 장 배포 후 이 버튼을 눌러 도착 주소와 실제 플레이를 확인합니다. 라운지 ZIP을 만들거나 업로드할 필요가 없습니다.
 
 ## 11. 운영 팁
 
@@ -192,14 +168,14 @@ npm run zip:lounge     # → pokemon-study-lounge.zip (상대경로, 500개 이�
 |---|---|
 | `supabase link` 에서 비밀번호 오류 | 2단계 DB 비밀번호. 대시보드 Settings → Database → Reset database password |
 | `db push` 가 "relation already exists" | 이미 적용된 마이그레이션. `supabase migration list` 로 상태 확인, 필요하면 `supabase migration repair --status applied 20260929000000` |
-| 게임 콘솔에 `[net] offline … Anonymous sign-ins are disabled` | 5단계(익명 로그인)가 꺼져 있음 |
-| `[net] offline … Failed to fetch` / CSP 경고 | 라운지 ZIP 처럼 외부 통신이 막힌 환경(정상) 또는 URL 오타. Vercel 주소에서 나온다면 `supabaseUrl` 확인 |
+| 게임 콘솔에 `[net] offline … Anonymous sign-ins are disabled` | 현재 공유 프로젝트에서는 게스트 기기 저장이 정상이며, 클라우드 저장은 카카오·라운지 계정 로그인을 사용 |
+| `[net] offline … Failed to fetch` / CSP 경고 | 네트워크 또는 설정 URL 확인 |
 | `[net] offline … Invalid API key` | `public/config.js` 의 anon 키 오타, 또는 다른 프로젝트 키 |
 | `npm run db:seed` 가 `row-level security` / `permission denied` | `.env.local` 에 anon 키를 넣음. service_role(sb_secret_) 키 필요 |
 | `db:seed` 가 `relation "units" does not exist` | 4단계 `supabase db push` 먼저 |
 | `db:seed` 가 `curriculum.json 이(가) 없습니다` | `npm run data:questions` 먼저 |
 | 문제를 고쳤는데 게임에 반영 안 됨 | `npm run data:questions && npm run db:seed` 다시 실행. 게임은 접속 시 불러옵니다(새로고침) |
-| 새 기기에서 세이브가 안 보임 | 익명 계정은 기기·브라우저마다 다릅니다. 이어하기 코드로 옮기세요 |
+| 새 기기에서 세이브가 안 보임 | 같은 카카오·라운지 계정으로 로그인했는지 확인하세요. 게스트 저장은 기기마다 따로 보관됩니다 |
 | 세이브가 옛날 것으로 돌아감 | 클라우드 세이브는 20초마다/화면 이탈 시 올라갑니다. 두 기기에서 동시에 플레이하지 마세요 |
 | Vercel 에서 404 / 흰 화면 | Framework Preset 이 Vite 인지, Output Directory 가 `dist` 인지 확인 |
 

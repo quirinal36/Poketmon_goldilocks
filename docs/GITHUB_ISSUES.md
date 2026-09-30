@@ -1,12 +1,12 @@
 # GitHub 에픽·이슈
 
-> 기준: [PLAN.md](PLAN.md), 작성일: 2026-09-30. [GitHub Issues](https://github.com/quirinal36/my_game/issues). [마일스톤 문서](MILESTONES.md).
+> 기준: [PLAN.md](PLAN.md), 작성일: 2026-09-30. [GitHub Issues](https://github.com/quirinal36/Poketmon_goldilocks/issues). [마일스톤 문서](MILESTONES.md).
 
 기존 E1~E7과 T01~T31은 GitHub 등록 당시 기록이다. 각 하위 이슈는 GitHub의 상위 에픽 및 해당 마일스톤에 연결되어 있다. 기존 이슈의 상태·진행률은 GitHub에서 관리한다.
 
-**다음 장의 등록용 초안:** [E8~E10 및 T32~T43](#chapter2), 에픽 3개와 하위 작업 12개를 추가했다. [스토리 기획](STORY_CHAPTER_2.md)과 [M7~M9](MILESTONES.md#chapter2)를 기준으로 하며, **신규 이슈·마일스톤은 아직 GitHub에 등록하지 않았다.** 문서의 E/T/M 식별자는 실제 GitHub 번호가 아니다. 신규 작업은 모두 미착수이며 담당자·마감일은 미정이다.
+**두 번째 장:** [E8~E10 및 T32~T43](#chapter2)의 에픽 3개와 하위 작업 12개는 [GitHub Issues](https://github.com/quirinal36/Poketmon_goldilocks/issues)에 등록되어 있다. [스토리](STORY_CHAPTER_2.md)와 [M7~M9](MILESTONES.md#chapter2)를 기준으로 구현하며, 최신 완료 상태는 GitHub에서 확인한다.
 
-현재 구현 기준은 커밋 `bdceb57`의 첫 체육관·계정 로그인·저장 기능이다. 아래 최초 시작 상태를 현재의 미구현 목록으로 해석하지 않는다.
+아래 E1~E7의 최초 시작 상태는 커밋 `bdceb57` 무렵의 기록이다. 현재의 미구현 목록으로 해석하지 않는다.
 
 ## 시작 상태 (최초 등록 당시)
 
@@ -216,7 +216,7 @@ M7~M9와 E8~E10·T32~T43을 GitHub에 등록했다. 각 작업은 해당 에픽�
 |---|---|---|---|
 | [E8 · 달맞이산 사건과 블루시티 진입 구현](#e8) | [M7](MILESTONES.md#m7) | T32~T36 | 기존 저장으로 산을 넘어 블루시티까지 이동 |
 | [E9 · 이슬·두 번째 배지와 저장 호환 완성](#e9) | [M8](MILESTONES.md#m8) | T37~T39 | 두 번째 배지 획득 및 중단 후 재개 |
-| [E10 · 다음 장 검증·안내·배포 완료](#e10) | [M9](MILESTONES.md#m9) | T40~T43 | 플레이 검증과 웹·ZIP 배포 |
+| [E10 · 다음 장 검증·안내·배포 완료](#e10) | [M9](MILESTONES.md#m9) | T40~T43 | 플레이 검증과 Vercel·라운지 링크 배포 |
 
 ### 공통 구현 기준
 
@@ -428,10 +428,10 @@ GitHub 이슈: [#41](https://github.com/quirinal36/Poketmon_goldilocks/issues/41
 |---|---|---|
 | [T40](#t40) | 다음 장 전체 진행 E2E와 기존 기능 회귀 검사 | T39 |
 | [T41](#t41) | 전투 균형·아동 사용성·화면·음성 검토 | T39 |
-| [T42](#t42) | 안내 문서와 라운지 ZIP 갱신 | T40, T41 |
+| [T42](#t42) | 안내 문서와 라운지 링크 갱신 | T40, T41 |
 | [T43](#t43) | GitHub 연동 배포와 운영 확인 | T42 |
 
-에픽 완료 조건: T40~T43 완료, 검증 결과·미확인 범위·패키지·배포 커밋과 URL 기록.
+에픽 완료 조건: T40~T43 완료, 검증 결과·미확인 범위·배포 커밋과 URL 기록.
 
 <a id="t40"></a>
 
@@ -475,23 +475,23 @@ GitHub 이슈: [#51](https://github.com/quirinal36/Poketmon_goldilocks/issues/51
 
 <a id="t42"></a>
 
-### T42 — 안내 문서와 라운지 ZIP 갱신
+### T42 — 안내 문서와 라운지 링크 갱신
 
 GitHub 이슈: [#52](https://github.com/quirinal36/Poketmon_goldilocks/issues/52)
 
 목적: 웹과 라운지 사용자가 새 스토리 범위와 도장·저장 규칙을 정확히 알 수 있도록 한다.
 
-작업 범위: `README.md`, `docs/TEACHER_GUIDE.md`, `docs/DESIGN.md`, `docs/VERIFICATION.md`, `docs/STORY_CHAPTER_2.md`, 패키지 산출물.
+작업 범위: `README.md`, `docs/TEACHER_GUIDE.md`, `docs/DESIGN.md`, `docs/DEPLOY.md`, `docs/VERIFICATION.md`, `docs/STORY_CHAPTER_2.md`, 라운지 작품 링크와 운영 도메인 안내.
 
 완료 조건:
 
 - [ ] 구현을 마친 시점에만 스토리 문서의 미구현 표기를 갱신하고 최종 레벨·보상·맵 수를 기록한다.
 - [ ] 두 번째 배지까지의 경로, 누적 도장 8개, 사건 중단·재개, 다음 지역 준비 안내를 설명한다.
-- [ ] 로그인 계정 저장과 게스트 기기 저장, 오프라인 ZIP의 차이를 현재 서비스 설정에 맞게 안내한다.
-- [ ] 새 지역·아트를 포함한 ZIP이 기존 500개 파일·30MB 제한, 상대경로, 외부 API 없는 실행 조건을 만족한다.
-- [ ] 압축을 푼 패키지에서 다음 장 진입·문제 풀이·저장 복구를 확인한다.
+- [ ] 로그인 계정 저장과 게스트 기기 저장의 차이를 현재 서비스 설정에 맞게 안내한다.
+- [ ] 라운지 작품 페이지 `https://lounge.letscoding.kr/works/leco/poke`의 Play 버튼이 `https://poke.letscoding.kr/`로 이동하는 흐름을 안내한다.
+- [ ] 운영 도메인에서 다음 장 진입·문제 풀이·저장 복구를 확인한다. 라운지에 ZIP을 업로드하지 않는다.
 
-검증: `npm run zip:lounge`, `npm run check:lounge`와 패키지의 다음 장 실행 확인. 문서 링크·메뉴 이름·현재 구현 범위를 대조한다.
+검증: 라운지 Play → 운영 도메인 이동과 운영 도메인에서 다음 장 실행 확인. 문서 링크·메뉴 이름·현재 구현 범위를 대조한다.
 
 <a id="t43"></a>
 
@@ -509,6 +509,6 @@ GitHub 이슈: [#53](https://github.com/quirinal36/Poketmon_goldilocks/issues/53
 - [ ] `main` 반영으로 생성된 배포의 커밋과 성공 상태를 확인하고 운영 도메인의 새 버전을 확인한다.
 - [ ] 테스트 계정으로 라운지 로그인·이름 표시, 카카오 복귀, 새 지역 저장·새 브라우저 복구를 확인한다. 모의 서버 결과로 대체하지 않는다.
 - [ ] 운영 데이터는 테스트 계정에서만 사용하고, 사용자 저장을 초기화하거나 공유 라운지 인증 설정을 임의 변경하지 않는다.
-- [ ] 배포 커밋·URL·검증 결과·ZIP 위치를 기록하고 실제 완료한 GitHub 이슈·마일스톤 상태를 갱신한다.
+- [ ] 배포 커밋·운영 URL·라운지 작품 URL·검증 결과를 기록하고 실제 완료한 GitHub 이슈·마일스톤 상태를 갱신한다.
 
 검증: Preview와 운영 URL의 자산·콘솔·네트워크 오류, 로그인 복귀, 계정 저장 결과 및 재접속 상태를 확인한다. 배포를 되돌릴 때 새 맵 저장의 호환성도 함께 검토하도록 운영 기록에 남긴다.

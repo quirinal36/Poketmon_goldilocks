@@ -83,6 +83,8 @@ for (const loginMode of ['kakao', 'password']) test(`${loginMode}: login, isolat
   await page.evaluate(async () => {
     const g = (window as any).__G;
     await g.world.movePlayer(['right']);
+    await g.world.teleport('cerulean_center', 5, 5);
+    g.world.setLastHeal({ map: 'cerulean_center', x: 5, y: 5 });
     g.save.data.player.money = 2345;
     g.save.data.bag.potion = 7;
     g.save.data.dex.caught = [25, 158];
@@ -93,7 +95,7 @@ for (const loginMode of ['kakao', 'password']) test(`${loginMode}: login, isolat
   await page.getByRole('button', { name: '저장하기', exact: true }).click();
   await expect(page.getByRole('status')).toContainText('이 기기와 계정에 저장했어요');
   expect(cloud).toMatchObject({
-    pos: { map: 'pallet', x: 12, y: 14 }, player: { money: 2345 }, bag: { potion: 7 },
+    pos: { map: 'cerulean_center', x: 5, y: 5 }, lastHeal: { map: 'cerulean_center', x: 5, y: 5 }, player: { money: 2345 }, bag: { potion: 7 },
     dex: { caught: [25, 158] }, flags: { saved_progress: true },
     learn: { subjects: { math: { completed: { 'm11-u1-l1': '2026-09-30' } } } },
   });
@@ -115,7 +117,7 @@ for (const loginMode of ['kakao', 'password']) test(`${loginMode}: login, isolat
   await expect(page.getByRole('button', { name: '이어서 하기', exact: true })).toBeVisible();
   await expect(page.getByText(/마지막 저장/)).toBeVisible();
   expect(await page.evaluate(() => (window as any).__G.save.data)).toMatchObject({
-    player: { money: 4567 }, pos: { map: 'pallet', x: 12, y: 14 }, bag: { potion: 7 }, flags: { saved_progress: true },
+    player: { money: 4567 }, pos: { map: 'cerulean_center', x: 5, y: 5 }, lastHeal: { map: 'cerulean_center', x: 5, y: 5 }, bag: { potion: 7 }, flags: { saved_progress: true },
   });
   await page.getByRole('button', { name: '로그아웃', exact: true }).click();
   await expect(page.getByRole('button', { name: '카카오 로그인', exact: true })).toBeVisible();

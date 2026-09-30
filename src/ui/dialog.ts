@@ -220,7 +220,7 @@ export class Dialog {
       const rows = spec.options.map((label, i) => {
         const row = el('button', { class: 'dlg-choice-row', type: 'button' },
           el('span', { class: 'dlg-cursor' }, '▶'), el('span', { class: 'dlg-choice-label' }, label));
-        row.addEventListener('pointerdown', (e) => { e.stopPropagation(); e.preventDefault(); });
+        row.addEventListener('pointerdown', (e) => { e.stopPropagation(); });
         row.addEventListener('click', (e) => { e.stopPropagation(); this.pickChoice(i); });
         return row;
       });

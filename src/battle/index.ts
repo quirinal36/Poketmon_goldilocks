@@ -141,10 +141,16 @@ export function createBattle(): BattleService {
         G.save.data.defeatedTrainers.push(trainer.id); G.save.addMoney(trainer.reward);
         const flag = ({ bug_1: 'forest_bug1', bug_2: 'forest_bug2', camper_gym: 'gym_trainer1' } as Record<string, string>)[trainer.id];
         if (flag) G.save.setFlag(flag);
-        await G.ui.say(trainer.defeat, { speaker: trainer.name, portrait: trainer.image });
         if (trainer.badge && !G.save.data.player.badges.includes(trainer.badge)) {
-          G.save.data.player.badges.push(trainer.badge); G.save.setFlag(`badge_${trainer.badge}`); G.save.setFlag('route3_open');
-          G.save.write('badge'); await G.ui.showBadge(trainer.badge); G.world.refreshNpcs();
+          G.save.data.player.badges.push(trainer.badge); G.save.setFlag(`badge_${trainer.badge}`);
+          if (trainer.badge === 'boulder') G.save.setFlag('route3_open');
+        }
+        G.save.write('trainer-win');
+        await G.ui.say(trainer.defeat, { speaker: trainer.name, portrait: trainer.image });
+        if (trainer.badge) {
+          await G.ui.showBadge(trainer.badge);
+          G.save.setFlag(`badge_${trainer.badge}_shown`);
+          G.save.write('badge-shown'); G.world.refreshNpcs();
         }
       }
       await G.audio.jingle('victory'); return outcome;
@@ -157,7 +163,9 @@ export function createBattle(): BattleService {
     wild: (speciesId, level, opts) => run([{ speciesId, level }], undefined, opts?.area),
     async trainer(id) {
       const trainer = G.data.trainers[id]; if (!trainer) throw Error(`Unknown trainer: ${id}`);
-      if (trainer.badge && G.learn.stage() < 4) { await G.ui.say('공부 도장 4개를 모아 다시 와 주세요.'); return 'fled'; }
+      if (trainer.badge === 'cascade' && !G.save.data.player.badges.includes('boulder')) { await G.ui.say('회색배지를 받은 뒤 다시 와 주세요.'); return 'fled'; }
+      const required = trainer.badge === 'cascade' ? 8 : trainer.badge === 'boulder' ? 4 : 0;
+      if (G.learn.stage() < required) { await G.ui.say(`공부 도장 ${required}개를 모아 다시 와 주세요.`); return 'fled'; }
       if (G.save.data.defeatedTrainers.includes(id)) { await G.ui.say(trainer.after || trainer.defeat); return 'won'; }
       return run(trainer.team, trainer);
     }, giveExp, checkEvolutions,

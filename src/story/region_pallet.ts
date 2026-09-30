@@ -25,7 +25,7 @@ export const SCRIPTS_PALLET: Record<string, Script> = {
       const id = await g.ui.pickStarter(STARTERS);
       const p = { uid: uid('p_'), speciesId: id, level: 5, exp: 0, hp: maxHpFor(5), maxHp: maxHpFor(5), friendship: 70, caughtAt: new Date().toISOString(), caughtArea: 'starter' as const, nickname: undefined as string | undefined };
       if (await g.ui.yesNo('별명을 지어 줄까요?')) p.nickname = await g.ui.openNameEntry('친구의 별명', [g.data.speciesById(id).name]);
-      g.save.addPokemon(p); g.save.markCaught(id); g.save.setFlag('got_starter'); g.save.write('starter');
+      g.save.addPokemon(p); g.save.markCaught(id); g.save.setFlag('starter_species', id); g.save.setFlag('got_starter'); g.save.write('starter');
     }
     const rival = g.data.trainers.rival_lab;
     rival.name = g.save.data.player.rivalName;

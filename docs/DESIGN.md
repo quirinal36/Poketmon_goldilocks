@@ -8,9 +8,9 @@
 - **What**: A Pokémon-Gold-style (Game Boy Color look) top-down RPG for Korean **1st graders (초등 1학년)**, played in a **tablet browser** (iPad / Android tablet, touch first; keyboard also works).
 - **Core loop**: walk in tall grass → wild Pokémon appears → **answer math/English questions** to battle it → answer the catch question to **catch it** → fill the **도감 (Pokédex, 251 species = Gen 1+2)**.
 - **Curriculum**: math + English, progressing **1학년 1학기 → 1학년 2학기 → 2학년 1학기 → 2학년 2학기**. One lesson (차시) per subject per day by default ("매일 진도"), difficulty rising gradually.
-- **Story scope**: 태초마을 (choose starter at 오박사's lab) → 1번도로 → 상록시티 → 2번도로 → 상록숲 → 회색시티 → 회색체육관: gym leader **웅** → **회색배지**. After the badge: free play continues (3번도로 opens, daily study continues, dex completion over ~2 years).
+- **Story scope**: 태초마을 → 회색시티의 웅과 회색배지 → 3번도로 → 달맞이산 탐사 수첩 사건 → 4번도로 → 블루시티의 이슬과 블루배지. 두 번째 배지 뒤에도 학습과 자유 탐험을 이어갈 수 있다.
 - **Customization**: player appearance (gender, skin, hair color, hair style, outfit color, hat), player name, rival name, partner Pokémon (party[0] follows you on the map, HGSS-style; changeable in the party screen), nicknames.
-- **Deploy**: static site (Vite build, all paths relative, `base: './'`). Hosted on Vercel (full features incl. Supabase) and uploadable as ZIP to 렛츠코딩 라운지 (Lounge CSP blocks external fetch → game must work 100% offline from bundled data + localStorage).
+- **Deploy**: Vite static site on Vercel (`base: './'`). GitHub `main` push가 운영 주소 `poke.letscoding.kr`에 배포되고, 라운지 Play 버튼이 운영 주소를 연다. 설정이 없거나 로그인하지 않은 게스트는 브라우저 저장을 사용한다.
 - **Data**: questions/curriculum are data, not code. Source of truth = generator scripts in `scripts/questions/*.mjs` → `public/data/*.json` (bundled snapshot) → seeded into Supabase tables. At runtime the game uses Supabase when reachable (questions overrides + cloud save + answer logs) and silently falls back to bundled JSON + localStorage.
 
 Child-friendliness rules (apply everywhere):
@@ -19,7 +19,7 @@ Child-friendliness rules (apply everywhere):
 3. **Touch targets ≥ 56 px** (CSS px) for answers, ≥ 48 px for other buttons. No hover-only UI. No double-tap requirements. No tiny text: min 18 px for body, 28 px+ for question text.
 4. **Mistakes are safe**: wrong answer → gentle feedback + hint + retry. Never lose progress, money, or Pokémon. Losing a battle just sends you to the Pokémon Center with full HP.
 5. Positive reinforcement: sounds, sparkles, "참 잘했어요!", EXP, level ups, evolutions.
-6. No ads, no external links, no data collection beyond anonymous learning logs.
+6. No ads. 카카오·라운지 계정 인증은 공유 Supabase Auth를 사용하고, 게임 저장과 학습 기록은 `pokedu` 스키마에서 계정별로 분리한다.
 
 ## 1. Tech stack & repo layout
 
@@ -220,7 +220,7 @@ Placed on outdoor maps via `MapDef.structures`. Footprint tiles are solid except
 | `gate` | 4×2 | (1,1) | forest gate hut (decor) |
 
 ### 7.4 Characters (`src/art/characters.ts`)
-16×16 frames drawn at tile position (may overflow 4 px upward). 4 directions × 3 frames (stand, stepA, stepB). NPC sprite ids (`NpcSpriteId`): `mom` `oak` `rival` `sister` `aide` `nurse` `clerk` `teacher` `boy` `girl` `youngster` `lass` `oldman` `oldwoman` `bugcatcher` `camper` `leader_rock` `fisher` `hiker` `gymguide` `man` `woman` `scientist`. Player sprite built from `PlayerAppearance` with palette swaps (skin 3 tones, hair 6 colors, 3 hair styles per gender, outfit 6 colors, hat on/off). Also `drawPlayerPortrait(appearance, 'front'|'back', size 48)` for trainer card & battle intro (palette-swapped 48×48 pixel art).
+16×16 frames drawn at tile position (may overflow 4 px upward). 4 directions × 3 frames (stand, stepA, stepB). NPC sprite ids (`NpcSpriteId`): `mom` `oak` `rival` `sister` `aide` `nurse` `clerk` `teacher` `boy` `girl` `youngster` `lass` `oldman` `oldwoman` `bugcatcher` `camper` `leader_rock` `leader_water` `rocket` `clefairy` `fisher` `hiker` `gymguide` `man` `woman` `scientist`. Player sprite built from `PlayerAppearance` with palette swaps (skin 3 tones, hair 6 colors, 3 hair styles per gender, outfit 6 colors, hat on/off). Also `drawPlayerPortrait(appearance, 'front'|'back', size 48)` for trainer card & battle intro (palette-swapped 48×48 pixel art).
 Partner follower = the Pokémon's **icon** sprite (32×32 box icon from atlas, 2-frame bob animation via 1 px offset), drawn centered on its tile, bottom-aligned.
 
 ### 7.5 Encounters (`src/world/encounters.ts`)
@@ -229,6 +229,7 @@ Areas (`AreaId`): `route1` (grassland, urban), `route2` (grassland, forest), `fo
 - Pool = species with a matching habitat, tier ≤ unlocked, and `obtainable === 'wild'`; weight = `(10 - tier)²`, ×0.5 if already caught (to favor new ones), ×1.5 for tier == unlocked (new stuff feels fresh).
 - Every non-legendary species must be reachable in at least one area (data script guarantees via `habitats` fallback).
 - Area base levels: route1 2–4, route2 3–5, forest 3–6, route22 4–7, route3 8–12; + floor(stage/10) capped +20.
+- 두 번째 장 출현 지역: `mt_moon`(동굴), `route4`(산길), `cerulean`(물가). 학습 단계에 따라 각 지역의 야생 포켓몬과 레벨이 정해진다.
 
 ### 7.6 Story flags & flow
 Flags (string keys in `save.flags`): `intro_done`, `oak_called`(mom told you), `oak_stopped`(oak stopped you at route1), `got_starter`, `rival_lab_battle`, `got_dex`, `route1_tutorial`, `viridian_arrived`, `got_rod`, `forest_bug1`, `forest_bug2`, `pewter_arrived`, `gym_trainer1`, `badge_boulder`, `route3_open`, `daily_special`, plus per-item pickups `item_<map>_<id>`.
@@ -240,9 +241,14 @@ Flow:
 5. Route 1: first grass step → Oak's tip via 전화 message (dialog): catching tutorial (`route1_tutorial`).
 6. Viridian: nurse heals; 오늘의 공부 board; 트레이너 스쿨 (practice); gym locked ("관장님은 외출 중"). Route 22: fisherman gives 낚싯대. Route 2 → forest (2 bug catchers; last one blocks the path until beaten? no—keep optional) → Pewter.
 7. Pewter gym: gym guide explains: 웅에게 도전하려면 **공부 도장 4개** (completed lessons ≥ 4). If fewer: "도장 N/4개! 매일 공부해서 도장을 모아 오렴." Camper trainer (optional) → 웅 (team: 꼬마돌 Lv 8, 롱스톤 Lv 10; gym questions) → win → **회색배지** (`badge_boulder`), money ₩1000, route3 opens (`route3_open`), Oak congratulates via message. Post-game hint: "매일 공부하면 새로운 포켓몬이 나타나요!"
+8. 회색배지 뒤 3번도로에서 오박사의 전화를 받는다. 달맞이산 입구 연구원의 부탁과 회복 → 삐삐 → 로켓단 승리 → 탐사 수첩 반환과 상처약 2개 → 4번도로 → 블루시티 순서로 진행한다. 로켓단 승리·수첩 보상은 중단 후에도 저장된다.
+9. 블루시티 라이벌·체육관 수련생은 선택 전투다. 이슬은 회색배지와 누적 완료 레슨 8개를 확인한다. 승리 시 `cascade`(블루배지)를 지급하며, 배지 연출 도중 종료해도 다시 볼 수 있다. 다음 장 지역은 아직 열리지 않는다.
+
+두 번째 장에 추가된 맵 7개: `mt_moon_front`, `mt_moon_deep`, `route4`, `cerulean`, `cerulean_center`, `cerulean_mart`, `cerulean_gym`. 전체 25개 맵이다.
 
 ### 7.7 Trainers (`TrainerDef` in types.ts), ids
 `rival_lab`, `bug_1` (벌레잡이 소년 민준: 캐터피 Lv4, 뿔충이 Lv4), `bug_2` (벌레잡이 소년 서준: 단데기 Lv5, 캐터피 Lv5, 뿔충이 Lv6→ keep ≤2 Pokémon: 단데기 Lv6, 딱충이 Lv6), `camper_gym` (캠프보이 도윤: 모래두지 Lv7), `leader_woong` (관장 웅: 꼬마돌 Lv8, 롱스톤 Lv10, badge `boulder`).
+두 번째 장: `route3_camper`, `moon_rocket`, `rival_cerulean`, `cerulean_swimmer`, `leader_misty`.
 
 ## 8. Images (codex) — `public/assets/img/`
 Generated by `scripts/gen-images.mjs` via `codex exec` image tool, then post-processed (white bg → transparent, trim, nearest-neighbor resize). **Prompts must describe ORIGINAL characters and must NOT mention Pokémon/Nintendo/Game Freak or real franchise names** (the image moderation rejects them). Style keyword: "retro 16-bit color handheld RPG pixel art, clean black outlines, limited palette".
@@ -251,6 +257,7 @@ Required (file → use):
 - `rival.png` spiky-haired boy rival, confident smirk — battles.
 - `bugcatcher.png`, `camper.png`, `leader_woong.png` (spiky dark brown hair, squinting smile, orange shirt, green vest, arms crossed), `mom.png` (optional).
 - `badge_boulder.png` gray octagonal stone badge icon (128×128).
+- `badge_cascade.svg` blue second badge icon for the trainer card and badge reveal.
 - `title_bg.png` landscape pixel art: sunrise over a small village with green hills and a path (no people, no text).
 - `app_icon.png` 512×512: red-and-white ball on an open schoolbook, pixel art.
 - `stamp.png` 공부 도장 icon (cute star stamp).
