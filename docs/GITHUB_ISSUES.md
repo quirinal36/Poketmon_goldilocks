@@ -206,9 +206,9 @@ GitHub: [E7 · Supabase 연결과 Vercel·라운지 서비스 배포](https://gi
 
 <a id="chapter2"></a>
 
-## 다음 장 — GitHub 등록용 이슈 초안
+## 다음 장 — GitHub 등록 이슈
 
-각 제목은 GitHub 등록 시 그대로 사용하고, 아래 목적·작업 범위·완료 조건·검증을 본문으로 옮긴다. 등록 순서는 M7~M9 → E8~E10 → T32~T43이다. 하위 작업을 해당 에픽·마일스톤에 연결한 뒤 실제 번호와 URL을 이 문서에 기록한다.
+M7~M9와 E8~E10·T32~T43을 GitHub에 등록했다. 각 작업은 해당 에픽의 하위 이슈와 마일스톤에 연결되어 있다. 아래 내용은 등록된 이슈의 기획 기준이다.
 
 | 에픽 | 마일스톤 | 하위 작업 | 결과 |
 |---|---|---|---|
@@ -228,6 +228,8 @@ GitHub: [E7 · Supabase 연결과 Vercel·라운지 서비스 배포](https://gi
 
 ## E8 — 달맞이산 사건과 블루시티 진입 구현
 
+GitHub 이슈: [#39](https://github.com/quirinal36/Poketmon_goldilocks/issues/39)
+
 마일스톤: [M7](MILESTONES.md#m7). 목적: 첫 배지를 가진 플레이어가 연구원을 돕고 블루시티까지 이동하도록 한다.
 
 | 작업 | 제목 | 선행 작업 |
@@ -243,6 +245,8 @@ GitHub: [E7 · Supabase 연결과 Vercel·라운지 서비스 배포](https://gi
 <a id="t32"></a>
 
 ### T32 — 새 지역 연결·진행·저장 기준 정리
+
+GitHub 이슈: [#42](https://github.com/quirinal36/Poketmon_goldilocks/issues/42)
 
 목적: 맵·배지·진행 기록의 이름과 복귀 위치를 먼저 정해 지역 연결 및 기존 저장 복구 오류를 예방한다.
 
@@ -261,6 +265,8 @@ GitHub: [E7 · Supabase 연결과 Vercel·라운지 서비스 배포](https://gi
 
 ### T33 — 3번도로·달맞이산·4번도로 맵과 아트 구현
 
+GitHub 이슈: [#43](https://github.com/quirinal36/Poketmon_goldilocks/issues/43)
+
 목적: 기존 3번도로에서 동굴을 통과해 도시 입구까지 걸을 수 있게 한다.
 
 작업 범위: `src/maps/`, `src/art/`, `src/core/types.ts`, `src/core/save.ts`, `src/world/`, `scripts/check-maps.mjs`, 필요한 이미지 자산. 3번도로 확장과 달맞이산 2개 맵·4번도로를 만들고, 동굴 벽·바닥·표지판 및 연구원·로켓단·삐삐 표현을 준비한다. 야생 조우가 발생하는 동굴 바닥과 안전한 이동 구간을 구분한다.
@@ -277,6 +283,8 @@ GitHub: [E7 · Supabase 연결과 Vercel·라운지 서비스 배포](https://gi
 <a id="t34"></a>
 
 ### T34 — 블루시티와 실내 맵·아트 구현
+
+GitHub 이슈: [#44](https://github.com/quirinal36/Poketmon_goldilocks/issues/44)
 
 목적: 동굴을 지난 플레이어에게 회복·쇼핑·학습·체육관을 이용할 도시를 제공한다.
 
@@ -295,6 +303,8 @@ GitHub: [E7 · Supabase 연결과 Vercel·라운지 서비스 배포](https://gi
 
 ### T35 — 새 지역 야생 출현과 트레이너 편성 추가
 
+GitHub 이슈: [#45](https://github.com/quirinal36/Poketmon_goldilocks/issues/45)
+
 목적: 새 지도에서 현재 진도에 맞는 포켓몬을 만나고, 기획된 다섯 상대와 대결하도록 한다.
 
 작업 범위: `src/world/encounters.ts`, `src/story/trainers.ts`, `src/core/types.ts`, 관련 단위 검사. 동굴·4번도로·물가의 출현 지역과 레벨 범위를 정하고, 캠프보이·로켓단·라이벌·수련생·이슬의 편성과 보상을 추가한다.
@@ -311,6 +321,8 @@ GitHub: [E7 · Supabase 연결과 Vercel·라운지 서비스 배포](https://gi
 <a id="t36"></a>
 
 ### T36 — 달맞이산 수첩 사건과 회복·출구 구현
+
+GitHub 이슈: [#46](https://github.com/quirinal36/Poketmon_goldilocks/issues/46)
 
 목적: 지도에 배치한 등장인물과 전투를 한 이야기로 연결한다.
 
@@ -330,6 +342,8 @@ GitHub: [E7 · Supabase 연결과 Vercel·라운지 서비스 배포](https://gi
 
 ## E9 — 이슬·두 번째 배지와 저장 호환 완성
 
+GitHub 이슈: [#40](https://github.com/quirinal36/Poketmon_goldilocks/issues/40)
+
 마일스톤: [M8](MILESTONES.md#m8). 목적: 두 번째 체육관까지 진행하고 기존 계정·기기 저장으로 안정적으로 이어간다.
 
 | 작업 | 제목 | 선행 작업 |
@@ -343,6 +357,8 @@ GitHub: [E7 · Supabase 연결과 Vercel·라운지 서비스 배포](https://gi
 <a id="t37"></a>
 
 ### T37 — 블루시티 라이벌·이슬·두 번째 배지 구현
+
+GitHub 이슈: [#47](https://github.com/quirinal36/Poketmon_goldilocks/issues/47)
 
 목적: 블루시티 도착부터 두 번째 배지 획득까지 플레이할 수 있게 한다.
 
@@ -362,6 +378,8 @@ GitHub: [E7 · Supabase 연결과 Vercel·라운지 서비스 배포](https://gi
 
 ### T38 — 사건·전투 보상 중복 방지와 중단 후 재개
 
+GitHub 이슈: [#48](https://github.com/quirinal36/Poketmon_goldilocks/issues/48)
+
 목적: 승리 직후나 대화 도중 게임을 닫아도 보상을 잃거나 여러 번 받지 않도록 한다.
 
 작업 범위: `src/story/`, `src/battle/index.ts`, `src/core/save.ts`, 관련 검사. 승리 기록과 사건 마무리를 구분해 저장하고, 다음 접속에서 완료하지 않은 장면만 이어서 처리한다. 기존 저장 한 번에 보상과 지급 완료 기록을 함께 담는다.
@@ -379,6 +397,8 @@ GitHub: [E7 · Supabase 연결과 Vercel·라운지 서비스 배포](https://gi
 <a id="t39"></a>
 
 ### T39 — 기존 저장·계정 저장·로그인 회귀 확인
+
+GitHub 이슈: [#49](https://github.com/quirinal36/Poketmon_goldilocks/issues/49)
 
 목적: 업데이트 전후와 기기를 옮긴 뒤에도 동일한 모험을 이어갈 수 있게 한다.
 
@@ -398,6 +418,8 @@ GitHub: [E7 · Supabase 연결과 Vercel·라운지 서비스 배포](https://gi
 
 ## E10 — 다음 장 검증·안내·배포 완료
 
+GitHub 이슈: [#41](https://github.com/quirinal36/Poketmon_goldilocks/issues/41)
+
 마일스톤: [M9](MILESTONES.md#m9). 목적: 다음 장을 검증하고, 정확한 안내와 함께 기존 배포 경로로 제공한다.
 
 | 작업 | 제목 | 선행 작업 |
@@ -412,6 +434,8 @@ GitHub: [E7 · Supabase 연결과 Vercel·라운지 서비스 배포](https://gi
 <a id="t40"></a>
 
 ### T40 — 다음 장 전체 진행 E2E와 기존 기능 회귀 검사
+
+GitHub 이슈: [#50](https://github.com/quirinal36/Poketmon_goldilocks/issues/50)
 
 목적: 개별 기능이 연결된 상태에서 첫 배지부터 두 번째 배지까지 진행할 수 있음을 확인한다.
 
@@ -431,6 +455,8 @@ GitHub: [E7 · Supabase 연결과 Vercel·라운지 서비스 배포](https://gi
 
 ### T41 — 전투 균형·아동 사용성·화면·음성 검토
 
+GitHub 이슈: [#51](https://github.com/quirinal36/Poketmon_goldilocks/issues/51)
+
 목적: 초등 저학년이 새 지역의 길과 목표를 이해하고, 오답 후에도 다시 도전하도록 조정한다.
 
 작업 범위: 새 지도·대사·전투 편성·필요한 스타일·음성 설정, `docs/STORY_CHAPTER_2.md`, `docs/VERIFICATION.md`.
@@ -449,6 +475,8 @@ GitHub: [E7 · Supabase 연결과 Vercel·라운지 서비스 배포](https://gi
 
 ### T42 — 안내 문서와 라운지 ZIP 갱신
 
+GitHub 이슈: [#52](https://github.com/quirinal36/Poketmon_goldilocks/issues/52)
+
 목적: 웹과 라운지 사용자가 새 스토리 범위와 도장·저장 규칙을 정확히 알 수 있도록 한다.
 
 작업 범위: `README.md`, `docs/TEACHER_GUIDE.md`, `docs/DESIGN.md`, `docs/VERIFICATION.md`, `docs/STORY_CHAPTER_2.md`, 패키지 산출물.
@@ -466,6 +494,8 @@ GitHub: [E7 · Supabase 연결과 Vercel·라운지 서비스 배포](https://gi
 <a id="t43"></a>
 
 ### T43 — GitHub 연동 배포와 운영 확인
+
+GitHub 이슈: [#53](https://github.com/quirinal36/Poketmon_goldilocks/issues/53)
 
 목적: 검증한 변경을 기존 GitHub–Vercel 경로로 공개하고 운영 주소에서 이어하기를 확인한다.
 
