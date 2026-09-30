@@ -247,3 +247,19 @@ Codex 이미지 ──gen-images──▶ assets/img ──▶ 트레이너/타�
 3. 빌드 통과를 확인하고, 문제 JSON을 생성한 뒤 커밋한다.
 4. 단계 3(지역 3개, 전투, 화면)을 시작한다.
 5. 단계 4~7을 차례로 진행한다.
+
+## 부록 — 지역 출구 좌표 계약
+
+야외 맵은 24×22이며, 아래 좌표는 타일 기준 0부터 시작한다. 모든 연결의 `toRange`는 1, `offset`은 0이다. 역방향 출구도 같은 경계 좌표를 사용한다.
+
+| 출발 → 도착 | 출발 경계 | 도착 경계 | 역방향 |
+|---|---|---|---|
+| pallet → route1 | (11, 0) | (11, 21) | route1 (11, 21) → pallet (11, 0) |
+| route1 → viridian | (11, 0) | (11, 21) | viridian (11, 21) → route1 (11, 0) |
+| viridian → route22 | (0, 12) | (23, 12) | route22 (23, 12) → viridian (0, 12) |
+| viridian → route2 | (11, 0) | (11, 21) | route2 (11, 21) → viridian (11, 0) |
+| route2 → forest | (11, 0) | (11, 21) | forest (11, 21) → route2 (11, 0) |
+| forest → pewter | (11, 0) | (11, 21) | pewter (11, 21) → forest (11, 0) |
+| pewter → route3 | (23, 12) | (0, 12) | route3 (0, 12) → pewter (23, 12) |
+
+건물 문·워프의 개별 좌표는 `src/maps/*.ts`의 `warps`에 선언한다. `npm run check:maps`가 목적지의 보행 가능 좌표, 귀환 경로, 건물 문과 워프의 일치를 검사한다. 회색배지 전에는 회색시티 (23, 12)의 NPC가 route3 진입을 막고, 배지 획득 시 `route3_open` 플래그로 길이 열린다.
