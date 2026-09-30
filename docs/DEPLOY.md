@@ -7,6 +7,8 @@
 
 운영 도메인: **https://poke.letscoding.kr** · Vercel 프로젝트: `letscodings-projects/poke-du`.
 
+현재 GitHub 저장소는 [quirinal36/Poketmon_goldilocks](https://github.com/quirinal36/Poketmon_goldilocks)이며, Vercel 프로젝트의 Git 연결도 이 저장소의 `main`으로 설정되어 있습니다. 저장소 이름을 바꿀 때에는 Vercel의 Git 연결을 새 저장소 주소로 다시 연결해야 다음 push가 자동 배포됩니다.
+
 Cloudflare DNS 연결값 (2026-09-30 Vercel 확인):
 
 | 유형 | 이름 | 값 | 프록시 |
