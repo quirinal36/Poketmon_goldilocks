@@ -198,7 +198,7 @@ export const inCat = (cat) => W.filter((w) => w.cat === cat);
 
 // "I like ___" form
 export const likeForm = (w) => w.like || (w.uncount || w.plural ? w.en : /(s|x|sh|ch)$/.test(w.en) ? w.en + 'es' : /[^aeiou]y$/.test(w.en) ? w.en.slice(0, -1) + 'ies' : w.en + 's');
-export const article = (w) => (w.plural ? '' : w.an ? 'an ' : 'a ');
+export const article = (w) => (w.plural || w.uncount ? '' : w.an ? 'an ' : 'a ');
 
 // ---------------------------------------------------------------- phrases ----
 // group: synonyms (never together). replies: groups that are acceptable replies (never used as distractors).
@@ -223,15 +223,15 @@ export const phrases = (...ens) => ens.map(phrase);
 
 // situation prompts (Korean, ≤ 40 chars) → phrase group
 export const SITUATIONS = [
-  { prompt: '친구를 만났어요. 뭐라고 말할까요?', group: 'hello' },
-  { prompt: '집에 가요. 친구에게 뭐라고 말할까요?', group: 'bye' },
-  { prompt: '아침에 선생님을 만났어요. 뭐라고 할까요?', group: 'morning' },
-  { prompt: '잠자기 전에 엄마께 뭐라고 말할까요?', group: 'night' },
+  { prompt: '만날 때 하는 "안녕!"을 골라 보세요.', group: 'hello' },
+  { prompt: '헤어질 때 하는 "잘 가!"를 골라 보세요.', group: 'bye' },
+  { prompt: '"좋은 아침이야."를 영어로 골라 보세요.', group: 'morning' },
+  { prompt: '"잘 자."를 영어로 골라 보세요.', group: 'night' },
   { prompt: '선물을 받았어요. 뭐라고 말할까요?', group: 'thanks' },
   { prompt: '친구와 부딪혔어요. 뭐라고 말할까요?', group: 'sorry' },
   { prompt: '친구가 고맙다고 해요. 뭐라고 대답할까요?', group: 'welcome' },
   { prompt: '친구가 미안하다고 해요. 뭐라고 대답할까요?', group: 'ok' },
-  { prompt: '처음 만난 친구에게 뭐라고 말할까요?', group: 'nice' },
+  { prompt: '"만나서 반가워."를 영어로 골라 보세요.', group: 'nice' },
 ];
 
 // ---------------------------------------------------------------- letters ----

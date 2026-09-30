@@ -1,16 +1,53 @@
-// STUB map — owned by a STORY/MAPS agent (wave 2).
 import type { MapDef } from '../core/types';
 export const MAP: MapDef = {
-  id: 'route2', name: 'route2', width: 10, height: 8, border: 'tree', music: 'town', indoor: false,
-  tiles: [
-    'TTTTTTTTTT',
-    'T........T',
-    'T..""""..T',
-    'T..""""..T',
-    'T........T',
-    'T..====..T',
-    'T........T',
-    'TTTTTTTTTT',
+  "id": "route2",
+  "name": "2번도로",
+  "width": 24,
+  "height": 22,
+  "border": "tree",
+  "music": "route",
+  "indoor": false,
+  "tiles": [
+    "TTTTTTTTTTT=TTTTTTTTTTTT",
+    "T..........=...........T",
+    "T..........=...........T",
+    "T..........=...........T",
+    "T..........=...........T",
+    "T..........=...........T",
+    "T..........=...........T",
+    "T..........=...........T",
+    "T..........=...........T",
+    "T..........=...........T",
+    "T.**.......=...........T",
+    "T..........=...........T",
+    "T======================T",
+    "T..........=...........T",
+    "T.....\"\"\"\"\"\"\"\"\"\".......T",
+    "T.....\"\"\"\"\"\"\"\"\"\".......T",
+    "T.....\"\"\"\"\"\"\"\"\"\".......T",
+    "T.....\"\"\"\"\"\"\"\"\"\"..**...T",
+    "T.....\"\"\"\"\"\"\"\"\"\".......T",
+    "T..........=...........T",
+    "T..........=...........T",
+    "TTTTTTTTTTT=TTTTTTTTTTTT"
   ],
-  warps: [], npcs: [],
+  "warps": [],
+  "npcs": [],
+  "area": "route2",
+  "exits": [
+    {
+      "dir": "down",
+      "to": "viridian",
+      "offset": 0,
+      "from": 11,
+      "toRange": 1
+    },
+    {
+      "dir": "up",
+      "to": "forest",
+      "offset": 0,
+      "from": 11,
+      "toRange": 1
+    }
+  ]
 };

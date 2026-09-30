@@ -89,8 +89,8 @@ function greetingDrill(L, r, list, { situations = true, reading = true } = {}) {
   list.forEach((p, i) => G.wordMeaning(L, r, p, pool, { v: 0, n: 2 + (i % 2), difficulty: 1 }));
   list.forEach((p, i) => G.wordMeaning(L, r, p, pool, { v: 1, n: 4 }));
   list.filter((p) => p.emoji).forEach((p, i) => { G.listenPicture(L, r, p, picPool, { n: 3, v: 0 }); G.listenPicture(L, r, p, picPool, { n: 4, v: 1 }); });
-  list.forEach((p, i) => { const a = replyOf(p); G.dialog(L, r, p.en, { en: a.en, ko: a.ko }, dialogWrongs(p).map((x) => ({ en: x.en, ko: x.ko })), { n: 3, v: 0 }); });
-  list.forEach((p, i) => { const a = replyOf(p); G.dialog(L, r, p.en, { en: a.en, ko: a.ko }, dialogWrongs(p).map((x) => ({ en: x.en, ko: x.ko })), { n: 4, v: 1, difficulty: 3 }); });
+  list.filter(p => p.replies.length).forEach((p, i) => { const a = replyOf(p); G.dialog(L, r, p.en, { en: a.en, ko: a.ko }, dialogWrongs(p).map((x) => ({ en: x.en, ko: x.ko })), { n: 3, v: 0 }); });
+  list.filter(p => p.replies.length).forEach((p, i) => { const a = replyOf(p); G.dialog(L, r, p.en, { en: a.en, ko: a.ko }, dialogWrongs(p).map((x) => ({ en: x.en, ko: x.ko })), { n: 4, v: 1, difficulty: 3 }); });
   if (situations) V.SITUATIONS.filter((s) => list.some((p) => p.group === s.group)).forEach((s) => G.situation(L, r, s, list.find((p) => p.group === s.group), pool));
   if (reading) list.forEach((p, i) => G.listenWord(L, r, p, pool, { v: i % 2 }));
 }
@@ -308,6 +308,9 @@ export function buildEnglish() {
         lessons.push({ id: lessonId, unitId, subject: 'english', grade: sem.grade, semester: sem.semester, lessonNo: li + 1, title: ls.title, goal: ls.goal, order: ++lessonOrder, requiredCorrect: 8 });
         const L = lessonBuilder(lessonId, 'english');
         ls.build(L, rng(seedOf(lessonId)));
+        // A new deterministic pass varies choices/examples for short lessons.
+        for (let pass = 1; L.count < 20 && pass <= 8; pass++) ls.build(L, rng(seedOf(`${lessonId}/${pass}`)));
+        if (L.count < 20) throw Error(`${lessonId}: only ${L.count} questions`);
         questions.push(...L.questions);
         built.push(ls);
       });

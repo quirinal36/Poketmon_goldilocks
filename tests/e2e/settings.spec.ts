@@ -1,0 +1,25 @@
+import { test, expect } from '@playwright/test';
+import { defaultSave } from '../../src/core/save';
+test('parent settings, native keyboard, transfer cancel and persistence', async ({ page }) => {
+  const save = defaultSave(); save.flags.intro_done = true;
+  await page.addInitScript(save => { if (!localStorage.getItem('pokestudy.save.v1')) localStorage.setItem('pokestudy.save.v1',JSON.stringify(save)); },save);
+  await page.goto('/?debug=1');
+  await page.getByRole('button',{name:'보호자',exact:true}).click();
+  const q = await page.getByRole('dialog',{name:'보호자 확인'}).locator('p').first().textContent();
+  const [a,b] = q!.match(/\d+/g)!.map(Number);
+  await page.getByRole('textbox').fill(String(a*b));
+  await page.getByRole('button',{name:'확인',exact:true}).focus(); await page.keyboard.press('Enter');
+  await page.getByLabel('하루 진도량',{exact:true}).selectOption('2');
+  await page.getByLabel('영어 사용',{exact:true}).selectOption('0');
+  await page.getByLabel('수학 사용',{exact:true}).selectOption('0');
+  await expect(page.getByLabel('수학 사용',{exact:true})).toHaveValue('1');
+  await page.getByRole('button',{name:'이어하기 코드 입력',exact:true}).click();
+  await page.getByRole('dialog',{name:'이어하기 코드',exact:true}).getByRole('button',{name:'닫기'}).click();
+  await expect(page.getByRole('heading',{name:'보호자 메뉴',exact:true})).toBeVisible();
+  await page.getByRole('button',{name:'학습 리포트',exact:true}).click();
+  await expect(page.getByRole('heading',{name:'최근 다시 볼 문제'})).toBeVisible();
+  await page.getByRole('button',{name:'닫기',exact:true}).click();
+  await page.getByRole('button',{name:'닫기',exact:true}).click();
+  await page.reload(); await expect(page.getByRole('button',{name:'이어서 하기',exact:true})).toBeVisible();
+  expect(await page.evaluate(()=> (window as any).__G.save.data.learn.parent)).toMatchObject({pace:2,subjects:{math:true,english:false}});
+});

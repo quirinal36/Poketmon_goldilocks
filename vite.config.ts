@@ -10,14 +10,14 @@ export default defineConfig({
     chunkSizeWarningLimit: 2000,
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'index.html'),
-        questions: resolve(__dirname, 'questions.html'),
+        main: resolve(import.meta.dirname, 'index.html'),
+        questions: resolve(import.meta.dirname, 'questions.html'),
       },
     },
   },
   server: { host: true },
   test: {
-    include: ['tests/unit/**/*.test.ts'],
+    include: ['tests/unit/**/*.test.{ts,mjs}'],
     environment: 'node',
   },
 } as any);

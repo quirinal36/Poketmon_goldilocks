@@ -300,6 +300,7 @@ export function createNet(opts: NetOptions = {}): NetHandle {
     },
 
     async createTransferCode() {
+      await flushPush();
       const r0 = ready();
       if (!r0) return null;
       const { c } = r0;

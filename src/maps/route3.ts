@@ -1,16 +1,54 @@
-// STUB map — owned by a STORY/MAPS agent (wave 2).
 import type { MapDef } from '../core/types';
 export const MAP: MapDef = {
-  id: 'route3', name: 'route3', width: 10, height: 8, border: 'tree', music: 'town', indoor: false,
-  tiles: [
-    'TTTTTTTTTT',
-    'T........T',
-    'T..""""..T',
-    'T..""""..T',
-    'T........T',
-    'T..====..T',
-    'T........T',
-    'TTTTTTTTTT',
+  "id": "route3",
+  "name": "3번도로",
+  "width": 24,
+  "height": 22,
+  "border": "tree",
+  "music": "route",
+  "indoor": false,
+  "tiles": [
+    "TTTTTTTTTTTTTTTTTTTTTTTT",
+    "T..........=...........T",
+    "T..........=...........T",
+    "T..........=...........T",
+    "T...\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"...T",
+    "T...\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"...T",
+    "T...\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"...T",
+    "T...\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"...T",
+    "T...\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"...T",
+    "T...\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"...T",
+    "T.**.......=...........T",
+    "T..........=...........T",
+    "=======================T",
+    "T..........=...........T",
+    "T..........=...........T",
+    "T..........=...........T",
+    "T..........=...........T",
+    "T..........=......**...T",
+    "T..........=...........T",
+    "T..........=...........T",
+    "T..........=...........T",
+    "TTTTTTTTTTTTTTTTTTTTTTTT"
   ],
-  warps: [], npcs: [],
+  "warps": [],
+  "npcs": [
+    {
+      "id": "hiker",
+      "x": 4,
+      "y": 13,
+      "sprite": "hiker",
+      "script": "semester_gifts"
+    }
+  ],
+  "area": "route3",
+  "exits": [
+    {
+      "dir": "left",
+      "to": "pewter",
+      "offset": 0,
+      "from": 12,
+      "toRange": 1
+    }
+  ]
 };

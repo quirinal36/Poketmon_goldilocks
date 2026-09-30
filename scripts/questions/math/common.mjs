@@ -55,19 +55,24 @@ export function obj2(r) { const [a, b] = sample(r, OBJ, 2); return [a, b]; }
 export function makeCtx(lessonId) {
   return { id: lessonId, L: lessonBuilder(lessonId, 'math'), r: rng(seedOf(lessonId)) };
 }
-const ko = (text) => [{ text, lang: 'ko-KR' }];
+const polish = text => typeof text !== 'string' ? text : text
+  .replace(/([가-힣0-9]+)은\(는\)/g, (_, word) => eun(word))
+  .replace(/([가-힣0-9]+)을\(를\)/g, (_, word) => eul(word))
+  .replace(/([가-힣0-9]+)이\(가\)/g, (_, word) => iga(word))
+  .replace(/([가-힣0-9]+)과\(와\)/g, (_, word) => wa(word));
+const ko = (text) => [{ text: polish(text), lang: 'ko-KR' }];
 
 /** numpad question. answer: integer. */
 export function addNum(ctx, { type, prompt, speak, visual, answer, hint, explain, difficulty }) {
   const a = Math.round(answer);
   if (!(a >= 0 && a <= 9999)) throw new Error(`${ctx.id}: numpad answer out of range ${answer} (${prompt})`);
-  return ctx.L.add({ type, prompt, speak: speak ? ko(speak) : undefined, visual, answerMode: 'numpad', answer: String(a), hint, explain, difficulty });
+  return ctx.L.add({ type, prompt: polish(prompt), speak: speak ? ko(speak) : undefined, visual, answerMode: 'numpad', answer: String(a), hint: polish(hint), explain: polish(explain), difficulty });
 }
 /** choice question. correct/distractors are values; toChoice renders them. */
 export function addChoice(ctx, { type, prompt, speak, visual, correct, distractors, toChoice, hint, explain, difficulty, n = 4 }) {
   const { choices, answer } = makeChoices(ctx.r, correct, distractors, toChoice, n);
   if (choices.length < 2) return false;
-  return ctx.L.add({ type, prompt, speak: speak ? ko(speak) : undefined, visual, answerMode: 'choice', choices, answer, hint, explain, difficulty });
+  return ctx.L.add({ type, prompt: polish(prompt), speak: speak ? ko(speak) : undefined, visual, answerMode: 'choice', choices, answer, hint: polish(hint), explain: polish(explain), difficulty });
 }
 export const asText = (v) => ({ text: String(v) });
 export const asEmoji = (v) => ({ emoji: String(v) });
@@ -147,7 +152,7 @@ export function qRead(ctx, d, lo, hi, { native: useNative = true } = {}) {
   addChoice(ctx, {
     type: 'read', prompt: `${eun(String(n))} 어떻게 읽을까요?`, speak: `이 수는 어떻게 읽을까요?`, visual: V.text(String(n)),
     correct: rd(n), distractors: ds, toChoice: asText,
-    hint: nat ? '하나, 둘, 셋… 순서로 세어 보세요.' : '일, 이, 삼… 순서로 읽어 보세요.', explain: `${n}은(는) '${sino(n)}'${n <= 99 ? ` 또는 '${native(n)}'` : ''}(이)라고 읽어요.`, difficulty: d,
+    hint: nat ? '하나, 둘, 셋… 순서로 세어 보세요.' : '일, 이, 삼… 순서로 읽어 보세요.', explain: `${eun(String(n))} '${sino(n)}'${n <= 99 ? ` 또는 '${native(n)}'` : ''}라고 읽어요.`, difficulty: d,
   });
 }
 /** 읽은 수 쓰기(numpad): '삼십오' → 35 */
@@ -178,18 +183,19 @@ export function qArith(ctx, d, { op, a, b, min = 0, max = 9999, pic = false, con
     addNum(ctx, {
       type: op === '+' ? 'add' : op === '-' ? 'sub' : 'mul', prompt: '빈칸에 알맞은 수를 써 보세요.', speak: speakExpr(expr), visual, answer: ans,
       hint: op === '+' ? `${x}에서 ${y}만큼 이어 세어 보세요.` : op === '-' ? `${x}에서 ${y}만큼 거꾸로 세어 보세요.` : `${x}을(를) ${y}번 더해 보세요.`,
-      explain: `${x} ${name} ${y}는 ${ans}이에요.`, difficulty: d,
+      explain: `${x} ${name} ${eun(String(y))} ${ans}입니다.`, difficulty: d,
     });
     return;
   }
 }
 /** □가 있는 식: "3 + □ = 7" / "□ - 2 = 5" (numpad). pos: 'a'|'b' which term is blank. */
-export function qBlank(ctx, d, { op, a, b, min = 0, max = 9999, pos } = {}) {
+export function qBlank(ctx, d, { op, a, b, min = 0, max = 9999, pos, cond } = {}) {
   const r = ctx.r;
   for (let t = 0; t < 40; t++) {
     const x = randInt(r, a[0], a[1]), y = randInt(r, b[0], b[1]);
     const res = op === '+' ? x + y : op === '-' ? x - y : x * y;
     if (res < min || res > max || (op === '-' && x < y) || (op === '×' && (x === 0 || y === 0))) continue;
+    if (cond && !cond(x, y, res)) continue;
     const p = pos || (r() < 0.5 ? 'a' : 'b');
     const expr = p === 'a' ? `□ ${op} ${y} = ${res}` : `${x} ${op} □ = ${res}`;
     const ans = p === 'a' ? x : y;
@@ -197,26 +203,27 @@ export function qBlank(ctx, d, { op, a, b, min = 0, max = 9999, pos } = {}) {
     const hint = op === '+' ? `${res}에서 ${p === 'a' ? y : x}을(를) 빼면 돼요.` : op === '-' ? (p === 'a' ? `${res}과(와) ${y}을(를) 더해 보세요.` : `${x}에서 ${res}을(를) 빼 보세요.`) : `${res}은(는) ${p === 'a' ? y : x}의 몇 배일까요?`;
     addNum(ctx, {
       type: 'blank', prompt: '□ 안에 알맞은 수를 써 보세요.', speak: speakExpr(expr), visual: V.text(expr), answer: ans,
-      hint, explain: `${x} ${name} ${y}는 ${res}이므로 □는 ${ans}이에요.`, difficulty: d,
+      hint, explain: `${x} ${name} ${eun(String(y))} ${res}입니다. □에 ${eul(String(ans))} 넣어요.`, difficulty: d,
     });
     return;
   }
 }
 /** 이야기(문장제) numpad: op '+'|'-' */
-export function qStory(ctx, d, { op, a, b, min = 0, max = 9999 } = {}) {
+export function qStory(ctx, d, { op, a, b, min = 0, max = 9999, cond } = {}) {
   const r = ctx.r;
   for (let t = 0; t < 40; t++) {
     const x = randInt(r, a[0], a[1]), y = randInt(r, b[0], b[1]);
     const ans = op === '+' ? x + y : x - y;
     if (ans < min || ans > max || (op === '-' && x < y)) continue;
+    if (cond && !cond(x, y, ans)) continue;
     const o = obj(r);
     let prompt, explain;
     if (op === '+') {
       prompt = r() < 0.5 ? `${o.n} ${x}${o.c}와 ${y}${o.c}가 있어요. 모두 몇 ${o.c}일까요?` : `${o.n} ${x}${o.c}에 ${y}${o.c}를 더 샀어요. 모두 몇 ${o.c}일까요?`;
-      explain = `${x} 더하기 ${y}는 ${ans}이에요.`;
+      explain = `${x} 더하기 ${eun(String(y))} ${ans}입니다.`;
     } else {
-      prompt = r() < 0.5 ? `${o.n} ${x}${o.c} 중 ${y}${o.c}를 먹었어요. 남은 것은 몇 ${o.c}일까요?` : `${o.n} ${x}${o.c} 중 ${y}${o.c}를 주었어요. 몇 ${o.c} 남았을까요?`;
-      explain = `${x} 빼기 ${y}는 ${ans}이에요.`;
+      prompt = r() < 0.5 ? `${o.n} ${x}${o.c} 중 ${y}${o.c}를 나눠 주었어요. 몇 ${o.c} 남았을까요?` : `${o.n} ${x}${o.c} 중 ${y}${o.c}를 주었어요. 몇 ${o.c} 남았을까요?`;
+      explain = `${x} 빼기 ${eun(String(y))} ${ans}입니다.`;
     }
     if ([...prompt].length > 40) continue;
     const visual = x + y <= 30 ? (op === '+' ? V.groups([{ emoji: o.e, count: x }, { emoji: o.e, count: y }], '+') : V.groups([{ emoji: o.e, count: x, crossed: y }])) : V.text(`${x} ${op} ${y}`, 'lg');

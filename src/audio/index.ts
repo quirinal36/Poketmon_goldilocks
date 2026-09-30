@@ -121,6 +121,7 @@ export function createAudio(): AudioService {
   }
 
   function jingle(id: MusicId): Promise<void> {
+    if (G.debug && typeof window !== 'undefined' && (window as any).__TEST__?.fastText) return Promise.resolve();
     if (!SONGS[id]) return Promise.resolve();
     const song = onceSong(id);
     const durMs = song.seconds * 1000 + 350;

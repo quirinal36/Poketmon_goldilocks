@@ -52,8 +52,9 @@ export function nearNumbers(r, ans, count = 3, { min = 0, max = 9999, spread = 3
     const d = ans + (r() < 0.5 ? -1 : 1) * randInt(r, 1, spread);
     if (d !== ans && d >= min && d <= max) set.add(d);
   }
-  let k = 1;
-  while (set.size < count) { const d = ans + k++; if (d <= max && d !== ans) set.add(d); }
+  for (let d = min; d <= max && set.size < count; d++) {
+    if (d !== ans) set.add(d);
+  }
   return [...set];
 }
 

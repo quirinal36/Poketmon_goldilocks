@@ -14,7 +14,11 @@
     "data:sprites": "node scripts/fetch-sprites.mjs",
     "data:questions": "node scripts/generate-questions.mjs",
     "db:seed": "node scripts/seed-supabase.mjs",
-    "zip:lounge": "node scripts/make-lounge-zip.mjs"
+    "zip:lounge": "node scripts/make-lounge-zip.mjs",
+    "check:maps": "node scripts/check-maps.mjs",
+    "check:questions": "node scripts/audit-questions.mjs",
+    "check:pokemon": "node scripts/check-pokemon.mjs",
+    "check:lounge": "node scripts/check-lounge.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.117.2",

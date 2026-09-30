@@ -90,6 +90,7 @@ function fill<T>(def: T, raw: unknown, dictKeys = false): T {
   }
   if (raw === undefined || raw === null) return def;
   if (typeof def !== typeof raw) return def;
+  if (typeof def === 'number' && !Number.isFinite(raw)) return def;
   return raw as T;
 }
 
@@ -98,20 +99,20 @@ function structuredCloneSafe<T>(v: T): T {
 }
 
 function repairPokemon(p: any): PokemonInstance | null {
-  if (!isObj(p) || typeof p.speciesId !== 'number') return null;
-  const level = typeof p.level === 'number' && p.level >= 1 ? Math.floor(p.level) : 5;
-  const maxHp = typeof p.maxHp === 'number' && p.maxHp > 0 ? p.maxHp : 18 + 3 * level;
+  if (!isObj(p) || !Number.isInteger(p.speciesId) || p.speciesId < 1 || p.speciesId > 251) return null;
+  const level = Number.isFinite(p.level) && p.level >= 1 ? Math.min(100, Math.floor(p.level)) : 5;
+  const maxHp = 18 + 3 * level;
   return {
     uid: typeof p.uid === 'string' && p.uid ? p.uid : uid('p_'),
     speciesId: p.speciesId,
     nickname: typeof p.nickname === 'string' && p.nickname ? p.nickname : undefined,
     level,
-    exp: typeof p.exp === 'number' ? p.exp : 0,
-    hp: typeof p.hp === 'number' ? Math.max(0, Math.min(maxHp, p.hp)) : maxHp,
+    exp: Number.isFinite(p.exp) ? Math.max(0, Math.floor(p.exp)) : 0,
+    hp: Number.isFinite(p.hp) ? Math.max(0, Math.min(maxHp, p.hp)) : maxHp,
     maxHp,
     caughtAt: typeof p.caughtAt === 'string' ? p.caughtAt : new Date().toISOString(),
     caughtArea: p.caughtArea,
-    friendship: typeof p.friendship === 'number' ? p.friendship : 70,
+    friendship: Number.isFinite(p.friendship) ? Math.max(0, Math.min(255, p.friendship)) : 70,
   };
 }
 
@@ -121,8 +122,10 @@ export function repairSave(raw: unknown): SaveData | null {
   const d = fill(defaultSave(), raw) as SaveData;
   d.version = 1;
   if (typeof d.id !== 'string' || !d.id) d.id = uid('s_');
-  d.party = (Array.isArray(d.party) ? d.party : []).map(repairPokemon).filter((p): p is PokemonInstance => !!p).slice(0, 6);
+  const party = (Array.isArray(d.party) ? d.party : []).map(repairPokemon).filter((p): p is PokemonInstance => !!p);
+  d.party = party.slice(0, 6);
   d.box = (Array.isArray(d.box) ? d.box : []).map(repairPokemon).filter((p): p is PokemonInstance => !!p);
+  d.box.unshift(...party.slice(6));
   d.dex.seen = uniqSorted(Array.isArray(d.dex.seen) ? d.dex.seen : []);
   d.dex.caught = uniqSorted(Array.isArray(d.dex.caught) ? d.dex.caught : []);
   d.player.badges = Array.isArray(d.player.badges) ? d.player.badges.filter((b) => typeof b === 'string') : [];
@@ -130,8 +133,10 @@ export function repairSave(raw: unknown): SaveData | null {
   if (typeof d.player.money !== 'number' || !Number.isFinite(d.player.money)) d.player.money = 500;
   d.player.money = Math.max(0, Math.floor(d.player.money));
   if (!MAP_IDS.includes(d.pos.map)) d.pos = { ...defaultSave().pos };
+  if (!Number.isInteger(d.pos.x) || !Number.isInteger(d.pos.y)) d.pos = { ...defaultSave().pos };
   if (!DIRS.includes(d.pos.facing)) d.pos.facing = 'down';
   if (!MAP_IDS.includes(d.lastHeal.map)) d.lastHeal = { ...defaultSave().lastHeal };
+  if (!Number.isInteger(d.lastHeal.x) || !Number.isInteger(d.lastHeal.y)) d.lastHeal = { ...defaultSave().lastHeal };
   for (const k of Object.keys(d.bag) as ItemId[]) {
     const v = (d.bag as any)[k];
     if (typeof v !== 'number' || !Number.isFinite(v) || v < 0) delete d.bag[k];
@@ -159,7 +164,7 @@ function clamp01(v: unknown, def: number): number {
 }
 
 function uniqSorted(a: number[]): number[] {
-  return Array.from(new Set(a.filter((n) => typeof n === 'number' && Number.isFinite(n)))).sort((x, y) => x - y);
+  return Array.from(new Set(a.filter((n) => Number.isInteger(n) && n >= 1 && n <= 251))).sort((x, y) => x - y);
 }
 
 function readRaw(): unknown | null {
@@ -180,6 +185,7 @@ export interface SaveServiceExt extends SaveService {
 }
 
 export function createSave(): SaveServiceExt {
+  let storageFailed = false;
   const svc: SaveServiceExt = {
     data: defaultSave(),
 
@@ -209,8 +215,11 @@ export function createSave(): SaveServiceExt {
       d.updatedAt = new Date().toISOString();
       try {
         localStorage.setItem(SAVE_KEY, JSON.stringify(d));
+        storageFailed = false;
       } catch (e) {
         console.warn('[save] localStorage write failed', e);
+        if (!storageFailed) G.ui?.toast('기기에 저장하지 못했어요. 보호자에게 저장 공간을 확인해 달라고 해 주세요.', 8000);
+        storageFailed = true;
       }
       try {
         G.net?.pushSave?.(d);

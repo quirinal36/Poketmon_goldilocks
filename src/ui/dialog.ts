@@ -84,8 +84,8 @@ export class Dialog {
 
   // ---------------------------------------------------------------- core
   private async run(lines: string | string[], opts: SayOptions, choice: ChoiceSpec | null): Promise<number | void> {
-    const pages = this.paginate(lines);
     this.show(opts);
+    const pages = this.paginate(lines);
     try {
       for (let i = 0; i < pages.length; i++) {
         const isLast = i === pages.length - 1;

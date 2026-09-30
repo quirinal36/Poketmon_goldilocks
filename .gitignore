@@ -12,3 +12,5 @@ playwright-report
 .cache
 _gen/*.png
 _gen/preview/
+
+**/graphify-out/

@@ -1,0 +1,14 @@
+{
+  "name": "포켓몬 공부 대모험",
+  "short_name": "공부 대모험",
+  "lang": "ko",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#d7e4ca",
+  "theme_color": "#31775c",
+  "icons": [
+    { "src": "./assets/img/app_icon_192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "./assets/img/app_icon.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

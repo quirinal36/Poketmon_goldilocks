@@ -50,7 +50,7 @@ export function validate({ units, lessons, questions }) {
     if (!q.id.startsWith(q.lessonId + '-')) errors.push(`${w}: id must start with lessonId`);
     perLesson.set(q.lessonId, (perLesson.get(q.lessonId) || 0) + 1);
     if (!q.prompt || typeof q.prompt !== 'string') errors.push(`${w}: missing prompt`);
-    else if ([...q.prompt].length > 48) warnings.push(`${w}: prompt long (${[...q.prompt].length})`);
+    else if ([...q.prompt].length > 40) warnings.push(`${w}: prompt long (${[...q.prompt].length})`);
     if (![1, 2, 3, 4, 5].includes(q.difficulty)) errors.push(`${w}: difficulty`);
     if (q.visual) checkVisual(q.visual, w, errors);
     if (q.listen && (!q.listen.text || !LANGS.has(q.listen.lang))) errors.push(`${w}: bad listen`);
@@ -76,7 +76,7 @@ export function validate({ units, lessons, questions }) {
   for (const l of lessons) {
     const n = perLesson.get(l.id) || 0;
     if (n === 0) errors.push(`lesson ${l.id} has no questions`);
-    else if (n < 15) warnings.push(`lesson ${l.id} has only ${n} questions`);
+    else if (n < 20) errors.push(`lesson ${l.id} has only ${n} questions`);
   }
   return { errors, warnings };
 }

@@ -1,16 +1,40 @@
-// STUB map — owned by a STORY/MAPS agent (wave 2).
 import type { MapDef } from '../core/types';
 export const MAP: MapDef = {
-  id: 'pewter_mart', name: 'pewter_mart', width: 10, height: 8, border: 'tree', music: 'town', indoor: false,
-  tiles: [
-    'TTTTTTTTTT',
-    'T........T',
-    'T..""""..T',
-    'T..""""..T',
-    'T........T',
-    'T..====..T',
-    'T........T',
-    'TTTTTTTTTT',
+  "id": "pewter_mart",
+  "name": "회색시티 프렌들리숍",
+  "width": 12,
+  "height": 10,
+  "border": "wall",
+  "music": "town",
+  "indoor": true,
+  "tiles": [
+    "WWWWWWWWWWWW",
+    "W__________W",
+    "W__________W",
+    "W____K_____W",
+    "W__________W",
+    "W__________W",
+    "W__________W",
+    "W__________W",
+    "W__________W",
+    "WWWWWmWWWWWW"
   ],
-  warps: [], npcs: [],
+  "warps": [
+    {
+      "x": 5,
+      "y": 9,
+      "to": "pewter",
+      "tx": 17,
+      "ty": 6
+    }
+  ],
+  "npcs": [
+    {
+      "id": "clerk",
+      "x": 5,
+      "y": 2,
+      "sprite": "clerk",
+      "script": "shop"
+    }
+  ]
 };

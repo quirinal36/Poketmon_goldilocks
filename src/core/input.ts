@@ -42,6 +42,8 @@ class InputManager {
       if (isEditable(e.target)) return;
       const b = KEYMAP[e.code];
       if (!b) return;
+      if (e.code === 'Tab') return;
+      if ((e.code === 'Enter' || e.code === 'Space') && (e.target as HTMLElement)?.tagName === 'BUTTON') return;
       e.preventDefault();
       if (e.repeat) return;
       this.down(b);

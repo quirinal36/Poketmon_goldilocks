@@ -427,7 +427,16 @@ export function createWorld(): WorldServiceExt {
     npcs = r.def.npcs.map((d) => makeNpc(d, false));
     refreshItems();
     player.sprite = G.save?.data?.player?.appearance ?? null;
-    player.setPos(Math.max(0, Math.min(r.w - 1, x)), Math.max(0, Math.min(r.h - 1, y)), facing);
+    let sx = Math.max(0, Math.min(r.w - 1, x)), sy = Math.max(0, Math.min(r.h - 1, y));
+    if (terrainBlocked(r, sx, sy) || npcAt(sx, sy)) {
+      let nearest = Infinity;
+      for (let ty = 0; ty < r.h; ty++) for (let tx = 0; tx < r.w; tx++) {
+        const distance = Math.abs(tx - sx) + Math.abs(ty - sy);
+        if (distance < nearest && !terrainBlocked(r, tx, ty) && !npcAt(tx, ty) && !r.warps.has(key(tx, ty))) { nearest = distance; x = tx; y = ty; }
+      }
+      sx = x; sy = y;
+    }
+    player.setPos(sx, sy, facing);
     grassSteps = 0;
     cancelAuto();
     lastHeld = null;
@@ -746,6 +755,7 @@ export function createWorld(): WorldServiceExt {
       console.error(`[world] script '${id}' failed`, e);
     } finally {
       scriptDepth--; unlock();
+      if (scriptDepth === 0) restoreMusic();
       refreshNpcs();
       try { G.ui.hud.refresh(); } catch { /* ignore */ }
       try { G.save.write('script'); } catch { /* ignore */ }

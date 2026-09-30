@@ -70,7 +70,7 @@ export function others(r, item, pool, n, { koMode = false } = {}) {
   return out;
 }
 const diffByChoices = (n, base = 1) => (n <= 3 ? base : base + 1);
-const explainWord = (w) => `${w.ko}${V.eunNeun(w.ko)} 영어로 ${w.en}!`;
+const explainWord = (w) => `${w.en} = ${w.ko}`;
 
 // ------------------------------------------------------------ vocabulary ----
 /** 🔊 word → pick picture. */
@@ -227,7 +227,7 @@ export function letterPicture(L, r, letter, correctWord, otherWords, { n = 4, li
   const { choices, answer } = makeChoices(r, correctWord, ds, (x) => ({ emoji: x.emoji, speak: en(x.en) }), n);
   const prompt = listenOnly ? '잘 듣고 이 글자로 시작하는 낱말을 골라 보세요.' : `${letter}로 시작하는 낱말을 골라 보세요.`;
   const q = { type: 'letter-picture', prompt, speak: [ko(listenOnly ? prompt : '이 글자로 시작하는 낱말을 골라 보세요.'), en(say(letter))],
-    answerMode: 'choice', choices, answer, hint: '그림을 눌러 낱말을 들어 보세요.', explain: `${correctWord.en}${V.eunNeun(correctWord.ko)} ${letter}로 시작해요.`,
+    answerMode: 'choice', choices, answer, hint: '그림을 눌러 낱말을 들어 보세요.', explain: `${correctWord.en}의 첫 글자는 ${letter}예요.`,
     difficulty: difficulty ?? (listenOnly ? 3 : 2) };
   if (listenOnly) q.listen = en(say(letter)); else q.visual = { kind: 'text', text: letter, lang: 'en-US', size: 'xl' };
   return L.add(q);
