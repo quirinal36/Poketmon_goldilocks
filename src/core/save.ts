@@ -167,9 +167,9 @@ function uniqSorted(a: number[]): number[] {
   return Array.from(new Set(a.filter((n) => Number.isInteger(n) && n >= 1 && n <= 251))).sort((x, y) => x - y);
 }
 
-function readRaw(): unknown | null {
+function readRaw(storageKey: string): unknown | null {
   try {
-    const s = localStorage.getItem(SAVE_KEY);
+    const s = localStorage.getItem(storageKey);
     if (!s) return null;
     return JSON.parse(s);
   } catch {
@@ -184,17 +184,17 @@ export interface SaveServiceExt extends SaveService {
   peek(): SaveData | null;
 }
 
-export function createSave(): SaveServiceExt {
+export function createSave(storageKey = SAVE_KEY): SaveServiceExt {
   let storageFailed = false;
   const svc: SaveServiceExt = {
     data: defaultSave(),
 
     exists(): boolean {
-      return repairSave(readRaw()) !== null;
+      return repairSave(readRaw(storageKey)) !== null;
     },
 
     peek(): SaveData | null {
-      return repairSave(readRaw());
+      return repairSave(readRaw(storageKey));
     },
 
     newGame(): SaveData {
@@ -204,17 +204,17 @@ export function createSave(): SaveServiceExt {
     },
 
     load(): SaveData | null {
-      const d = repairSave(readRaw());
+      const d = repairSave(readRaw(storageKey));
       if (!d) return null;
       svc.data = d;
       return d;
     },
 
-    write(reason = 'manual'): void {
+    write(reason = 'manual'): boolean {
       const d = svc.data;
       d.updatedAt = new Date().toISOString();
       try {
-        localStorage.setItem(SAVE_KEY, JSON.stringify(d));
+        localStorage.setItem(storageKey, JSON.stringify(d));
         storageFailed = false;
       } catch (e) {
         console.warn('[save] localStorage write failed', e);
@@ -227,17 +227,18 @@ export function createSave(): SaveServiceExt {
         console.warn('[save] pushSave failed', e);
       }
       if (G.debug) console.debug('[save] write:', reason);
+      return !storageFailed;
     },
 
     reset(): void {
-      try { localStorage.removeItem(SAVE_KEY); } catch { /* ignore */ }
+      try { localStorage.removeItem(storageKey); } catch { /* ignore */ }
       svc.data = defaultSave();
     },
 
     importData(d: SaveData): boolean {
       const r = repairSave(d);
       if (!r) return false;
-      try { localStorage.setItem(SAVE_KEY, JSON.stringify(r)); return true; } catch { return false; }
+      try { localStorage.setItem(storageKey, JSON.stringify(r)); return true; } catch { return false; }
     },
 
     flag(key: string): boolean {

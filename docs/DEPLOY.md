@@ -3,6 +3,40 @@
 > 학원 선생님이 혼자서도 따라 할 수 있도록 순서대로 적었습니다.
 > 명령은 모두 이 저장소 폴더(`my_game/`)에서 터미널에 입력합니다.
 
+## 카카오 로그인 · pokedu (현재 구성)
+
+운영 도메인: **https://poke.letscoding.kr** · Vercel 프로젝트: `letscodings-projects/poke-du`.
+
+Cloudflare DNS 연결값 (2026-09-30 Vercel 확인):
+
+| 유형 | 이름 | 값 | 프록시 |
+|---|---|---|---|
+| CNAME | `poke` | `e478339c04838165.vercel-dns-017.com` | DNS only |
+| TXT | `_vercel` | `vc-domain-verify=poke.letscoding.kr,6ee2c2530ee80d6a4251` | 해당 없음 |
+
+기존 `_vercel` TXT 레코드는 유지하고 위 값을 별도로 추가합니다. DNS 저장 후 Vercel 프로젝트 Domains에서 `poke.letscoding.kr`을 Verify합니다. 임시 배포 주소는 https://poke-du.vercel.app 이며, 카카오 로그인 복귀 주소는 운영 도메인으로 등록되어 있습니다.
+
+`.env.local`의 `SUPABASE_PROJECT_URL`과 `SUPABASE_ANON_KEY`를 그대로 사용합니다. Vite는 이 두 공개 값만 브라우저에 넣습니다. `SUPABASE_DB_PASSWORD`는 포함하지 않습니다. 기존 `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`도 지원하며, 명시적으로 빈 값을 지정하면 오프라인 빌드가 됩니다.
+
+- **라운지 계정 로그인**은 lounge.letscoding.kr과 동일한 Supabase Auth 프로젝트에 기존 이메일·비밀번호로 로그인합니다. 별도 회원가입이나 비밀번호 복사 없이 같은 사용자 ID의 `pokedu` 저장을 불러옵니다. 비밀번호는 저장하지 않습니다.
+- 시작 화면의 **카카오 로그인** → 카카오 동의 → 같은 게임 경로로 복귀합니다. PKCE 코드 교환과 세션 유지는 Supabase SDK가 처리합니다.
+- 로그인 없이도 기기 저장으로 플레이할 수 있습니다. 카카오 계정과 게스트의 저장은 분리되며, 기존 게스트 진행을 계정에 자동으로 덮어쓰지 않습니다. 로그아웃하면 게스트 저장으로 돌아옵니다.
+- 인증 계정은 Supabase의 `auth.users`, 게임 테이블과 RPC는 **`pokedu`** 스키마를 사용합니다. 각 계정은 RLS로 자기 저장과 학습 기록만 접근합니다.
+- 스키마 SQL: `supabase/migrations/20260930000000_pokedu.sql`. 공유 Supabase 프로젝트에는 아래 파일만 적용하세요. 기존 초기 마이그레이션은 `public` 스키마용이므로 전체 `db push` 또는 `config push`로 다른 서비스 설정을 바꾸지 마세요.
+  ```sh
+  supabase db query --linked --file supabase/migrations/20260930000000_pokedu.sql
+  ```
+  이미 적용한 프로젝트에서는 재실행하지 않습니다.
+- Supabase Data API의 Exposed schemas에 기존 목록을 유지하며 `pokedu`를 추가합니다.
+- Auth → URL Configuration의 Redirect URLs에 운영 주소 `https://poke.letscoding.kr/`, 개발용 `http://localhost:5173/`, 미리보기용 `http://localhost:4173/`를 등록합니다. 공유 프로젝트의 Site URL은 다른 서비스에서도 사용하므로 변경하지 않습니다.
+- 현재 공유 프로젝트는 이메일 없는 로그인을 허용하지 않으므로 Supabase 카카오 공급자의 기본 범위(`account_email` 포함)를 사용합니다. Kakao Developers에서 해당 동의 항목이 활성화되어 있어야 합니다.
+- Kakao provider는 켜져 있어야 하며, Kakao Developers의 Redirect URI는 Supabase provider가 안내하는 `https://<project-ref>.supabase.co/auth/v1/callback`입니다.
+- 클라우드 교육과정/문제는 선택 사항입니다. 테이블이 비어 있으면 내장 데이터를 사용합니다. 업로드하려면 서버 전용 service-role 키를 추가한 후 `npm run db:seed`를 사용합니다.
+
+참고: [Supabase 카카오 로그인](https://supabase.com/docs/guides/auth/social-login/auth-kakao), [사용자 정의 스키마](https://supabase.com/docs/guides/api/using-custom-schemas).
+
+아래 절은 새 전용 프로젝트를 처음 만드는 경우의 일반 안내입니다. 공유 프로젝트에는 위의 `pokedu` 설정을 우선 적용합니다.
+
 ## 0. 한눈에 보기
 
 게임은 **설정이 비어 있으면 그대로 오프라인**으로 동작합니다(문제는 내장, 저장은 기기에). Supabase 주소와 anon 키를 넣으면 클라우드 기능이 켜집니다.

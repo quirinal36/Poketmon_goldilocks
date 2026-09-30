@@ -1,23 +1,31 @@
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import { resolve } from 'node:path';
 
 // base './' — 모든 자산을 상대경로로 만든다 (렛츠코딩 라운지 ZIP 업로드 규칙: 루트 절대경로 금지).
-export default defineConfig({
-  base: './',
-  build: {
-    target: 'es2020',
-    assetsInlineLimit: 0,
-    chunkSizeWarningLimit: 2000,
-    rollupOptions: {
-      input: {
-        main: resolve(import.meta.dirname, 'index.html'),
-        questions: resolve(import.meta.dirname, 'questions.html'),
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '');
+  // Only the public URL and anon key may enter the browser bundle.
+  return {
+    define: {
+      'import.meta.env.VITE_SUPABASE_URL': JSON.stringify(env.VITE_SUPABASE_URL ?? env.SUPABASE_PROJECT_URL ?? env.SUPABASE_URL ?? ''),
+      'import.meta.env.VITE_SUPABASE_ANON_KEY': JSON.stringify(env.VITE_SUPABASE_ANON_KEY ?? env.SUPABASE_ANON_KEY ?? ''),
+    },
+    base: './',
+    build: {
+      target: 'es2020',
+      assetsInlineLimit: 0,
+      chunkSizeWarningLimit: 2000,
+      rollupOptions: {
+        input: {
+          main: resolve(import.meta.dirname, 'index.html'),
+          questions: resolve(import.meta.dirname, 'questions.html'),
+        },
       },
     },
-  },
-  server: { host: true },
-  test: {
-    include: ['tests/unit/**/*.test.{ts,mjs}'],
-    environment: 'node',
-  },
-} as any);
+    server: { host: true },
+    test: {
+      include: ['tests/unit/**/*.test.{ts,mjs}'],
+      environment: 'node',
+    },
+  } as any;
+});

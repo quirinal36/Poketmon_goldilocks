@@ -6,7 +6,7 @@ import { createLearn } from './learn';
 import { createBattle } from './battle';
 import { createUI } from './ui';
 import { createWorld } from './world';
-import { createSave, repairSave } from './core/save';
+import { createSave, repairSave, SAVE_KEY } from './core/save';
 import { loadData } from './data';
 import { initArt } from './art';
 import { input } from './core/input';
@@ -23,6 +23,10 @@ async function boot() {
   document.addEventListener('keydown', () => G.audio.unlock(), { once: true });
   G.data = await loadData();
   await Promise.all([initArt(), G.net.init()]);
+  if (G.net.accountId) {
+    G.save = createSave(`${SAVE_KEY}:${G.net.accountId}`);
+    G.save.load();
+  }
   const cloud = repairSave(await G.net.pullSave());
   if (cloud && (!G.save.exists() || Date.parse(cloud.updatedAt) > Date.parse(G.save.data.updatedAt))) G.save.data = cloud;
   await G.learn.init();
@@ -39,10 +43,11 @@ async function boot() {
     const now = performance.now();
     if (visible) G.save.data.playTimeSec += Math.max(0, Math.round((now - last) / 1000));
     last = now; visible = !document.hidden; G.save.write('autosave');
+    if (document.hidden) void G.net.flush();
   };
   setInterval(saveSession, 20000);
   document.addEventListener('visibilitychange', () => { saveSession(); if (!document.hidden) G.learn.rollover(); });
-  window.addEventListener('pagehide', saveSession);
+  window.addEventListener('pagehide', () => { saveSession(); void G.net.flush(); });
 }
 boot().catch(error => {
   console.error('[boot]', error);

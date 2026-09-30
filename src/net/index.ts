@@ -52,12 +52,17 @@ export interface QueryBuilder extends PromiseLike<QueryResult<Record<string, unk
   upsert(rows: unknown, opts?: { onConflict?: string; ignoreDuplicates?: boolean }): PromiseLike<QueryResult<unknown>>;
   insert(rows: unknown): PromiseLike<QueryResult<unknown>>;
 }
-export interface AuthUserLike { id: string }
+export interface AuthUserLike { id: string; is_anonymous?: boolean }
 export interface SupabaseLike {
   auth: {
+    initialize(): PromiseLike<{ error: { message: string } | null }>;
     getSession(): PromiseLike<{ data: { session: { user: AuthUserLike } | null }; error: { message: string } | null }>;
+    signInWithPassword(credentials: { email: string; password: string }): PromiseLike<{ error: { message: string } | null }>;
+    signInWithOAuth(options: { provider: 'kakao'; options: { redirectTo: string } }): PromiseLike<{ error: { message: string } | null }>;
+    signOut(options: { scope: 'local' }): PromiseLike<{ error: { message: string } | null }>;
     signInAnonymously(): PromiseLike<{ data: { user: AuthUserLike | null }; error: { message: string } | null }>;
   };
+  schema(name: string): Pick<SupabaseLike, 'from'>;
   from(table: string): QueryBuilder;
   rpc(fn: string, args?: Record<string, unknown>): PromiseLike<QueryResult<unknown>>;
 }
@@ -74,11 +79,6 @@ export interface NetOptions {
   debounceMs?: number;
   /** Diagnostics sink; defaults to console.info (never console.error — see DESIGN §12). */
   log?: (msg: string, detail?: unknown) => void;
-}
-
-/** NetService plus a test/lifecycle hook to flush the debounced save now. */
-export interface NetHandle extends NetService {
-  flush(): Promise<void>;
 }
 
 // --------------------------------------------------------------- guards ----
@@ -108,7 +108,7 @@ function rowToLesson(r: Record<string, unknown>): Lesson {
 }
 
 // -------------------------------------------------------------- factory ----
-export function createNet(opts: NetOptions = {}): NetHandle {
+export function createNet(opts: NetOptions = {}): NetService {
   const cfg = opts.config === undefined ? readConfig() : opts.config;
   const TIMEOUT = opts.timeoutMs ?? DEFAULT_TIMEOUT_MS;
   const DEBOUNCE = opts.debounceMs ?? PUSH_DEBOUNCE_MS;
@@ -121,12 +121,16 @@ export function createNet(opts: NetOptions = {}): NetHandle {
   let online = false;
   let client: SupabaseLike | null = null;
   let userId: string | null = null;
+  let accountId: string | null = null;
+  let accountName: string | null = null;
+  let authError: string | null = null;
   let initPromise: Promise<void> | null = null;
 
   // debounced cloud save
   let pendingSave: SaveData | null = null;
   let pushTimer: ReturnType<typeof setTimeout> | null = null;
-  let pushInFlight: Promise<void> | null = null;
+  let pushInFlight: Promise<boolean> | null = null;
+  let lastPushSucceeded = false;
 
   const errMsg = (e: unknown): string => (e instanceof Error ? `${e.name}: ${e.message}` : String(e));
   const fail = (what: string) => (e: unknown) => log(`${what} failed → ignoring`, errMsg(e));
@@ -159,12 +163,21 @@ export function createNet(opts: NetOptions = {}): NetHandle {
       const mod = await withTimeout(loadClient(), TIMEOUT, 'load supabase-js');
       const f = makeFetch();
       const c = mod.createClient(cfg.url, cfg.key, {
-        auth: { persistSession: true, storageKey: AUTH_STORAGE_KEY, autoRefreshToken: true, detectSessionInUrl: false },
+        db: { schema: 'pokedu' },
+        auth: { persistSession: true, storageKey: AUTH_STORAGE_KEY, autoRefreshToken: true, detectSessionInUrl: true, flowType: 'pkce' },
         ...(f ? { global: { fetch: f } } : {}),
       }) as SupabaseLike;
 
+      client = c;
+      const initialized = await withTimeout(c.auth.initialize(), TIMEOUT, 'auth callback');
+      if (initialized.error) {
+        authError = '로그인을 완료하지 못했어요. 다시 시도해 주세요.';
+        throw new Error(initialized.error.message);
+      }
       const sess = await withTimeout(c.auth.getSession(), TIMEOUT, 'getSession');
+      if (sess.error) { authError = '로그인을 완료하지 못했어요. 다시 시도해 주세요.'; throw new Error(sess.error.message); }
       let user: AuthUserLike | null = sess.data?.session?.user ?? null;
+      accountId = user && user.is_anonymous === false ? user.id : null;
       if (!user) {
         const res = await withTimeout(c.auth.signInAnonymously(), TIMEOUT, 'signInAnonymously');
         if (res.error) throw new Error(res.error.message);
@@ -175,39 +188,43 @@ export function createNet(opts: NetOptions = {}): NetHandle {
       client = c;
       userId = user.id;
       online = true;
+      if (accountId) {
+        accountName = await guarded(async () => {
+          const { data, error } = await c.schema('public').from('profiles').select('display_name').eq('id', accountId).maybeSingle();
+          if (error) return null;
+          return typeof data?.display_name === 'string' ? data.display_name.trim() || null : null;
+        }, null, TIMEOUT, 'lounge profile');
+      }
       log(`online as ${user.id.slice(0, 8)}…`);
     } catch (e) {
       // CSP (connect-src 'self') surfaces here as TypeError: Failed to fetch — expected in the Lounge sandbox.
-      client = null; userId = null; online = false;
+      userId = null; online = false;
       log('offline (cloud features disabled)', errMsg(e));
     }
   }
 
   // ------------------------------------------------------ cloud save ----
-  async function flushPush(): Promise<void> {
+  async function flushPush(): Promise<boolean> {
     if (pushTimer) { clearTimeout(pushTimer); pushTimer = null; }
-    if (pushInFlight) await pushInFlight;   // serialize: never let an older save overtake a newer one
-    const save = pendingSave;
-    pendingSave = null;
+    while (pushInFlight) await pushInFlight;
     const r = ready();
-    if (!save || !r) return;
+    if (!r) return false;
+    const save = pendingSave;
+    if (!save) return lastPushSucceeded;
+    pendingSave = null;
     const { c, uid } = r;
     const run = guarded(
       () => c.from('players').upsert(
-        { id: uid, name: save.player?.name ?? null, save, save_updated_at: save.updatedAt ?? new Date().toISOString() },
+        { id: uid, name: save.player?.name ?? null, save, save_updated_at: save.updatedAt },
         { onConflict: 'id' },
-      ).then((res) => { if (res.error) throw new Error(res.error.message); }),
-      undefined, TIMEOUT, 'pushSave', fail('pushSave'),
+      ).then((res) => { if (res.error) throw new Error(res.error.message); return true; }),
+      false, TIMEOUT, 'pushSave', fail('pushSave'),
     );
     pushInFlight = run;
-    await run;
-    if (pushInFlight === run) pushInFlight = null;
-  }
-
-  function onHidden(): void { void flushPush(); }
-  if (typeof document !== 'undefined' && typeof document.addEventListener === 'function') {
-    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') onHidden(); });
-    if (typeof window !== 'undefined') window.addEventListener('pagehide', onHidden);
+    lastPushSucceeded = await run;
+    if (!lastPushSucceeded && !pendingSave) pendingSave = save;
+    pushInFlight = null;
+    return lastPushSucceeded;
   }
 
   // ------------------------------------------------------------ paging ----
@@ -224,8 +241,46 @@ export function createNet(opts: NetOptions = {}): NetHandle {
   }
 
   // ------------------------------------------------------------ service ----
-  const net: NetHandle = {
+  const net: NetService = {
     get online() { return online; },
+    get loginAvailable() { return !!cfg; },
+    get accountId() { return accountId; },
+    get accountName() { return accountName; },
+    get authError() { return authError; },
+
+    async signInWithPassword(email, password) {
+      email = email.trim();
+      if (!/^[^\s@]+@[^\s@]+$/.test(email) || !password) return '라운지에서 사용하는 이메일과 비밀번호를 입력해 주세요.';
+      await net.init();
+      if (!client) return '로그인에 연결하지 못했어요. 인터넷 연결을 확인해 주세요.';
+      return guarded(async () => {
+        const { error } = await client!.auth.signInWithPassword({ email, password });
+        return error ? '이메일 또는 비밀번호를 확인해 주세요.' : null;
+      }, '로그인에 연결하지 못했어요. 잠시 후 다시 시도해 주세요.', TIMEOUT, 'password login');
+    },
+
+    async signInWithKakao() {
+      await net.init();
+      if (!client) return '로그인에 연결하지 못했어요. 인터넷 연결을 확인해 주세요.';
+      return guarded(async () => {
+        const { error } = await client!.auth.signInWithOAuth({
+          provider: 'kakao',
+          options: { redirectTo: location.origin + location.pathname },
+        });
+        return error ? '카카오 로그인을 시작하지 못했어요. 잠시 후 다시 시도해 주세요.' : null;
+      }, '로그인에 연결하지 못했어요. 다시 시도해 주세요.', TIMEOUT, 'kakao login', fail('kakao login'));
+    },
+
+    async signOut() {
+      if (!client) return false;
+      await net.flush();
+      return guarded(async () => {
+        const { error } = await client!.auth.signOut({ scope: 'local' });
+        if (error) return false;
+        userId = null; accountId = null; accountName = null; online = false;
+        return true;
+      }, false, TIMEOUT, 'signOut', fail('signOut'));
+    },
 
     init() {
       if (!initPromise) initPromise = doInit();
@@ -246,7 +301,7 @@ export function createNet(opts: NetOptions = {}): NetHandle {
 
     pushSave(save) {
       if (!cfg) return;
-      pendingSave = save;
+      pendingSave = JSON.parse(JSON.stringify(save)) as SaveData;
       if (!pushTimer) pushTimer = setTimeout(() => { void flushPush(); }, DEBOUNCE);
     },
 
@@ -324,10 +379,7 @@ export function createNet(opts: NetOptions = {}): NetHandle {
       }, null, TIMEOUT, 'claimTransferCode', fail('claimTransferCode'));
     },
 
-    async flush() {
-      await flushPush();
-      if (pushInFlight) await pushInFlight;
-    },
+    flush: flushPush,
   };
   return net;
 }

@@ -57,3 +57,42 @@ describe('game integration contracts', () => {
     expect(pool.length).toBeGreaterThan(0); expect(pool.every(p => p.species.obtainable === 'wild' && p.species.tier < 9)).toBe(true);
   });
 });
+
+
+it('keeps guest and account saves separate, including reset and import', () => {
+  const values = new Map<string, string>();
+  vi.stubGlobal('localStorage', {
+    getItem: (key: string) => values.get(key) ?? null,
+    setItem: (key: string, value: string) => values.set(key, value),
+    removeItem: (key: string) => values.delete(key),
+  });
+  try {
+    const guest = createSave(), a = createSave('account:a'), b = createSave('account:b');
+    const guestSave = defaultSave(), accountSave = defaultSave();
+    guest.importData(guestSave); a.importData(accountSave);
+    expect(guest.load()?.id).toBe(guestSave.id);
+    expect(a.load()?.id).toBe(accountSave.id);
+    expect(b.exists()).toBe(false);
+    a.reset();
+    expect(a.exists()).toBe(false);
+    expect(guest.peek()?.id).toBe(guestSave.id);
+  } finally { vi.unstubAllGlobals(); }
+});
+
+
+it('reports local storage failure while still queuing the cloud save', () => {
+  const oldNet = G.net, oldUI = G.ui;
+  const pushSave = vi.fn();
+  vi.stubGlobal('localStorage', { setItem: () => { throw new Error('quota exceeded'); } });
+  const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+  G.net = { pushSave } as any; G.ui = { toast: vi.fn() } as any;
+  try {
+    const save = createSave();
+    expect(save.write()).toBe(false);
+    expect(pushSave).toHaveBeenCalledWith(save.data);
+    vi.stubGlobal('localStorage', { setItem: vi.fn() });
+    expect(save.write()).toBe(true);
+  } finally {
+    G.net = oldNet; G.ui = oldUI; warn.mockRestore(); vi.unstubAllGlobals();
+  }
+});

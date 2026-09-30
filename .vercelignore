@@ -1,0 +1,8 @@
+.env*
+_gen/
+_archive/
+.cache/
+graphify-out/
+test-results/
+playwright-report/
+*.zip

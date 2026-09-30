@@ -14,3 +14,5 @@ _gen/*.png
 _gen/preview/
 
 **/graphify-out/
+
+supabase/.temp/

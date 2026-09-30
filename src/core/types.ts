@@ -518,9 +518,17 @@ export interface AudioService {
 }
 
 export interface NetService {
+  readonly loginAvailable: boolean;
+  readonly accountId: string | null;
+  readonly accountName: string | null;
+  readonly authError: string | null;
+  signInWithPassword(email: string, password: string): Promise<string | null>;
+  signInWithKakao(): Promise<string | null>;
+  signOut(): Promise<boolean>;
   readonly online: boolean;
   init(): Promise<void>;
   pullSave(): Promise<SaveData | null>;
+  flush(): Promise<boolean>;                    // true = cloud save confirmed
   pushSave(save: SaveData): void;                 // debounced, fire-and-forget
   flushLogs(logs: AnswerLog[]): Promise<boolean>; // true = uploaded
   fetchQuestions(lessonIds: string[]): Promise<Question[] | null>;
@@ -534,7 +542,7 @@ export interface SaveService {
   exists(): boolean;
   newGame(): SaveData;
   load(): SaveData | null;
-  write(reason?: string): void;          // persist to localStorage (+ net.pushSave)
+  write(reason?: string): boolean;          // persist to localStorage (+ net.pushSave)
   reset(): void;
   flag(key: string): boolean;
   setFlag(key: string, value?: boolean | number | string): void;

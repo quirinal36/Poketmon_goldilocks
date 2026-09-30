@@ -26,7 +26,7 @@ function fakeSave(id = 'save-1'): SaveData {
 
 type Op = [string, unknown[]];
 interface FakeBehaviour {
-  session?: { user: { id: string } } | null;
+  session?: { user: { id: string; is_anonymous?: boolean } } | null;
   signIn?: () => Promise<{ data: { user: { id: string } | null }; error: { message: string } | null }>;
   rows?: (table: string, ops: Op[]) => Record<string, unknown>[];
   single?: (table: string, ops: Op[]) => Record<string, unknown> | null;
@@ -58,9 +58,14 @@ function fakeClient(b: FakeBehaviour = {}): FakeClient {
   return {
     calls, rpcCalls,
     auth: {
+      initialize: async () => ({ error: null }),
+      signInWithPassword: async () => ({ error: null }),
+      signInWithOAuth: async () => ({ error: null }),
+      signOut: async () => ({ error: null }),
       getSession: async () => ({ data: { session: b.session === undefined ? null : b.session }, error: null }),
       signInAnonymously: b.signIn ?? (async () => ({ data: { user: { id: 'user-anon-1' } }, error: null })),
     },
+    schema: () => ({ from }),
     from,
     rpc: async (fn: string, args?: Record<string, unknown>) => { rpcCalls.push({ fn, args }); return { data: b.rpc ? b.rpc(fn, args) : null, error: null }; },
   };
@@ -361,4 +366,128 @@ describe('createNet — online with a fake supabase client', () => {
     expect(await p).toBeNull();
     expect(net.online).toBe(true);
   });
+});
+
+
+describe('Kakao authentication', () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  it('uses pokedu and consumes PKCE callbacks, with an account-specific identity', async () => {
+    const { net, spy } = onlineNet({ session: { user: { id: 'kakao-user', is_anonymous: false } } });
+    await net.init();
+    expect(net.accountId).toBe('kakao-user');
+    expect(spy.createArgs?.[2]).toMatchObject({ db: { schema: 'pokedu' }, auth: { detectSessionInUrl: true, flowType: 'pkce' } });
+  });
+
+  it('can log in even when anonymous sign-ins are disabled, returning to the same app path', async () => {
+    vi.stubGlobal('location', { origin: 'https://game.example', pathname: '/play/' });
+    const { net, client } = onlineNet({ signIn: async () => ({ data: { user: null }, error: { message: 'disabled' } }) });
+    const oauth = vi.spyOn(client.auth, 'signInWithOAuth');
+    await net.init();
+    expect(net.online).toBe(false);
+    expect(net.accountId).toBeNull();
+    expect(await net.signInWithKakao()).toBeNull();
+    expect(oauth).toHaveBeenCalledWith({ provider: 'kakao', options: { redirectTo: 'https://game.example/play/' } });
+    oauth.mockResolvedValue({ error: { message: 'provider disabled' } });
+    expect(await net.signInWithKakao()).toContain('시작하지 못했어요');
+    oauth.mockRejectedValue(new TypeError('offline'));
+    expect(await net.signInWithKakao()).toContain('연결하지 못했어요');
+  });
+
+  it('reports callback failure without silently creating a guest session', async () => {
+    const { net, client } = onlineNet();
+    vi.spyOn(client.auth, 'initialize').mockResolvedValue({ error: { message: 'invalid code' } });
+    const anonymous = vi.spyOn(client.auth, 'signInAnonymously');
+    await net.init();
+    expect(net.authError).toContain('로그인을 완료하지 못했어요');
+    expect(anonymous).not.toHaveBeenCalled();
+  });
+
+  it('flushes before local sign-out and stops cloud writes afterwards', async () => {
+    const { net, client } = onlineNet({ session: { user: { id: 'kakao-user', is_anonymous: false } } });
+    await net.init();
+    net.pushSave(fakeSave());
+    const signOut = vi.spyOn(client.auth, 'signOut');
+    expect(await net.signOut()).toBe(true);
+    expect(client.calls).toHaveLength(1);
+    expect(signOut).toHaveBeenCalledWith({ scope: 'local' });
+    expect(net.accountId).toBeNull();
+    expect(net.online).toBe(false);
+    net.pushSave(fakeSave());
+    await net.flush();
+    expect(client.calls).toHaveLength(1);
+  });
+});
+
+
+describe('confirmed cloud saves', () => {
+  it('keeps failed snapshots for retry and never uploads later unsaved mutations', async () => {
+    const behaviour: FakeBehaviour = { writeError: 'network failure' };
+    const { net, client } = onlineNet(behaviour);
+    await net.init();
+    const save = fakeSave('snapshot');
+    save.player.money = 123;
+    net.pushSave(save);
+    save.player.money = 999;
+    expect(await net.flush()).toBe(false);
+    behaviour.writeError = null;
+    expect(await net.flush()).toBe(true);
+    expect(client.calls).toHaveLength(2);
+    expect(client.calls[1].rows).toMatchObject({ save: { player: { money: 123 } } });
+    expect(await net.flush()).toBe(true);
+    expect(client.calls).toHaveLength(2);
+  });
+
+  it('preserves a pending save while offline and uploads it once reconnected', async () => {
+    const { net, client } = onlineNet();
+    await net.init();
+    vi.stubGlobal('navigator', { onLine: false });
+    try {
+      net.pushSave(fakeSave('offline-progress'));
+      expect(await net.flush()).toBe(false);
+      expect(client.calls).toHaveLength(0);
+      vi.stubGlobal('navigator', { onLine: true });
+      expect(await net.flush()).toBe(true);
+      expect(client.calls[0].rows).toMatchObject({ save: { id: 'offline-progress' } });
+    } finally { vi.unstubAllGlobals(); }
+  });
+});
+
+
+it('uses Lounge email/password auth without altering passwords or exposing auth errors', async () => {
+  const { net, client } = onlineNet({ signIn: async () => ({ data: { user: null }, error: { message: 'disabled' } }) });
+  const login = vi.spyOn(client.auth, 'signInWithPassword');
+  expect(await net.signInWithPassword('not-an-email', 'secret')).toContain('이메일');
+  expect(login).not.toHaveBeenCalled();
+  expect(await net.signInWithPassword(' user@example.com ', ' secret ')).toBeNull();
+  expect(login).toHaveBeenCalledWith({ email: 'user@example.com', password: ' secret ' });
+  login.mockResolvedValue({ error: { message: 'private server detail' } });
+  expect(await net.signInWithPassword('user@example.com', 'wrong')).toBe('이메일 또는 비밀번호를 확인해 주세요.');
+  login.mockRejectedValue(new Error('network error'));
+  expect(await net.signInWithPassword('user@example.com', 'secret')).toContain('연결하지 못했어요');
+});
+
+
+it('reads the Lounge display name only for the current account and clears it on logout', async () => {
+  let profileOps: Op[] = [];
+  const { net, client } = onlineNet({
+    session: { user: { id: 'lounge-user', is_anonymous: false } },
+    single: (table, ops) => { profileOps = ops; return table === 'profiles' ? { display_name: '  라운지 이름  ' } : null; },
+  });
+  const schema = vi.spyOn(client, 'schema');
+  await net.init();
+  expect(schema).toHaveBeenCalledWith('public');
+  expect(profileOps).toEqual([['select', ['display_name']], ['eq', ['id', 'lounge-user']]]);
+  expect(net.accountName).toBe('라운지 이름');
+  await net.signOut();
+  expect(net.accountName).toBeNull();
+});
+
+it('keeps login usable when the Lounge profile is missing or unavailable', async () => {
+  for (const single of [() => null, () => ({ display_name: '  ' }), () => { throw new Error('offline'); }]) {
+    const { net } = onlineNet({ session: { user: { id: 'lounge-user', is_anonymous: false } }, single });
+    await net.init();
+    expect(net.online).toBe(true);
+    expect(net.accountName).toBeNull();
+  }
 });

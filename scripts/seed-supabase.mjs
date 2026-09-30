@@ -33,7 +33,7 @@ function loadEnvFile(path) {
 }
 loadEnvFile(resolve(root, '.env.local'));
 
-const url = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || '';
+const url = process.env.SUPABASE_PROJECT_URL || process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || '';
 const key = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
 /** Tell the teacher early when the wrong key was pasted. */
@@ -118,7 +118,7 @@ if (/wrong key|unrecognized/.test(keyKind)) {
 }
 console.log(`target: ${url} (key: ${keyKind})${dryRun ? '  [DRY RUN]' : ''}`);
 
-const sb = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } });
+const sb = createClient(url, key, { db: { schema: 'pokedu' }, auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } });
 
 async function upsertAll(table, rows) {
   let n = 0;

@@ -54,23 +54,78 @@ export function showTitle(): Promise<'new' | 'continue'> {
     body.append(el('div', { class: 'title-art', style: { backgroundImage: `url("${asset('assets/img/title_bg.png')}")` } },
       el('p', { class: 'eyebrow' }, '매일 조금씩, 함께 자라는 모험'), el('div', { class: 'title-friends' }, ...[1, 25, 158].map(id => pokemonSprite(id, 'front', 96)))));
     const actions = el('div', { class: 'title-actions' });
-    if (G.save.exists()) actions.append(button('이어서 하기', () => done('continue'), 'primary'));
+    const loginStatus = el('p', { class: 'muted', role: 'status' },
+      G.net.authError || (G.net.accountId ? (G.net.accountName ? `${G.net.accountName}님 계정으로 로그인했어요.` : '계정으로 로그인했어요.') : '로그인 없이도 이 기기에서 플레이할 수 있어요.'));
+    if (G.net.loginAvailable) {
+      actions.append(G.net.accountId
+        ? button('로그아웃', async () => {
+          if (await G.net.signOut()) location.reload();
+          else loginStatus.textContent = '로그아웃하지 못했어요. 다시 시도해 주세요.';
+        })
+        : button('카카오 로그인', async () => {
+          loginStatus.textContent = '카카오 로그인으로 이동하고 있어요…';
+          const error = await G.net.signInWithKakao();
+          if (error) loginStatus.textContent = error;
+        }, 'kakao'));
+      if (!G.net.accountId) actions.append(button('라운지 계정 로그인', () => openLoungeLogin()));
+    }
+    if (G.save.exists()) {
+      actions.append(button('이어서 하기', () => done('continue'), 'primary'));
+      body.append(el('p', { class: 'muted' },
+        `${G.save.data.player.name} · 배지 ${G.save.data.player.badges.length}개 · 포켓몬 ${G.save.data.dex.caught.length}마리 · 마지막 저장 ${new Date(G.save.data.updatedAt).toLocaleString('ko-KR')}`));
+    }
     actions.append(button('새로 시작', async () => {
       if (G.save.exists() && !await G.ui.yesNo('새로 시작하면 이 기기의 모험이 바뀌어요. 시작할까요?')) return;
       done('new');
     }, 'primary'), button('보호자', () => openParentArea()));
-    body.append(actions, el('p', { class: 'muted' }, '방향키로 이동 · A로 대화 · START / M으로 메뉴'));
+    body.append(actions, loginStatus, el('p', { class: 'muted' }, '방향키로 이동 · A로 대화 · START / M으로 메뉴'));
   });
 }
+async function openLoungeLogin(): Promise<void> {
+  await screen('라운지 계정 로그인', body => {
+    const email = el('input', { type: 'email', name: 'email', autocomplete: 'username', required: true,
+      autocapitalize: 'none', spellcheck: false, 'aria-label': '이메일 (라운지 아이디)' });
+    const password = el('input', { type: 'password', name: 'password', autocomplete: 'current-password', required: true,
+      'aria-label': '비밀번호' });
+    const status = el('p', { role: 'status', class: 'muted' });
+    const submit = el('button', { type: 'submit', class: 'game-btn primary' }, '로그인');
+    const form = el('form', { class: 'login-form' },
+      el('p', {}, '라운지에서 사용하는 이메일과 비밀번호를 입력해 주세요.'),
+      el('label', {}, '이메일 (라운지 아이디)', email), el('label', {}, '비밀번호', password), submit, status,
+      el('a', { href: 'https://lounge.letscoding.kr/login', target: '_blank', rel: 'noopener noreferrer' }, '라운지에서 계정 확인하기'));
+    form.addEventListener('submit', async event => {
+      event.preventDefault();
+      if (submit.disabled) return;
+      submit.disabled = true; status.textContent = '로그인하고 있어요…';
+      const error = await G.net.signInWithPassword(email.value, password.value);
+      password.value = '';
+      if (error) { status.textContent = error; submit.disabled = false; password.focus(); }
+      else location.reload();
+    });
+    body.append(form);
+    queueMicrotask(() => email.focus());
+  }, null);
+}
+
 export async function openStartMenu(): Promise<void> {
   await screen('모험 메뉴', body => {
+    const saveStatus = el('p', { class: 'muted', role: 'status' },
+      G.net.accountId ? '20초마다 자동 저장해요. 저장하기를 누르면 계정에도 바로 저장해요.' : '20초마다 이 기기에 자동 저장해요.');
     const entries: [string, () => Promise<unknown>][] = [
       ['포켓몬 도감', () => openPokedex()], ['내 포켓몬', () => openParty()], ['가방', () => openBag()],
       ['트레이너 카드', () => openTrainerCard()], ['오늘의 공부', () => openDailyPlan()],
       ['꾸미기', async () => { G.save.data.player.appearance = await openCustomize('mirror'); G.save.write('appearance'); }],
-      ['레포트 쓰기', async () => { G.save.write(); G.audio.playSfx('save'); G.ui.toast('모험을 저장했어요!'); }], ['보호자', () => openParentArea()],
+      ['저장하기', async () => {
+        saveStatus.textContent = '저장하고 있어요…';
+        const local = G.save.write('manual');
+        const cloud = await G.net.flush();
+        saveStatus.textContent = local
+          ? (cloud ? '이 기기와 계정에 저장했어요.' : G.net.accountId ? '이 기기에 저장했어요. 계정 저장은 아직 완료되지 않았어요. 연결 후 다시 저장해 주세요.' : '이 기기에 저장했어요.')
+          : (cloud ? '계정에 저장했지만 이 기기에는 저장하지 못했어요.' : '저장하지 못했어요. 저장 공간과 인터넷 연결을 확인해 주세요.');
+        if (local || cloud) G.audio.playSfx('save');
+      }], ['보호자', () => openParentArea()],
     ];
-    body.append(el('div', { class: 'menu-grid' }, ...entries.map(([text, fn]) => button(text, fn))));
+    body.append(el('div', { class: 'menu-grid' }, ...entries.map(([text, fn]) => button(text, fn))), saveStatus);
   }, null);
 }
 export async function openPokedex(focusId?: number): Promise<void> {
