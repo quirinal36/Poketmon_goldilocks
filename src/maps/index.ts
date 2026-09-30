@@ -17,6 +17,13 @@ import { MAP as m_pewter_center } from './pewter_center';
 import { MAP as m_pewter_mart } from './pewter_mart';
 import { MAP as m_pewter_gym } from './pewter_gym';
 import { MAP as m_route3 } from './route3';
+import { MAP as m_mt_moon_front } from './mt_moon_front';
+import { MAP as m_mt_moon_deep } from './mt_moon_deep';
+import { MAP as m_route4 } from './route4';
+import { MAP as m_cerulean } from './cerulean';
+import { MAP as m_cerulean_center } from './cerulean_center';
+import { MAP as m_cerulean_mart } from './cerulean_mart';
+import { MAP as m_cerulean_gym } from './cerulean_gym';
 
 export const MAPS: Record<MapId, MapDef> = {
   pallet: m_pallet,
@@ -37,4 +44,11 @@ export const MAPS: Record<MapId, MapDef> = {
   pewter_mart: m_pewter_mart,
   pewter_gym: m_pewter_gym,
   route3: m_route3,
+  mt_moon_front: m_mt_moon_front,
+  mt_moon_deep: m_mt_moon_deep,
+  route4: m_route4,
+  cerulean: m_cerulean,
+  cerulean_center: m_cerulean_center,
+  cerulean_mart: m_cerulean_mart,
+  cerulean_gym: m_cerulean_gym,
 };

@@ -289,15 +289,16 @@ export type MapId =
   | 'pallet' | 'player_house_1f' | 'player_house_2f' | 'rival_house' | 'oak_lab'
   | 'route1' | 'viridian' | 'viridian_center' | 'viridian_mart' | 'viridian_school'
   | 'route22' | 'route2' | 'forest' | 'pewter' | 'pewter_center' | 'pewter_mart' | 'pewter_gym'
-  | 'route3';
+  | 'route3' | 'mt_moon_front' | 'mt_moon_deep' | 'route4'
+  | 'cerulean' | 'cerulean_center' | 'cerulean_mart' | 'cerulean_gym';
 
-export type AreaId = 'route1' | 'route2' | 'forest' | 'route22' | 'route3';
+export type AreaId = 'route1' | 'route2' | 'forest' | 'route22' | 'route3' | 'mt_moon' | 'route4' | 'cerulean';
 
 export type TileId =
   // outdoor
   | 'grass' | 'grass2' | 'flower' | 'tall_grass' | 'path' | 'sand' | 'tree' | 'tree_dark' | 'bush'
   | 'water' | 'ledge' | 'fence' | 'sign' | 'mailbox' | 'rock' | 'bridge' | 'stairs_out' | 'cave'
-  | 'pond_lily' | 'black'
+  | 'pond_lily' | 'black' | 'cave_floor' | 'cave_wall'
   // indoor
   | 'floor_wood' | 'floor_tile' | 'floor_lab' | 'floor_gym' | 'wall' | 'wall_window' | 'wall_poster'
   | 'wall_clock' | 'bookshelf' | 'pc' | 'tv' | 'bed_top' | 'bed_bottom' | 'table' | 'table_ball'
@@ -322,7 +323,7 @@ export interface StructureInfo { w: number; h: number; door: { x: number; y: num
 export type NpcSpriteId =
   | 'mom' | 'oak' | 'rival' | 'sister' | 'aide' | 'nurse' | 'clerk' | 'teacher' | 'boy' | 'girl'
   | 'youngster' | 'lass' | 'oldman' | 'oldwoman' | 'bugcatcher' | 'camper' | 'leader_rock' | 'fisher'
-  | 'hiker' | 'gymguide' | 'man' | 'woman' | 'scientist';
+  | 'hiker' | 'gymguide' | 'man' | 'woman' | 'scientist' | 'rocket' | 'clefairy' | 'leader_water';
 
 export type ScriptId = string;
 export type FlagExpr = string;   // 'flag' | '!flag' | 'flagA&flagB' | 'a|b' (see world/flags.ts evalFlag)
@@ -467,6 +468,8 @@ export interface WorldService {
   emote(target: string | 'player', emote: '!' | '?' | '♪' | '♥' | '…'): Promise<void>;
   refreshNpcs(): void;        // re-evaluate visibleIf after flag changes
   healParty(): void;
+  setLastHeal(pos?: { map: MapId; x: number; y: number }): void;
+  whiteout(): Promise<void>;
 }
 
 export type BattleOutcome = 'won' | 'lost' | 'caught' | 'fled';

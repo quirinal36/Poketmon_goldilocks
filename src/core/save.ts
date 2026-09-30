@@ -2,6 +2,7 @@
 // via G.net.pushSave (debounced there). repairSave() fills missing fields of older/partial saves.
 import type { Dir, ItemId, LearnState, MapId, PokemonInstance, SaveData, SaveService } from './types';
 import { G } from '../game';
+import { MAPS } from '../maps';
 import { todayStr, uid } from './util';
 
 export const SAVE_KEY = 'pokestudy.save.v1';
@@ -10,6 +11,7 @@ export const MAP_IDS: MapId[] = [
   'pallet', 'player_house_1f', 'player_house_2f', 'rival_house', 'oak_lab',
   'route1', 'viridian', 'viridian_center', 'viridian_mart', 'viridian_school',
   'route22', 'route2', 'forest', 'pewter', 'pewter_center', 'pewter_mart', 'pewter_gym', 'route3',
+  'mt_moon_front', 'mt_moon_deep', 'route4', 'cerulean', 'cerulean_center', 'cerulean_mart', 'cerulean_gym',
 ];
 const DIRS: Dir[] = ['up', 'down', 'left', 'right'];
 
@@ -133,10 +135,10 @@ export function repairSave(raw: unknown): SaveData | null {
   if (typeof d.player.money !== 'number' || !Number.isFinite(d.player.money)) d.player.money = 500;
   d.player.money = Math.max(0, Math.floor(d.player.money));
   if (!MAP_IDS.includes(d.pos.map)) d.pos = { ...defaultSave().pos };
-  if (!Number.isInteger(d.pos.x) || !Number.isInteger(d.pos.y)) d.pos = { ...defaultSave().pos };
+  if (!Number.isInteger(d.pos.x) || !Number.isInteger(d.pos.y) || d.pos.x < 0 || d.pos.y < 0 || d.pos.x >= MAPS[d.pos.map].width || d.pos.y >= MAPS[d.pos.map].height) d.pos = { ...defaultSave().pos };
   if (!DIRS.includes(d.pos.facing)) d.pos.facing = 'down';
   if (!MAP_IDS.includes(d.lastHeal.map)) d.lastHeal = { ...defaultSave().lastHeal };
-  if (!Number.isInteger(d.lastHeal.x) || !Number.isInteger(d.lastHeal.y)) d.lastHeal = { ...defaultSave().lastHeal };
+  if (!Number.isInteger(d.lastHeal.x) || !Number.isInteger(d.lastHeal.y) || d.lastHeal.x < 0 || d.lastHeal.y < 0 || d.lastHeal.x >= MAPS[d.lastHeal.map].width || d.lastHeal.y >= MAPS[d.lastHeal.map].height) d.lastHeal = { ...defaultSave().lastHeal };
   for (const k of Object.keys(d.bag) as ItemId[]) {
     const v = (d.bag as any)[k];
     if (typeof v !== 'number' || !Number.isFinite(v) || v < 0) delete d.bag[k];

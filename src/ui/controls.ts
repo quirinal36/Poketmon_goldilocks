@@ -5,6 +5,7 @@ import { input } from '../core/input';
 import { el } from '../core/util';
 
 const DEAD_ZONE = 0.16;
+const MIN_DPAD_TAP_MS = 80; // Let the 60 fps world sample a brief touch; tune with real devices.
 
 function dirFromPoint(dx: number, dy: number): Dir | null {
   const r = Math.hypot(dx, dy);
@@ -27,6 +28,8 @@ export function initControls(): void {
   const dpadWrap = el('div', { class: 'ctl-dpad' }, dpad);
 
   const pointers = new Map<number, Dir | null>();
+  const pressedAt = new Map<number, number>();
+  const pendingRelease = new Map<number, number>();
   const held = (d: Dir) => Array.from(pointers.values()).includes(d);
   const applyDir = (id: number, d: Dir | null) => {
     const prev = pointers.get(id) ?? null;
@@ -36,10 +39,19 @@ export function initControls(): void {
     if (d) { input.down(d); dpad.classList.add('p-' + d); }
   };
   const release = (id: number) => {
-    if (!pointers.has(id)) return;
     const prev = pointers.get(id) ?? null;
     pointers.delete(id);
+    pressedAt.delete(id);
+    const timer = pendingRelease.get(id);
+    if (timer !== undefined) clearTimeout(timer);
+    pendingRelease.delete(id);
     if (prev && !held(prev)) { input.up(prev); dpad.classList.remove('p-' + prev); }
+  };
+  const releaseAfterTap = (id: number) => {
+    if (pendingRelease.has(id)) return;
+    const remaining = MIN_DPAD_TAP_MS - (performance.now() - (pressedAt.get(id) ?? 0));
+    if (remaining <= 0) release(id);
+    else pendingRelease.set(id, window.setTimeout(() => release(id), remaining));
   };
   const point = (e: PointerEvent): Dir | null => {
     const r = dpad.getBoundingClientRect();
@@ -49,6 +61,8 @@ export function initControls(): void {
   };
   dpad.addEventListener('pointerdown', (e) => {
     e.preventDefault();
+    if (pendingRelease.has(e.pointerId)) release(e.pointerId);
+    pressedAt.set(e.pointerId, performance.now());
     try { dpad.setPointerCapture(e.pointerId); } catch { /* ignore */ }
     applyDir(e.pointerId, point(e));
   });
@@ -58,7 +72,7 @@ export function initControls(): void {
     applyDir(e.pointerId, point(e));
   });
   for (const ev of ['pointerup', 'pointercancel', 'lostpointercapture'] as const) {
-    dpad.addEventListener(ev, (e) => { release((e as PointerEvent).pointerId); });
+    dpad.addEventListener(ev, (e) => { releaseAfterTap((e as PointerEvent).pointerId); });
   }
 
   // ------------------------------------------------------------- buttons
@@ -103,7 +117,7 @@ export function initControls(): void {
   let lastTouchEnd = 0;
   document.addEventListener('touchend', (e) => {
     const now = Date.now();
-    if (now - lastTouchEnd < 300 && !(e.target as HTMLElement | null)?.closest?.('input,textarea,select,[contenteditable]')) e.preventDefault();
+    if (now - lastTouchEnd < 300 && !(e.target as HTMLElement | null)?.closest?.('button,[role="button"],input,textarea,select,[contenteditable]')) e.preventDefault();
     lastTouchEnd = now;
   }, { passive: false });
   window.addEventListener('blur', () => { for (const id of Array.from(pointers.keys())) release(id); });

@@ -1,12 +1,12 @@
 # GitHub 에픽·이슈
 
-> 기준: [PLAN.md](PLAN.md), 작성일: 2026-09-30. [GitHub Issues](https://github.com/quirinal36/my_game/issues). [마일스톤 문서](MILESTONES.md).
+> 기준: [PLAN.md](PLAN.md), 작성일: 2026-09-30. [GitHub Issues](https://github.com/quirinal36/Poketmon_goldilocks/issues). [마일스톤 문서](MILESTONES.md).
 
 기존 E1~E7과 T01~T31은 GitHub 등록 당시 기록이다. 각 하위 이슈는 GitHub의 상위 에픽 및 해당 마일스톤에 연결되어 있다. 기존 이슈의 상태·진행률은 GitHub에서 관리한다.
 
-**다음 장의 등록용 초안:** [E8~E10 및 T32~T43](#chapter2), 에픽 3개와 하위 작업 12개를 추가했다. [스토리 기획](STORY_CHAPTER_2.md)과 [M7~M9](MILESTONES.md#chapter2)를 기준으로 하며, **신규 이슈·마일스톤은 아직 GitHub에 등록하지 않았다.** 문서의 E/T/M 식별자는 실제 GitHub 번호가 아니다. 신규 작업은 모두 미착수이며 담당자·마감일은 미정이다.
+**두 번째 장:** [E8~E10 및 T32~T43](#chapter2)의 에픽 3개와 하위 작업 12개는 [GitHub Issues](https://github.com/quirinal36/Poketmon_goldilocks/issues)에 등록되어 있다. [스토리](STORY_CHAPTER_2.md)와 [M7~M9](MILESTONES.md#chapter2)를 기준으로 구현하며, 최신 완료 상태는 GitHub에서 확인한다.
 
-현재 구현 기준은 커밋 `bdceb57`의 첫 체육관·계정 로그인·저장 기능이다. 아래 최초 시작 상태를 현재의 미구현 목록으로 해석하지 않는다.
+아래 E1~E7의 최초 시작 상태는 커밋 `bdceb57` 무렵의 기록이다. 현재의 미구현 목록으로 해석하지 않는다.
 
 ## 시작 상태 (최초 등록 당시)
 
@@ -431,7 +431,7 @@ GitHub 이슈: [#41](https://github.com/quirinal36/Poketmon_goldilocks/issues/41
 | [T42](#t42) | 안내 문서와 라운지 링크 갱신 | T40, T41 |
 | [T43](#t43) | GitHub 연동 배포와 운영 확인 | T42 |
 
-에픽 완료 조건: T40~T43 완료, 검증 결과·미확인 범위·패키지·배포 커밋과 URL 기록.
+에픽 완료 조건: T40~T43 완료, 검증 결과·미확인 범위·배포 커밋과 URL 기록.
 
 <a id="t40"></a>
 
