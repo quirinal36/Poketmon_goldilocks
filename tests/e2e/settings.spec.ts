@@ -13,6 +13,15 @@ test('parent settings, native keyboard, transfer cancel and persistence', async 
   await page.getByLabel('영어 사용',{exact:true}).selectOption('0');
   await page.getByLabel('수학 사용',{exact:true}).selectOption('0');
   await expect(page.getByLabel('수학 사용',{exact:true})).toHaveValue('1');
+  await page.getByLabel('수학 시작 진도',{exact:true}).selectOption('2');
+  await page.getByRole('button',{name:'시작 진도 적용'}).first().click();
+  await page.getByRole('button',{name:/▶\s*예$/}).click();
+  expect(await page.evaluate(()=> (window as any).__G.learn.plan().math.lesson?.id)).toBe('m11-u1-l2');
+  const previewPromise=page.context().waitForEvent('page');
+  await page.getByRole('button',{name:'문제 미리보기',exact:true}).click();
+  const preview=await previewPromise;
+  await expect(preview.locator('.qb-filters')).toBeVisible();
+  await preview.close();
   await page.getByRole('button',{name:'이어하기 코드 입력',exact:true}).click();
   await page.getByRole('dialog',{name:'이어하기 코드',exact:true}).getByRole('button',{name:'닫기'}).click();
   await expect(page.getByRole('heading',{name:'보호자 메뉴',exact:true})).toBeVisible();

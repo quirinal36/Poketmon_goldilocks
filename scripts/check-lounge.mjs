@@ -6,6 +6,7 @@ import { createServer } from 'node:http';
 import assert from 'node:assert/strict';
 import JSZip from 'jszip';
 import { chromium } from '@playwright/test';
+import sharp from 'sharp';
 const root = await mkdtemp(join(tmpdir(),'pokestudy-zip-'));
 const zip = await JSZip.loadAsync(await readFile('pokemon-study-lounge.zip'));
 for (const [name,entry] of Object.entries(zip.files)) {
@@ -40,8 +41,23 @@ try {
   await page.waitForFunction(()=>window.__G.save.flag('intro_done'));
   await page.evaluate(async()=>{window.__TEST__.autoAnswer='correct';const result=await window.__G.learn.quiz({purpose:'practice'});if(!result.correct)throw Error('offline question failed');});
   await page.reload(); await page.getByRole('button',{name:'이어서 하기',exact:true}).waitFor();
-  const manifest=await (await page.request.get(origin+'/class/game/manifest.webmanifest')).json();
-  for(const icon of manifest.icons)assert.equal((await page.request.get(origin+'/class/game/'+icon.src)).status(),200);
+  const devtools=await page.context().newCDPSession(page);
+  const appManifest=await devtools.send('Page.getAppManifest');
+  assert.deepEqual(appManifest.errors,[]);
+  assert.equal(appManifest.url,origin+'/class/game/manifest.webmanifest');
+  const manifest=JSON.parse(appManifest.data);
+  assert.equal(manifest.name,'포켓몬 공부 대모험');
+  assert.equal(manifest.display,'standalone');
+  assert.equal(manifest.start_url,'./');
+  for(const icon of manifest.icons){
+    const response=await page.request.get(origin+'/class/game/'+icon.src);
+    assert.equal(response.status(),200);
+    const meta=await sharp(await response.body()).metadata();
+    const size=Number(icon.sizes.split('x')[0]);
+    assert.equal(meta.width,size);assert.equal(meta.height,size);
+  }
+  const touchIcon=await page.locator('link[rel="apple-touch-icon"]').getAttribute('href');
+  assert.equal((await page.request.get(origin+'/class/game/'+touchIcon)).status(),200);
   await page.goto(origin+'/class/game/questions.html'); await page.waitForSelector('.qb-filters');
   assert.deepEqual(errors,[]);assert.deepEqual(external,[]);
   console.log('OK: extracted ZIP, nested relative URLs, self-only CSP, new game/question/save restore, question browser, manifest/icons, zero external requests/errors');
