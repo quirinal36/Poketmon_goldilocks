@@ -103,5 +103,8 @@ test('new adventure, starter, rival, catch, study, badge, restore and whiteout',
   await fight(page, () => page.evaluate(() => (window as any).__G.world.mapId === 'viridian_center'));
   await expect.poll(() => page.evaluate(() => (window as any).__G.world.isLocked())).toBe(false);
   expect(await page.evaluate(() => (window as any).__G.save.data.party.every((p: any) => p.hp === p.maxHp))).toBe(true);
+  await page.evaluate(() => { void (window as any).__G.world.startWildBattle('route1'); });
+  await page.getByRole('button', { name: '도망간다', exact: true }).click();
+  await expect.poll(() => page.evaluate(() => (window as any).__G.world.isLocked())).toBe(false);
   expect(errors).toEqual([]);
 });
