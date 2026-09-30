@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Visual QA — 포켓몬 공부 대모험</title>
+  <style>
+    body { margin: 0; background: #f3f0ea; color: #3f3d56; font-family: 'Jua', 'Apple SD Gothic Neo', sans-serif; }
+    .dv-top { position: sticky; top: 0; z-index: 10; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding: 10px 16px; background: #fff; border-bottom: 2px solid #e6e1d6; }
+    .dv-top h1 { font-size: 20px; margin: 0 12px 0 0; font-weight: normal; }
+    .dv-top button, .dv-top label { font: inherit; font-size: 15px; padding: 6px 12px; border-radius: 10px; border: 2px solid #d9d3c7; background: #fff; cursor: pointer; }
+    .dv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 14px; padding: 14px 16px 40px; }
+    .dv-card { background: #fffdf8; border: 2px solid #e6e1d6; border-radius: 16px; padding: 12px; display: flex; flex-direction: column; gap: 8px; min-height: 240px; }
+    .dv-card-head { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #6b6880; font-family: ui-monospace, monospace; }
+    .dv-card-head .kind { padding: 2px 8px; border-radius: 999px; background: #eef2ff; color: #4f7cff; font-family: inherit; }
+    .dv-card-head .open { margin-left: auto; font: inherit; font-size: 13px; padding: 4px 10px; border-radius: 8px; border: 2px solid #bcd2ff; background: #f0f5ff; cursor: pointer; }
+    .dv-prompt { font-size: 20px; }
+    .dv-visual { flex: 1; display: flex; align-items: center; justify-content: center; min-height: 160px; padding: 6px; background: #fff; border-radius: 12px; border: 1px dashed #e6e1d6; overflow: hidden; }
+    .dv-visual .vis-svg { max-height: 260px; }
+    .dv-choices { display: flex; flex-wrap: wrap; gap: 6px; font-size: 15px; }
+    .dv-choice { padding: 4px 10px; border-radius: 8px; border: 2px solid #e6e1d6; background: #fff; display: flex; align-items: center; gap: 4px; }
+    .dv-choice.is-answer { border-color: #2fb36b; background: #dff7e8; }
+    .dv-choice .vis-svg { max-height: 60px; max-width: 60px; }
+    .dv-answer { font-size: 15px; color: #6b6880; }
+    .dv-log { position: fixed; right: 12px; bottom: 12px; background: #fff; border: 2px solid #e6e1d6; border-radius: 12px; padding: 8px 12px; font-size: 14px; max-width: 360px; box-shadow: 0 6px 20px rgba(0,0,0,.08); }
+  </style>
+</head>
+<body>
+  <div id="dv-root"></div>
+  <script type="module" src="./visuals.ts"></script>
+</body>
+</html>

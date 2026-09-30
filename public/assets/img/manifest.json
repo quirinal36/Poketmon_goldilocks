@@ -1,0 +1,92 @@
+{
+  "oak": {
+    "file": "oak.png",
+    "w": 85,
+    "h": 192,
+    "kind": "portrait"
+  },
+  "rival": {
+    "file": "rival.png",
+    "w": 84,
+    "h": 192,
+    "kind": "trainer"
+  },
+  "bugcatcher": {
+    "file": "bugcatcher.png",
+    "w": 139,
+    "h": 192,
+    "kind": "trainer"
+  },
+  "camper": {
+    "file": "camper.png",
+    "w": 78,
+    "h": 192,
+    "kind": "trainer"
+  },
+  "leader_woong": {
+    "file": "leader_woong.png",
+    "w": 72,
+    "h": 192,
+    "kind": "trainer"
+  },
+  "mom": {
+    "file": "mom.png",
+    "w": 68,
+    "h": 192,
+    "kind": "portrait"
+  },
+  "nurse": {
+    "file": "nurse.png",
+    "w": 75,
+    "h": 192,
+    "kind": "portrait"
+  },
+  "clerk": {
+    "file": "clerk.png",
+    "w": 88,
+    "h": 192,
+    "kind": "portrait"
+  },
+  "badge_boulder": {
+    "file": "badge_boulder.png",
+    "w": 128,
+    "h": 128,
+    "kind": "badge"
+  },
+  "stamp": {
+    "file": "stamp.png",
+    "w": 128,
+    "h": 128,
+    "kind": "stamp"
+  },
+  "title_bg": {
+    "file": "title_bg.png",
+    "w": 960,
+    "h": 540,
+    "kind": "background"
+  },
+  "app_icon": {
+    "file": "app_icon.png",
+    "w": 512,
+    "h": 512,
+    "kind": "icon"
+  },
+  "app_icon_192": {
+    "file": "app_icon_192.png",
+    "w": 192,
+    "h": 192,
+    "kind": "icon"
+  },
+  "apple_touch_icon": {
+    "file": "apple-touch-icon.png",
+    "w": 180,
+    "h": 180,
+    "kind": "icon"
+  },
+  "favicon": {
+    "file": "favicon.png",
+    "w": 64,
+    "h": 64,
+    "kind": "icon"
+  }
+}

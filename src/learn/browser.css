@@ -1,0 +1,50 @@
+/* questions.html — teacher/parent question browser */
+html, body { margin: 0; background: #f3f0ea; color: #3f3d56; }
+body { font-family: 'Jua', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif; font-size: 17px; }
+#qb-root { min-height: 100vh; }
+.qb-header { position: sticky; top: 0; z-index: 20; background: #fffdf8; border-bottom: 2px solid #e6e1d6; padding: 10px 16px; display: flex; flex-direction: column; gap: 8px; }
+.qb-title-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.qb-title { font-size: 22px; margin: 0; font-weight: normal; }
+.qb-title small { font-size: 14px; color: #6b6880; margin-left: 8px; }
+.qb-count { margin-left: auto; font-size: 15px; color: #6b6880; }
+.qb-filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.qb-filters select, .qb-filters input { font: inherit; font-size: 16px; padding: 6px 10px; border-radius: 10px; border: 2px solid #d9d3c7; background: #fff; color: inherit; min-height: 40px; }
+.qb-filters input[type='search'] { min-width: 200px; flex: 1 1 200px; }
+.qb-filters button { font: inherit; font-size: 15px; padding: 6px 12px; border-radius: 10px; border: 2px solid #d9d3c7; background: #fff; cursor: pointer; min-height: 40px; }
+.qb-main { padding: 14px 16px 60px; max-width: 1400px; margin: 0 auto; }
+.qb-lesson { background: #fff; border: 2px solid #e6e1d6; border-radius: 16px; padding: 12px 16px; margin-bottom: 14px; }
+.qb-lesson h2 { margin: 0 0 4px; font-size: 20px; font-weight: normal; }
+.qb-lesson .qb-goal { color: #6b6880; font-size: 16px; }
+.qb-lesson .qb-meta { font-size: 14px; color: #8b879c; margin-top: 4px; }
+.qb-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 14px; }
+.qb-card { background: #fffdf8; border: 2px solid #e6e1d6; border-radius: 16px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
+.qb-card-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 13px; color: #6b6880; }
+.qb-id { font-family: ui-monospace, Menlo, monospace; }
+.qb-chip { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 999px; color: #fff; background: #4f7cff; font-size: 13px; }
+.qb-chip.is-english { background: #ff7a59; }
+.qb-tag { padding: 2px 8px; border-radius: 999px; background: #eef2ff; color: #4f7cff; }
+.qb-diff { color: #f59e0b; letter-spacing: 1px; }
+.qb-try { margin-left: auto; font: inherit; font-size: 13px; padding: 4px 10px; border-radius: 8px; border: 2px solid #bcd2ff; background: #f0f5ff; cursor: pointer; }
+.qb-prompt { font-size: 22px; line-height: 1.3; }
+.qb-speak { font-size: 14px; color: #6b6880; }
+.qb-speak span { display: inline-block; margin-right: 8px; }
+.qb-visual { display: flex; align-items: center; justify-content: center; min-height: 100px; padding: 8px; background: #fff; border-radius: 12px; border: 1px dashed #e6e1d6; overflow: hidden; }
+.qb-visual .vis-svg { max-height: 240px; }
+.qb-visual .vis-clock .vis-svg { width: 180px; }
+.qb-choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.qb-choices.is-stacked { grid-template-columns: minmax(0, 1fr); }
+.qb-choice { display: flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 10px; border: 2px solid #e6e1d6; background: #fff; font-size: 18px; min-height: 40px; }
+.qb-choice.is-answer { border-color: #2fb36b; background: #dff7e8; }
+.qb-choice.is-answer::after { content: '✓'; color: #2fb36b; margin-left: auto; font-weight: bold; }
+.qb-choice .qb-letter { color: #8b879c; font-size: 14px; }
+.qb-choice .vis-svg { max-height: 70px; max-width: 90px; }
+.qb-choice .vis-clock .vis-svg { width: 70px; }
+.qb-choice .vis-text { font-size: 22px; padding: 0; }
+.qb-choice .vis { gap: 4px; }
+.qb-numpad { font-size: 18px; padding: 6px 10px; border-radius: 10px; border: 2px solid #2fb36b; background: #dff7e8; display: inline-block; }
+.qb-notes { font-size: 15px; color: #6b6880; display: flex; flex-direction: column; gap: 2px; }
+.qb-notes b { color: #3f3d56; font-weight: normal; }
+.qb-more { display: block; margin: 20px auto; font: inherit; font-size: 18px; padding: 10px 26px; border-radius: 12px; border: 2px solid #bcd2ff; background: #f0f5ff; cursor: pointer; }
+.qb-empty { text-align: center; color: #6b6880; padding: 40px 0; font-size: 18px; }
+.qb-warn { background: #fff9e0; border: 2px solid #f6c343; border-radius: 12px; padding: 10px 14px; margin-bottom: 14px; }
+@media (max-width: 480px) { .qb-grid { grid-template-columns: minmax(0, 1fr); } .qb-main { padding: 10px; } }

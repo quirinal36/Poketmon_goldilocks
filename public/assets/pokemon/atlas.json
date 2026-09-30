@@ -1,0 +1,18 @@
+{
+  "front": {
+    "url": "assets/pokemon/front.png",
+    "cell": 56,
+    "cols": 16
+  },
+  "back": {
+    "url": "assets/pokemon/back.png",
+    "cell": 56,
+    "cols": 16
+  },
+  "icons": {
+    "url": "assets/pokemon/icons.png",
+    "cell": 32,
+    "cols": 16
+  },
+  "count": 251
+}

@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>오디오 테스트 — 포켓몬 공부 대모험</title>
+  <style>
+    :root { color-scheme: light dark; font-family: system-ui, -apple-system, sans-serif; }
+    body { margin: 0; padding: 16px; background: #14181f; color: #e8ecf1; }
+    h1 { font-size: 20px; margin: 0 0 8px; }
+    h2 { font-size: 15px; margin: 20px 0 8px; color: #9fb3c8; text-transform: uppercase; letter-spacing: .06em; }
+    .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    button { min-height: 44px; padding: 0 14px; border-radius: 8px; border: 1px solid #3a4452; background: #232a34; color: #e8ecf1; font-size: 15px; cursor: pointer; }
+    button:hover { background: #2c3541; }
+    button.on { background: #3f7a3a; border-color: #62b25a; }
+    button.jingle { background: #4a3c66; border-color: #7b64a8; }
+    input[type=text], input[type=number] { min-height: 40px; padding: 0 10px; border-radius: 8px; border: 1px solid #3a4452; background: #0f1319; color: #e8ecf1; font-size: 15px; }
+    input[type=range] { width: 180px; }
+    label { display: inline-flex; gap: 8px; align-items: center; }
+    #status { padding: 8px 12px; border-radius: 8px; background: #0f1319; border: 1px solid #3a4452; font-family: ui-monospace, Menlo, monospace; font-size: 13px; }
+    #log { white-space: pre-wrap; font-family: ui-monospace, Menlo, monospace; font-size: 12px; background: #0f1319; border: 1px solid #3a4452; border-radius: 8px; padding: 8px; max-height: 240px; overflow: auto; }
+    .rms { font-family: ui-monospace, Menlo, monospace; font-size: 12px; color: #9fb3c8; }
+  </style>
+</head>
+<body>
+  <h1>🔊 오디오 테스트 페이지</h1>
+  <div id="status">ctx: (none) — 아무 버튼이나 눌러서 오디오를 켜세요</div>
+
+  <h2>Volumes</h2>
+  <div class="row">
+    <label>음악 <input id="vol-music" type="range" min="0" max="1" step="0.05" value="0.7" /> <span id="vol-music-v">0.70</span></label>
+    <label>효과음 <input id="vol-sfx" type="range" min="0" max="1" step="0.05" value="0.8" /> <span id="vol-sfx-v">0.80</span></label>
+    <button id="unlock" data-kind="unlock">unlock()</button>
+  </div>
+
+  <h2>Music (loops)</h2>
+  <div class="row" id="music"></div>
+  <div class="row" style="margin-top:8px"><button id="music-stop" data-kind="music-stop">■ stop music</button></div>
+
+  <h2>Jingles (music pauses, then resumes)</h2>
+  <div class="row" id="jingles"></div>
+
+  <h2>SFX</h2>
+  <div class="row" id="sfx"></div>
+
+  <h2>Cries</h2>
+  <div class="row">
+    <input id="cry-id" type="number" min="1" max="251" value="25" style="width:90px" />
+    <button id="cry-play" data-kind="cry">playCry(id)</button>
+    <button id="cry-prev" data-kind="cry-prev">◀ prev</button>
+    <button id="cry-next" data-kind="cry-next">next ▶</button>
+    <button id="cry-random" data-kind="cry-random">random ×5</button>
+    <span id="cry-info" class="rms"></span>
+  </div>
+
+  <h2>TTS</h2>
+  <div class="row">
+    <input id="tts-ko" type="text" size="34" value="사과가 세 개 있어요. 몇 개일까요?" />
+    <button id="tts-speak-ko" data-kind="tts">speak ko</button>
+    <input id="tts-en" type="text" size="24" value="It is a red apple." />
+    <button id="tts-speak-en" data-kind="tts">speak en</button>
+    <button id="tts-speak-both" data-kind="tts">speak ko + en (queue)</button>
+    <button id="tts-stop" data-kind="tts-stop">stopSpeaking()</button>
+  </div>
+  <div class="row" style="margin-top:8px">
+    <label>rate <input id="tts-rate" type="range" min="0.6" max="1.3" step="0.05" value="0.95" /> <span id="tts-rate-v">0.95</span></label>
+    <span id="tts-info" class="rms"></span>
+  </div>
+
+  <h2>Offline render check (RMS)</h2>
+  <div class="row">
+    <button id="render-all" data-kind="render">render all music (6 s each)</button>
+    <button id="render-sfx" data-kind="render">render all sfx</button>
+    <span id="render-out" class="rms"></span>
+  </div>
+
+  <h2>Log</h2>
+  <div id="log"></div>
+
+  <script type="module" src="./audio.ts"></script>
+</body>
+</html>

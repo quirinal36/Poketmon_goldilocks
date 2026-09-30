@@ -1,0 +1,19 @@
+# Supabase CLI 설정 — `supabase link`, `supabase db push`, `supabase config push` 용 최소 설정.
+# 여기 없는 항목은 CLI 기본값을 씁니다. (docs/DEPLOY.md 참고)
+project_id = "pokemon-study"
+
+[db]
+# 새 Supabase 프로젝트의 Postgres 메이저 버전. 대시보드 Settings → Infrastructure 에서 확인해 맞추세요.
+# (link 시 값이 다르면 경고만 나오고, db push 에는 영향이 없습니다.)
+major_version = 17
+
+[auth]
+enabled = true
+# 배포 후 실제 게임 주소로 바꾸세요 (예: https://pokemon-study.vercel.app).
+site_url = "https://YOUR-APP.vercel.app"
+additional_redirect_urls = ["http://localhost:5173"]
+# 게임은 이메일 없이 '익명 로그인'으로 클라우드 세이브를 씁니다. 반드시 true.
+enable_anonymous_sign_ins = true
+# 익명 가입도 '가입'이므로 가입이 막혀 있으면 안 됩니다.
+enable_signup = true
+enable_manual_linking = false
