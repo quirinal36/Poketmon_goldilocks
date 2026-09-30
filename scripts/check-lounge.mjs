@@ -38,10 +38,11 @@ try {
   await page.getByRole('button',{name:'결정',exact:true}).click();
   await page.getByRole('button',{name:'결정',exact:true}).click();
   await page.waitForFunction(()=>window.__G.save.flag('intro_done'));
+  await page.evaluate(async()=>{window.__TEST__.autoAnswer='correct';const result=await window.__G.learn.quiz({purpose:'practice'});if(!result.correct)throw Error('offline question failed');});
   await page.reload(); await page.getByRole('button',{name:'이어서 하기',exact:true}).waitFor();
   const manifest=await (await page.request.get(origin+'/class/game/manifest.webmanifest')).json();
   for(const icon of manifest.icons)assert.equal((await page.request.get(origin+'/class/game/'+icon.src)).status(),200);
   await page.goto(origin+'/class/game/questions.html'); await page.waitForSelector('.qb-filters');
   assert.deepEqual(errors,[]);assert.deepEqual(external,[]);
-  console.log('OK: extracted ZIP, nested relative URLs, self-only CSP, new game/save restore, question browser, manifest/icons, zero external requests/errors');
+  console.log('OK: extracted ZIP, nested relative URLs, self-only CSP, new game/question/save restore, question browser, manifest/icons, zero external requests/errors');
 } finally { await browser.close(); await new Promise(resolve=>server.close(resolve)); await rm(root,{recursive:true,force:true}); }
