@@ -28,5 +28,8 @@ ZIP은 `pokemon-study-lounge.zip`, 웹 빌드는 `dist/`에 생성됩니다. 외
 - [구현·검증 결과와 남은 서비스 배포](docs/VERIFICATION.md)
 - [교육과정](docs/CURRICULUM.md) · [240문제 검토 기록](docs/QUESTION_REVIEW.md)
 - [서비스 배포](docs/DEPLOY.md) · [설계](docs/DESIGN.md)
+- [다음 스토리 기획: 달맞이산~두 번째 체육관 (미구현)](docs/STORY_CHAPTER_2.md)
+- [다음 장 제작 마일스톤](docs/MILESTONES.md#chapter2) · [GitHub 등록용 이슈 초안](docs/GITHUB_ISSUES.md#chapter2)
+- [배경음악 제작·적용 기록](docs/AUDIO.md)
 
 개발용 검사: `/dev/art.html`, `/dev/audio.html`, `/dev/visuals.html`. `?debug=1`에서는 `window.__G`와 E2E 가속 도구가 활성화됩니다. 일반 실행에서는 노출하지 않습니다.

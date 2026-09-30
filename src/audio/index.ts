@@ -10,6 +10,7 @@
 
 import type { AudioService, Lang, MusicId, Settings, SfxId, Speakable } from '../core/types';
 import { G } from '../game';
+import { asset } from '../core/util';
 import { createEngine } from './engine';
 import { SONGS } from './music';
 import { SFX } from './sfx';
@@ -26,6 +27,71 @@ export { parseMML } from './mml';
 
 const MUSIC_FADE_OUT = 0.45;
 const MUSIC_FADE_IN = 0.3;
+const RECORDED_MUSIC: Partial<Record<MusicId, string>> = {
+  title: 'assets/audio/town.mp3', town: 'assets/audio/town.mp3', city: 'assets/audio/town.mp3',
+  lab: 'assets/audio/town.mp3', center: 'assets/audio/town.mp3',
+  route: 'assets/audio/route.mp3', forest: 'assets/audio/forest.mp3',
+  gym: 'assets/audio/battle.mp3', battle_wild: 'assets/audio/battle.mp3',
+  battle_trainer: 'assets/audio/battle.mp3', battle_gym: 'assets/audio/battle.mp3',
+};
+
+class RecordedLoop {
+  onEnded: (() => void) | null = null;
+  private out: GainNode;
+  private source: AudioBufferSourceNode | null = null;
+  private offset = 0;
+  private startedAt = 0;
+  private paused = false;
+  finished = false;
+
+  constructor(private ctx: AudioContext, dest: AudioNode, private buffer: AudioBuffer) {
+    this.out = ctx.createGain();
+    this.out.connect(dest);
+  }
+
+  private run() {
+    const source = this.ctx.createBufferSource();
+    source.buffer = this.buffer;
+    source.loop = true;
+    source.connect(this.out);
+    this.startedAt = this.ctx.currentTime;
+    source.start(0, this.offset);
+    this.source = source;
+  }
+
+  start(fade = 0) {
+    this.out.gain.setValueAtTime(0, this.ctx.currentTime);
+    this.out.gain.linearRampToValueAtTime(0.65, this.ctx.currentTime + Math.max(0.01, fade));
+    this.run();
+  }
+
+  pause() {
+    if (this.paused || this.finished) return;
+    this.offset = (this.offset + this.ctx.currentTime - this.startedAt) % this.buffer.duration;
+    this.paused = true;
+    try { this.source?.stop(); } catch { /* already stopped */ }
+    this.source?.disconnect();
+    this.source = null;
+  }
+
+  resume() {
+    if (!this.paused || this.finished) return;
+    this.paused = false;
+    this.run();
+  }
+
+  stop(fade = 0) {
+    if (this.finished) return;
+    this.finished = true;
+    const now = this.ctx.currentTime;
+    this.out.gain.cancelScheduledValues(now);
+    this.out.gain.setValueAtTime(this.out.gain.value, now);
+    this.out.gain.linearRampToValueAtTime(0, now + Math.max(0.01, fade));
+    try { this.source?.stop(now + Math.max(0.01, fade)); } catch { /* already stopped */ }
+    if (fade > 0) setTimeout(() => this.out.disconnect(), fade * 1000 + 50);
+    else this.out.disconnect();
+  }
+}
 
 function readSettings(): Partial<Settings> | null {
   try {
@@ -45,7 +111,9 @@ export function createAudio(): AudioService {
   const engine = createEngine();
   const loops = new Map<MusicId, CompiledSong>();
   const onces = new Map<MusicId, CompiledSong>();
-  let current: { id: MusicId; player: SongPlayer } | null = null;
+  let current: { id: MusicId; player: SongPlayer | RecordedLoop } | null = null;
+  const recordings = new Map<string, Promise<AudioBuffer>>();
+  let musicRequest = 0;
   let pendingMusic: MusicId | null | undefined;     // requested before the context existed
   let explicitVolumes = false;
   let activeJingles = 0;
@@ -79,23 +147,43 @@ export function createAudio(): AudioService {
   function playMusic(id: MusicId | null): void {
     if (!SONGS[id as MusicId] && id !== null) return;
     if (!engine.ready) { pendingMusic = id; return; }
+    if (current && current.id === id && !current.player.finished) return;
+    const request = ++musicRequest;
     const synth = engine.synth!;
     const bus = engine.musicBus!;
-    if (current && current.id === id && !current.player.finished) return;
     syncVolumes();
-    if (current) {
-      current.player.stop(MUSIC_FADE_OUT);
+    const start = (player: SongPlayer | RecordedLoop) => {
+      if (request !== musicRequest) return;
+      current?.player.stop(MUSIC_FADE_OUT);
+      player.onEnded = () => { if (current?.player === player) current = null; };
+      try {
+        player.start(MUSIC_FADE_IN);
+        if (activeJingles > 0) player.pause();
+      } catch { return; }
+      current = { id: id!, player };
+      engine.resume();
+    };
+    if (id === null) {
+      current?.player.stop(MUSIC_FADE_OUT);
       current = null;
+      return;
     }
-    if (id === null) return;
-    const player = new SongPlayer(synth, bus, loopSong(id));
-    player.onEnded = () => { if (current?.player === player) current = null; };
-    try {
-      player.start(MUSIC_FADE_IN);
-      if (activeJingles > 0) player.pause();   // a jingle is playing: hold until it ends
-    } catch { return; }
-    current = { id, player };
-    engine.resume();
+    const path = RECORDED_MUSIC[id];
+    if (!path) { start(new SongPlayer(synth, bus, loopSong(id))); return; }
+    let recording = recordings.get(path);
+    if (!recording) {
+      recording = fetch(asset(path)).then(r => {
+        if (!r.ok) throw Error(`music ${r.status}`);
+        return r.arrayBuffer();
+      }).then(data => engine.ctx!.decodeAudioData(data));
+      recordings.set(path, recording);
+    }
+    void recording.then(buffer => {
+      if (request === musicRequest) start(new RecordedLoop(engine.ctx!, bus, buffer));
+    }).catch(() => {
+      recordings.delete(path);
+      if (request === musicRequest) start(new SongPlayer(synth, bus, loopSong(id)));
+    });
   }
 
   engine.onReady(() => {
