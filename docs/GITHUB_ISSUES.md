@@ -186,16 +186,18 @@ GitHub: [E6 · 라운지 배포 패키지와 이용 안내 준비](https://githu
 
 ## E7 — Supabase 연결과 Vercel·라운지 서비스 배포
 
+상태: 완료. 하위 이슈 T28~T31과 M6도 2026-09-30 완료 처리했다.
+
 GitHub: [E7 · Supabase 연결과 Vercel·라운지 서비스 배포](https://github.com/quirinal36/my_game/issues/7) · 마일스톤: [M6 · 서비스 배포·라운지 등록](https://github.com/quirinal36/my_game/milestone/6)
 
 사용자 준비가 필요한 Supabase·라운지 계정을 구분해 관리하고 실제 서비스 URL과 최종 검증 증거를 남긴다.
 
 완료 조건:
 
-- [ ] Supabase 스키마·익명 로그인·시드·연결 검증
-- [ ] Vercel URL 및 라운지 외부 링크 등록 확인
-- [ ] 클라우드용 외부 링크와 오프라인 ZIP의 동작 차이를 안내
-- [ ] PLAN §1.3 전체 완료 기준 충족 및 배포 체크포인트
+- [x] Supabase 스키마·익명 로그인·시드·연결 검증
+- [x] Vercel URL 및 라운지 외부 링크 등록 확인
+- [x] 클라우드용 외부 링크와 오프라인 ZIP의 동작 차이를 안내
+- [x] PLAN §1.3 전체 완료 기준 충족 및 배포 체크포인트
 
 | 작업 | 제목 | 선행 작업 |
 |---|---|---|
