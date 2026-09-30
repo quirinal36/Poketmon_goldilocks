@@ -101,7 +101,7 @@ function ballEmblem(p: Painter, x: number, y: number): void {
 
 /** 8×8 Hangul glyphs for the 연구소 sign. */
 const HANGUL: Record<string, string[]> = {
-  연: ['.oo..o.o', 'o..o.ooo', 'o..o.o.o', '.oo..o.o', '........', '.o......', '.o......', '.oooooo.'],
+  연: ['.oo....o', 'o..o.ooo', 'o..o...o', '.oo..ooo', '.......o', '.o......', '.o......', '.oooooo.'],
   구: ['.ooooo..', '.....o..', '.....o..', '........', 'oooooooo', '....o...', '....o...', '....o...'],
   소: ['...oo...', '..o..o..', '.o....o.', '........', '...o....', '...o....', 'oooooooo', '........'],
 };
