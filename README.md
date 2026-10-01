@@ -28,6 +28,7 @@ npm run e2e
 - [서비스 배포](docs/DEPLOY.md) · [설계](docs/DESIGN.md)
 - [두 번째 장: 달맞이산~블루시티](docs/STORY_CHAPTER_2.md)
 - [두 번째 장 마일스톤](docs/MILESTONES.md#chapter2) · [GitHub 이슈](docs/GITHUB_ISSUES.md#chapter2)
+- [세 번째 장 기획: 이수재~갈색시티·마티스](docs/STORY_CHAPTER_3.md) · [마일스톤](docs/MILESTONES.md#chapter3) · [GitHub 이슈](docs/GITHUB_ISSUES.md#chapter3) — 계획 / 미구현
 - [배경음악 제작·적용 기록](docs/AUDIO.md)
 
 개발용 검사: `/dev/art.html`, `/dev/audio.html`, `/dev/visuals.html`. `?debug=1`에서는 `window.__G`와 E2E 가속 도구가 활성화됩니다. 일반 실행에서는 노출하지 않습니다.

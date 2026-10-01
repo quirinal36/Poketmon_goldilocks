@@ -513,3 +513,409 @@ GitHub 이슈: [#53](https://github.com/quirinal36/Poketmon_goldilocks/issues/53
 - [ ] 배포 커밋·운영 URL·라운지 작품 URL·검증 결과를 기록하고 실제 완료한 GitHub 이슈·마일스톤 상태를 갱신한다.
 
 검증: Preview와 운영 URL의 자산·콘솔·네트워크 오류, 로그인 복귀, 계정 저장 결과 및 재접속 상태를 확인한다. 배포를 되돌릴 때 새 맵 저장의 호환성도 함께 검토하도록 운영 기록에 남긴다.
+
+<a id="chapter3"></a>
+
+## 세 번째 장 — 이수재·상트앙느호·세 번째 배지
+
+기준: [스토리 기획](STORY_CHAPTER_3.md) · [M10~M12](MILESTONES.md#chapter3). 상태: 계획 / 미구현. 에픽 3개, 하위 작업 12개. 실제 상태는 GitHub에서 관리한다.
+
+| 에픽 | 마일스톤 | 하위 작업 |
+|---|---|---|
+| [E11 · 이수재의 부탁·승선권과 갈색시티 진입 구현](https://github.com/quirinal36/Poketmon_goldilocks/issues/55) | [M10](https://github.com/quirinal36/Poketmon_goldilocks/milestone/10) | T44~T48 |
+| [E12 · 상트앙느호 사건·마티스·세 번째 배지와 저장 호환 완성](https://github.com/quirinal36/Poketmon_goldilocks/issues/56) | [M11](https://github.com/quirinal36/Poketmon_goldilocks/milestone/11) | T49~T52 |
+| [E13 · 세 번째 장 전체 플레이 검증과 운영 출시](https://github.com/quirinal36/Poketmon_goldilocks/issues/57) | [M12](https://github.com/quirinal36/Poketmon_goldilocks/milestone/12) | T53~T55 |
+
+<a id="e11"></a>
+
+### E11 — 이수재의 부탁·승선권과 갈색시티 진입 구현
+
+GitHub: [#55](https://github.com/quirinal36/Poketmon_goldilocks/issues/55) (E11)
+
+목적: 기존 블루배지 저장에서 금빛다리·이수재의 집을 방문해 승선권을 받고 갈색시티까지 왕복한다.
+
+마일스톤: [M10](MILESTONES.md#m10). 완료 조건: 해당 마일스톤 종료 조건 및 아래 하위 작업 모두 완료.
+
+- [T44 세 번째 장 맵·진행·저장 계약 확정](https://github.com/quirinal36/Poketmon_goldilocks/issues/58)
+- [T45 금빛다리·25번도로·이수재의 집 맵과 아트 구현](https://github.com/quirinal36/Poketmon_goldilocks/issues/59)
+- [T46 남행 도로·갈색시티·상트앙느호 맵과 아트 구현](https://github.com/quirinal36/Poketmon_goldilocks/issues/60)
+- [T47 새 지역 야생 출현·트레이너 편성·필수 자산 추가](https://github.com/quirinal36/Poketmon_goldilocks/issues/61)
+- [T48 이수재 부탁·승선권·세 번째 장 진입 안내 구현](https://github.com/quirinal36/Poketmon_goldilocks/issues/62)
+
+<a id="t44"></a>
+
+### T44 세 번째 장 맵·진행·저장 계약 확정
+
+GitHub: [#58](https://github.com/quirinal36/Poketmon_goldilocks/issues/58) (T44)
+
+<!-- PLAN:T44 -->
+상위 에픽: [#55](https://github.com/quirinal36/Poketmon_goldilocks/issues/55) (E11)
+
+마일스톤: [M10](https://github.com/quirinal36/Poketmon_goldilocks/milestone/10)
+
+선행 작업: 없음
+
+목적: 지역 제작 전에 13개 새 맵과 사건·배지·저장 ID 및 왕복 좌표를 확정한다.
+
+작업 범위: `docs/STORY_CHAPTER_3.md`, `src/core/types.ts`, `src/core/save.ts`, `src/maps/index.ts`의 기존 계약 검토.
+
+완료 조건:
+
+- [ ] 13개 새 MapId와 총 38개 맵 목표, 출현 AreaId·트레이너·thunder 배지·플래그 ID를 기록한다.
+- [ ] 블루시티 북/남 출구, 집·지하통로·도시·선박·실내의 출발/도착/역방향 좌표와 회복·기절 복귀 위치를 표로 기록한다.
+- [ ] 블루배지 진입, 승선권, 선장 도움, 배지 2개·누적 도장 12개 조건 및 각 저장 시점을 확정한다.
+- [ ] 새 플래그 없는 저장의 기본값, chapter2_complete 없는 블루배지 저장, 새 MapId·MAP_IDS 등록 기준을 정한다.
+- [ ] 공용 battle.trainer의 도장/배지 분기와 showBadge·트레이너 카드 확장을 T50에 명시한다. 미구현 맵을 런타임에 먼저 등록하지 않는다.
+
+검증: 계약을 실제 맵·저장 정규화·전투 진입·화면 코드와 대조한다. 실행 코드 변경 시 타입 및 관련 단위 검사를 수행한다.
+
+상태: 계획 / 미구현. 상세 스토리·맵·학습·보상 기준은 상위 에픽을 따른다.
+
+<a id="t45"></a>
+
+### T45 금빛다리·25번도로·이수재의 집 맵과 아트 구현
+
+GitHub: [#59](https://github.com/quirinal36/Poketmon_goldilocks/issues/59) (T45)
+
+<!-- PLAN:T45 -->
+상위 에픽: [#55](https://github.com/quirinal36/Poketmon_goldilocks/issues/55) (E11)
+
+마일스톤: [M10](https://github.com/quirinal36/Poketmon_goldilocks/milestone/10)
+
+선행 작업: [#58](https://github.com/quirinal36/Poketmon_goldilocks/issues/58) (T44)
+
+목적: 블루시티 북쪽에서 이수재의 집까지 돌아올 수 있는 짧은 탐험 경로를 만든다.
+
+작업 범위: `src/maps/cerulean.ts`, 새 `route24`·`route25`·`bill_house` 맵, 맵 레지스트리·타입·저장 허용 목록, 필요한 `src/art/` 및 자산.
+
+완료 조건:
+
+- [ ] 북쪽 새 맵 3개와 금빛다리·집의 문·표지판·NPC·장치 상호작용 위치를 계약대로 만든다.
+- [ ] 블루배지 전에는 북쪽 출구를 안내 NPC로 막고 획득 후 연다. 기존 4번도로·도시 건물 연결을 유지한다.
+- [ ] 맵을 MapId·MAPS·MAP_IDS에 함께 등록해 새 위치 저장을 보존한다.
+- [ ] 이수재 회복 위치·왕복 통로·선택 트레이너를 피해서 지나갈 수 있는 길을 확보한다.
+- [ ] 기존 아트를 재사용하고 누락 이미지·충돌·진행을 막는 NPC가 없다.
+
+검증: npm run build, npm run check:maps 및 북쪽 왕복·문·배지 전후 통행·저장 재개 확인. 스크립트 연결은 T48과 함께 최종 검증한다.
+
+상태: 계획 / 미구현. 상세 스토리·맵·학습·보상 기준은 상위 에픽을 따른다.
+
+<a id="t46"></a>
+
+### T46 남행 도로·갈색시티·상트앙느호 맵과 아트 구현
+
+GitHub: [#60](https://github.com/quirinal36/Poketmon_goldilocks/issues/60) (T46)
+
+<!-- PLAN:T46 -->
+상위 에픽: [#55](https://github.com/quirinal36/Poketmon_goldilocks/issues/55) (E11)
+
+마일스톤: [M10](https://github.com/quirinal36/Poketmon_goldilocks/milestone/10)
+
+선행 작업: [#58](https://github.com/quirinal36/Poketmon_goldilocks/issues/58) (T44)
+
+목적: 블루시티에서 항구 도시와 선내까지 이어지는 지도를 완성한다.
+
+작업 범위: 블루시티 남쪽 출구, 새 route5·underground_path·route6·vermilion 및 센터·상점·체육관·선박 3개 맵, 타입·맵/저장 등록·아트.
+
+완료 조건:
+
+- [ ] 남쪽 지역 10개 맵을 추가한다. 북쪽 3개와 합쳐 새 13개이며 총 38개 맵이다.
+- [ ] 도시 안 선착장을 선내와 연결하고 선내↔갑판/선장실을 왕복한다. 독립 항구·노랑시티 맵은 추가하지 않는다.
+- [ ] 블루배지 없으면 남쪽 새 길을 막고, 승선권 없어도 갈색시티는 탐험할 수 있다.
+- [ ] 센터 회복·PC·공부 게시판·상점은 공용 스크립트를 연결한다. 체육관/선착장 문턱은 T49·T50 조건을 연결할 위치를 둔다.
+- [ ] 선내 회복과 선장실 lastHeal, 계단·문·기절 복귀의 보행 좌표를 확보한다. 배는 사건 후에도 남아 있다.
+
+검증: npm run build, npm run check:maps, 도로·도시·배의 왕복과 문/회복/복귀 확인. 사건 조건은 T49·T50 통합 시 검증한다.
+
+상태: 계획 / 미구현. 상세 스토리·맵·학습·보상 기준은 상위 에픽을 따른다.
+
+<a id="t47"></a>
+
+### T47 새 지역 야생 출현·트레이너 편성·필수 자산 추가
+
+GitHub: [#61](https://github.com/quirinal36/Poketmon_goldilocks/issues/61) (T47)
+
+<!-- PLAN:T47 -->
+상위 에픽: [#55](https://github.com/quirinal36/Poketmon_goldilocks/issues/55) (E11)
+
+마일스톤: [M10](https://github.com/quirinal36/Poketmon_goldilocks/milestone/10)
+
+선행 작업: [#58](https://github.com/quirinal36/Poketmon_goldilocks/issues/58) (T44)
+
+목적: 기존 포켓몬·전투·음악을 사용해 북쪽과 항구 지역의 만남을 구성한다.
+
+작업 범위: `src/world/encounters.ts`, `src/story/trainers.ts`, `src/core/types.ts`, 필요한 초상·배지 자산. 새 지역 맵과의 연결은 T45·T46에 통합.
+
+완료 조건:
+
+- [ ] 금빛다리·6번도로·선상 라이벌·수련생·마티스 5개 트레이너 ID와 기획의 초기 레벨·보상을 추가한다.
+- [ ] 북쪽 야생 12~16, 남쪽 14~18을 초기 목표로 기존 도장별 해금·obtainable=wild 필터·낚시 정책을 유지한다. 실내에 의도하지 않은 야생 출현이 없다.
+- [ ] 선상 라이벌은 기존 스타터 기록과 상대 종 선택 규칙을 따르고 스타터 기록 없는 저장의 기존 fallback을 유지한다.
+- [ ] 마티스·필요한 NPC 초상·오렌지배지와 선박에 필요한 자산만 추가하고 기존 스프라이트·음악을 재사용한다.
+- [ ] 전투 문제는 현재 학습 진도를 사용하고 새 문제은행·상성/기술 시스템을 추가하지 않는다.
+
+검증: npm run build, npm run check:pokemon 및 출현 풀·레벨 범위·라이벌 선택·이미지 표시 관련 검사. 맵 연결 후 check:maps도 통과한다.
+
+상태: 계획 / 미구현. 상세 스토리·맵·학습·보상 기준은 상위 에픽을 따른다.
+
+<a id="t48"></a>
+
+### T48 이수재 부탁·승선권·세 번째 장 진입 안내 구현
+
+GitHub: [#62](https://github.com/quirinal36/Poketmon_goldilocks/issues/62) (T48)
+
+<!-- PLAN:T48 -->
+상위 에픽: [#55](https://github.com/quirinal36/Poketmon_goldilocks/issues/55) (E11)
+
+마일스톤: [M10](https://github.com/quirinal36/Poketmon_goldilocks/milestone/10)
+
+선행 작업: [#59](https://github.com/quirinal36/Poketmon_goldilocks/issues/59) (T45), [#61](https://github.com/quirinal36/Poketmon_goldilocks/issues/61) (T47)
+
+목적: 블루배지 저장에서 다음 목적지를 안내하고 장치 확인 후 승선권을 받게 한다.
+
+작업 범위: 새 `src/story/chapter3.ts`, `src/story/index.ts`, `src/story/chapter2.ts`, 블루시티·북쪽 맵 이벤트 및 단위 검사.
+
+완료 조건:
+
+- [ ] 블루배지만 있으면 chapter2_complete 없는 저장도 새 장을 시작하고 새 안내는 한 번 표시한다.
+- [ ] 이슬 마무리 전화·블루시티 준비 중 표지판을 북쪽 이수재/남쪽 갈색시티 안내로 갱신한다.
+- [ ] 부탁 → 표시등 확인 → 연결 장치 확인 → 이수재에게 돌아오기 순서와 각 단계 대사를 구현한다. 순서가 이르면 다음 행동을 안내한다.
+- [ ] bill_helped·ss_ticket_received를 함께 저장하고 재대화·재접속으로 진행 권한이나 추가 보상을 중복 처리하지 않는다.
+- [ ] 이수재 회복은 반복 사용 가능하고 북쪽 선택 전투를 거절해도 승선권을 받을 수 있다.
+
+검증: 부탁 수락 전/후·장치 순서·재대화·회복·새 장 안내 중단 및 기존 블루배지 저장 진입 단위 검사. 북쪽 실제 상호작용 확인.
+
+상태: 계획 / 미구현. 상세 스토리·맵·학습·보상 기준은 상위 에픽을 따른다.
+
+<a id="e12"></a>
+
+### E12 — 상트앙느호 사건·마티스·세 번째 배지와 저장 호환 완성
+
+GitHub: [#56](https://github.com/quirinal36/Poketmon_goldilocks/issues/56) (E12)
+
+목적: 선장을 돕고 마티스에게 세 번째 배지를 받으며 사건 도중 종료해도 보상 중복 없이 이어 한다.
+
+마일스톤: [M11](MILESTONES.md#m11). 완료 조건: 해당 마일스톤 종료 조건 및 아래 하위 작업 모두 완료.
+
+- [T49 상트앙느호 승선·선장 사건·체육관 개방 구현](https://github.com/quirinal36/Poketmon_goldilocks/issues/63)
+- [T50 마티스·도장 12개 조건·세 번째 배지 화면 구현](https://github.com/quirinal36/Poketmon_goldilocks/issues/64)
+- [T51 세 번째 장 사건·보상 중단 복구와 중복 방지](https://github.com/quirinal36/Poketmon_goldilocks/issues/65)
+- [T52 기존 저장·신규 맵·게스트·계정 전환 호환 검증](https://github.com/quirinal36/Poketmon_goldilocks/issues/66)
+
+<a id="t49"></a>
+
+### T49 상트앙느호 승선·선장 사건·체육관 개방 구현
+
+GitHub: [#63](https://github.com/quirinal36/Poketmon_goldilocks/issues/63) (T49)
+
+<!-- PLAN:T49 -->
+상위 에픽: [#56](https://github.com/quirinal36/Poketmon_goldilocks/issues/56) (E12)
+
+마일스톤: [M11](https://github.com/quirinal36/Poketmon_goldilocks/milestone/11)
+
+선행 작업: [#60](https://github.com/quirinal36/Poketmon_goldilocks/issues/60) (T46), [#61](https://github.com/quirinal36/Poketmon_goldilocks/issues/61) (T47), [#62](https://github.com/quirinal36/Poketmon_goldilocks/issues/62) (T48)
+
+목적: 승선권으로 배에 올라 선장을 돕고 갈색체육관을 개방한다.
+
+작업 범위: `src/story/chapter3.ts`, 갈색시티·선박 맵, 공용 회복 및 스토리 단위 검사.
+
+완료 조건:
+
+- [ ] 승선권 없으면 진입을 막고 이수재 위치를 안내한다. 보유 시 승선권을 소모하지 않고 반복 승선할 수 있다.
+- [ ] 갑판 선원 꾸러미 → 선장 전달 순서를 플래그로 기록한다. 꾸러미 없이 선장에게 가면 갑판을 안내한다.
+- [ ] captain_helped·vermilion_gym_open을 같은 저장 시점에 반영하고 반복 대화로 보상이 늘지 않는다.
+- [ ] 선내 회복은 사건 완료 전부터 가능하며 완료 후 선장도 회복·복귀 장소를 제공한다.
+- [ ] 선상 라이벌 대결은 선택이며 승리/거절/패배 후에도 사건을 이어 간다. 배는 사건 후에도 정박한다.
+
+검증: 승선권 경계, 선장 먼저 방문, 꾸러미 수령·전달 중단, 라이벌 거절/패배, 반복 승선·기절 복귀를 단위 및 실제 플레이로 확인한다.
+
+상태: 계획 / 미구현. 상세 스토리·맵·학습·보상 기준은 상위 에픽을 따른다.
+
+<a id="t50"></a>
+
+### T50 마티스·도장 12개 조건·세 번째 배지 화면 구현
+
+GitHub: [#64](https://github.com/quirinal36/Poketmon_goldilocks/issues/64) (T50)
+
+<!-- PLAN:T50 -->
+상위 에픽: [#56](https://github.com/quirinal36/Poketmon_goldilocks/issues/56) (E12)
+
+마일스톤: [M11](https://github.com/quirinal36/Poketmon_goldilocks/milestone/11)
+
+선행 작업: [#61](https://github.com/quirinal36/Poketmon_goldilocks/issues/61) (T47), [#63](https://github.com/quirinal36/Poketmon_goldilocks/issues/63) (T49)
+
+목적: 마티스에게 조건에 맞춰 도전하고 오렌지배지를 정확히 표시한다.
+
+작업 범위: `src/story/chapter3.ts`, `src/battle/index.ts`, `src/ui/screens/index.ts`, 갈색체육관 맵·배지 자산 및 관련 검사.
+
+완료 조건:
+
+- [ ] 체육관 개방과 마티스 대결을 구분한다. 관장 대결은 선장 도움 완료·회색/블루배지·누적 도장 12개를 모두 요구한다.
+- [ ] 스토리 안내와 공용 battle.trainer 양쪽을 갱신해 직접 전투 호출도 조건을 우회하지 못한다. 기존 웅 4개·이슬 8개 조건을 유지한다.
+- [ ] 도장 11개·12개·12개 초과, 선장 미완료, 이전 배지 부족을 구분해 다음 행동을 안내한다. 한 과목/보호자 시작 진도를 인정한다.
+- [ ] trainer-win에서 thunder 배지와 ₩2,000을 한 번 지급한다. showBadge·트레이너 카드에 오렌지배지 이름·이미지·대체 텍스트를 추가한다.
+- [ ] 수련생은 선택, 체육관 길은 고정 통로이며 풀베기·특정 포켓몬·스위치 퍼즐을 요구하지 않는다. 축하·다음 지역 준비 안내를 저장한다.
+
+검증: 공용 배틀 직접 호출과 스토리 진입 조건 회귀, 3개 배지 표시, 승리 후 재방문·연출 재개 검사. npm run build 및 관련 단위 검사.
+
+상태: 계획 / 미구현. 상세 스토리·맵·학습·보상 기준은 상위 에픽을 따른다.
+
+<a id="t51"></a>
+
+### T51 세 번째 장 사건·보상 중단 복구와 중복 방지
+
+GitHub: [#65](https://github.com/quirinal36/Poketmon_goldilocks/issues/65) (T51)
+
+<!-- PLAN:T51 -->
+상위 에픽: [#56](https://github.com/quirinal36/Poketmon_goldilocks/issues/56) (E12)
+
+마일스톤: [M11](https://github.com/quirinal36/Poketmon_goldilocks/milestone/11)
+
+선행 작업: [#62](https://github.com/quirinal36/Poketmon_goldilocks/issues/62) (T48), [#63](https://github.com/quirinal36/Poketmon_goldilocks/issues/63) (T49), [#64](https://github.com/quirinal36/Poketmon_goldilocks/issues/64) (T50)
+
+목적: 전투·대사·보상 도중 종료해도 필수 진행이 사라지거나 용돈·배지가 반복되지 않게 한다.
+
+작업 범위: `src/story/chapter3.ts`, `src/battle/index.ts`, `src/core/save.ts`의 해당 경로와 새 장 단위 검사.
+
+완료 조건:
+
+- [ ] 장치 확인, 승선권 지급, 꾸러미 수령, 선장 전달/개방, 마티스 승리, 배지 연출, 마무리 전화의 저장 경계를 표로 기록한다.
+- [ ] 각 경계 직전/직후 종료한 저장에서 다시 접속해 남은 단계로 진행하며 이미 끝난 전투·장치 확인을 강제하지 않는다.
+- [ ] 승리 기록·용돈·배지 상태를 연출 전에 함께 저장하고 재대화·재접속 시 지급량과 기록 개수가 늘지 않는다.
+- [ ] 패배/취소는 완료나 배지로 처리하지 않고 최근 회복 장소에서 재도전한다.
+- [ ] 날짜 변경·일일 학습 완료가 사건 기록을 지우지 않는다. 기존 chapter2 복구 검사는 계속 통과한다.
+
+검증: 종료 시점을 재현하는 최소 단위 회귀 검사와 저장 전후 상태/아이템/용돈 비교. 관련 기존 테스트를 함께 실행한다.
+
+상태: 계획 / 미구현. 상세 스토리·맵·학습·보상 기준은 상위 에픽을 따른다.
+
+<a id="t52"></a>
+
+### T52 기존 저장·신규 맵·게스트·계정 전환 호환 검증
+
+GitHub: [#66](https://github.com/quirinal36/Poketmon_goldilocks/issues/66) (T52)
+
+<!-- PLAN:T52 -->
+상위 에픽: [#56](https://github.com/quirinal36/Poketmon_goldilocks/issues/56) (E12)
+
+마일스톤: [M11](https://github.com/quirinal36/Poketmon_goldilocks/milestone/11)
+
+선행 작업: [#59](https://github.com/quirinal36/Poketmon_goldilocks/issues/59) (T45), [#60](https://github.com/quirinal36/Poketmon_goldilocks/issues/60) (T46), [#65](https://github.com/quirinal36/Poketmon_goldilocks/issues/65) (T51)
+
+목적: 새 장을 추가해도 기존 모험과 계정별 저장이 보존되도록 한다.
+
+작업 범위: `src/core/save.ts`, 기존 `src/net/`·인증 경로, `tests/unit/`, `tests/e2e/auth.spec.ts` 및 새 장 저장 검사.
+
+완료 조건:
+
+- [ ] 첫 배지 저장·블루배지 저장·chapter2_complete 없는 저장·새 플래그 없는 저장을 초기화 없이 읽는다.
+- [ ] 13개 신규 맵의 위치/방향 및 모든 회복 지점이 정규화 후 유지되고 저장·새로고침·기절 복귀에서 유효하다.
+- [ ] 파티·박스·도장·기존 배지·돈·사건 상태를 로컬/계정 저장 전후 비교한다.
+- [ ] 게스트→로그인·계정 전환·로그아웃 시 기존 분리 정책을 유지한다. 카카오/라운지 로그인 경로의 자동 회귀를 검사한다.
+- [ ] 모의 서버 검증과 운영 확인을 구분해 기록한다. 운영 계정 실제 저장·다른 브라우저 복구는 T55로 추적한다.
+
+검증: 저장 정규화 단위 검사, 기존 auth E2E와 새 지역 저장 재개 E2E. 공용 인증이나 DB 구조를 불필요하게 변경하지 않는다.
+
+상태: 계획 / 미구현. 상세 스토리·맵·학습·보상 기준은 상위 에픽을 따른다.
+
+<a id="e13"></a>
+
+### E13 — 세 번째 장 전체 플레이 검증과 운영 출시
+
+GitHub: [#57](https://github.com/quirinal36/Poketmon_goldilocks/issues/57) (E13)
+
+목적: 학습·화면·실기기·계정 저장을 확인한 세 번째 장을 기존 운영 주소와 라운지 Play로 제공한다.
+
+마일스톤: [M12](MILESTONES.md#m12). 완료 조건: 해당 마일스톤 종료 조건 및 아래 하위 작업 모두 완료.
+
+- [T53 세 번째 장 전체 진행 E2E와 기존 두 장 회귀](https://github.com/quirinal36/Poketmon_goldilocks/issues/67)
+- [T54 전투 균형·아동 사용성·5개 해상도·실기기 확인](https://github.com/quirinal36/Poketmon_goldilocks/issues/68)
+- [T55 세 번째 장 안내·라운지 소개·GitHub 연동 배포와 운영 검증](https://github.com/quirinal36/Poketmon_goldilocks/issues/69)
+
+<a id="t53"></a>
+
+### T53 세 번째 장 전체 진행 E2E와 기존 두 장 회귀
+
+GitHub: [#67](https://github.com/quirinal36/Poketmon_goldilocks/issues/67) (T53)
+
+<!-- PLAN:T53 -->
+상위 에픽: [#57](https://github.com/quirinal36/Poketmon_goldilocks/issues/57) (E13)
+
+마일스톤: [M12](https://github.com/quirinal36/Poketmon_goldilocks/milestone/12)
+
+선행 작업: [#65](https://github.com/quirinal36/Poketmon_goldilocks/issues/65) (T51), [#66](https://github.com/quirinal36/Poketmon_goldilocks/issues/66) (T52)
+
+목적: 기존 블루배지 저장에서 세 번째 배지까지의 실제 연결을 자동으로 검증한다.
+
+작업 범위: 새 `tests/e2e/chapter3.spec.ts`, 관련 단위·맵 검사 및 `docs/VERIFICATION.md`.
+
+완료 조건:
+
+- [ ] 1024×768·768×1024에서 이수재→승선권→갈색시티→선장→마티스→저장 복구 경로를 검증한다.
+- [ ] 새 사건 플래그나 세 번째 배지를 직접 넣어 성공 처리하지 않는다. 기존 장 완료 저장 등 테스트 준비와 debug 이동 사용 구간은 명시한다.
+- [ ] 블루배지 없음, 승선권 없음, 선장 미완료, 도장 11/12/초과, 한 과목·시작 진도 조정, 선택 전투 생략을 검증한다.
+- [ ] 패배·기절 복귀·재도전, 사건/연출 중단, 기존 지역 왕복과 기존 두 장·로그인 회귀를 실행한다.
+- [ ] npm run build, npm test, npm run check:maps, npm run check:pokemon, npm run e2e가 통과한다. 문제은행을 수정했다면 npm run check:questions도 실행한다.
+
+검증: 명령·검증 수·실패/수정 결과·스크린샷·콘솔 오류를 기록한다. 자동 검사 범위를 실기기 검사로 표현하지 않는다.
+
+상태: 계획 / 미구현. 상세 스토리·맵·학습·보상 기준은 상위 에픽을 따른다.
+
+<a id="t54"></a>
+
+### T54 전투 균형·아동 사용성·5개 해상도·실기기 확인
+
+GitHub: [#68](https://github.com/quirinal36/Poketmon_goldilocks/issues/68) (T54)
+
+<!-- PLAN:T54 -->
+상위 에픽: [#57](https://github.com/quirinal36/Poketmon_goldilocks/issues/57) (E13)
+
+마일스톤: [M12](https://github.com/quirinal36/Poketmon_goldilocks/milestone/12)
+
+선행 작업: [#64](https://github.com/quirinal36/Poketmon_goldilocks/issues/64) (T50), [#65](https://github.com/quirinal36/Poketmon_goldilocks/issues/65) (T51)
+
+목적: 저학년 사용자가 목적지를 이해하고 무리한 반복 전투 없이 세 번째 배지에 도전하도록 확인한다.
+
+작업 범위: 새 장 지도·대사·편성·화면·음성의 필요한 조정, `docs/STORY_CHAPTER_3.md`, `docs/VERIFICATION.md`.
+
+완료 조건:
+
+- [ ] 도장 12개 전후·기존 스타터 7종의 대표 파티에서 실제 문제를 풀며 확인한다. 선택 전투 생략 경로와 오답 후 복귀도 포함한다.
+- [ ] 전투는 기존 정답 공격 규칙으로 평가한다. 타입 상성이나 레벨 수치만으로 난이도를 추정하지 않고 필요시 편성·보상을 조정해 기록한다.
+- [ ] 1024×768·768×1024·1280×800·820×1180·375×667에서 대화·문제·선박·배지·카드가 잘리거나 겹치지 않는다.
+- [ ] 키보드·초점·56px 이상 터치 영역·방향키/A/B/START·TTS 재생/다시 듣기/음소거와 쉬운 한국어·다음 목적지 안내를 확인한다.
+- [ ] 실제 터치 기기에서 이동·승선·대화·전투·음성을 확인하고 기기/브라우저/결과를 기록한다. 기존 T41 #51 미확인 사항도 추적한다.
+
+검증: 실제 플레이·화면 크기별 결과와 실기기 결과를 구분해 기록한다. 코드 조정 시 영향 받는 검사와 E2E를 재실행한다.
+
+상태: 계획 / 미구현. 상세 스토리·맵·학습·보상 기준은 상위 에픽을 따른다.
+
+<a id="t55"></a>
+
+### T55 세 번째 장 안내·라운지 소개·GitHub 연동 배포와 운영 검증
+
+GitHub: [#69](https://github.com/quirinal36/Poketmon_goldilocks/issues/69) (T55)
+
+<!-- PLAN:T55 -->
+상위 에픽: [#57](https://github.com/quirinal36/Poketmon_goldilocks/issues/57) (E13)
+
+마일스톤: [M12](https://github.com/quirinal36/Poketmon_goldilocks/milestone/12)
+
+선행 작업: [#67](https://github.com/quirinal36/Poketmon_goldilocks/issues/67) (T53), [#68](https://github.com/quirinal36/Poketmon_goldilocks/issues/68) (T54)
+
+목적: 검증된 세 번째 장을 기존 배포 경로로 공개하고 실제 계정 저장까지 확인한다.
+
+작업 범위: `README.md`, `docs/TEACHER_GUIDE.md`, `docs/DESIGN.md`, `docs/STORY_CHAPTER_3.md`, `docs/DEPLOY.md`, `docs/VERIFICATION.md`, 기존 Vercel·운영 도메인·라운지 작품.
+
+완료 조건:
+
+- [ ] 문서에 최종 맵 수·경로·누적 도장 12개·승선/선장 조건·저장 안내·다음 지역 준비 상태를 실제 구현 기준으로 반영한다.
+- [ ] Preview에서 새 자산·진행·저장을 확인한 뒤 main 반영으로 생성된 배포의 성공 상태·커밋·poke.letscoding.kr 버전을 기록한다.
+- [ ] 테스트 계정으로 라운지 로그인·이름 표시·카카오 복귀·새 지역 저장·새 브라우저 복구를 확인한다. 모의 서버 결과로 대체하지 않는다.
+- [ ] 라운지 https://lounge.letscoding.kr/works/leco/poke 소개를 세 번째 배지 범위로 갱신하고 Play→https://poke.letscoding.kr/ 이동을 확인한다. ZIP 업로드는 하지 않는다.
+- [ ] 기존 #51·#52·#53 잔여 확인을 증거로 정리한 뒤 해당 이슈와 M9 상태를 갱신한다. 확인하지 못한 항목은 열린 상태로 남긴다.
+- [ ] 배포 커밋·URL·계정/기기별 결과·남은 제한과 되돌리기 시 신규 MapId 저장 호환 대책을 기록한다. 사용자 저장 초기화·공유 인증 설정 변경은 하지 않는다.
+
+검증: Preview/운영의 자산·콘솔·네트워크 오류, 실제 로그인/계정 저장/다른 브라우저 재개, 라운지 링크와 최신 안내를 확인한다.
+
+상태: 계획 / 미구현. 상세 스토리·맵·학습·보상 기준은 상위 에픽을 따른다.
