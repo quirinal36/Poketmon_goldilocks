@@ -398,7 +398,7 @@ GitHub: [M11](https://github.com/quirinal36/Poketmon_goldilocks/milestone/11)
 
 GitHub: [M12](https://github.com/quirinal36/Poketmon_goldilocks/milestone/12)
 
-구현 상태: 자동 검증 일부 완료, 실기기·운영 검증 대기.
+구현 상태: 자동 검증과 main Production 배포 확인. 실기기·운영 계정·라운지 검증 대기.
 
 목표: 학습·화면·실기기·계정 저장을 확인한 세 번째 장을 기존 운영 주소와 라운지 Play로 제공한다.
 

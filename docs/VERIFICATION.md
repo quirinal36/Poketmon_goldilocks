@@ -154,3 +154,7 @@ Aside CLI/Aside Browser에서 로컬 게임 시작 화면과 새 게임 진입�
 - 카카오·비밀번호 로그인 및 계정 저장 분리는 모의 서버 E2E에서 기존 경로가 통과했다. [초안 PR #70](https://github.com/quirinal36/Poketmon_goldilocks/pull/70)의 Vercel Preview 배포 상태는 성공이다. Preview URL은 SSO 로그인으로 리디렉션되어 게임 화면은 확인하지 못했다. 실제 테스트 계정의 운영 저장·새 브라우저 복구, Preview 화면·Production, 라운지 소개·Play 링크는 [M9의 잔여 이슈](MILESTONES.md#m9)와 함께 M12에서 추적한다.
 
 검증 파일: `tests/unit/chapter3.test.ts`, `tests/e2e/chapter3.spec.ts`, `tests/e2e/chapter3-boundaries.spec.ts`, `tests/e2e/chapter3-touch.spec.ts`, `tests/e2e/chapter3-layout.spec.ts`.
+
+### main 병합과 운영 배포
+
+[PR #70](https://github.com/quirinal36/Poketmon_goldilocks/pull/70)을 `main`에 병합한 커밋은 `39bb0cd19a50a9b2c966d62afb1756358a57f9db`다. 이 커밋의 Vercel Production 배포 `6777657679`는 성공 상태다. `https://poke.letscoding.kr/`와 새 오렌지배지 SVG가 HTTP 200을 반환했고, 운영 앱 번들에 `route24`·`ss_anne_captain`·`thunder`가 포함된 것을 확인했다. Preview의 SSO 보호 때문에 실제 Preview 게임 화면은 확인하지 못했다. 운영 계정 저장·다른 브라우저 복구, 실기기 플레이, 라운지 소개·Play 링크와 기존 M9 잔여 항목은 아직 확인하지 않았다.
