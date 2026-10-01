@@ -318,7 +318,7 @@ GitHub 마일스톤: [#9](https://github.com/quirinal36/Poketmon_goldilocks/mile
 
 ## 세 번째 장 제작 계획 — 이수재부터 마티스까지
 
-상태: M10·M11 기능 구현 및 자동 검증 완료, M12 검증 중 (2026-10-01). 기준: [스토리 기획](STORY_CHAPTER_3.md). 기존 블루배지 저장에서 시작해 세 번째 배지까지 진행한다. 새 맵 13개(총 38개), 누적 도장 12개를 사용한다. 운영 배포·실기기 확인 전까지 GitHub 완료 상태는 갱신하지 않는다.
+상태: M10·M11 구현·자동 검증 완료, M12 현장·운영 검증 중 (2026-10-01). 기준: [스토리 기획](STORY_CHAPTER_3.md). 기존 블루배지 저장에서 시작해 세 번째 배지까지 진행한다. 새 맵 13개(총 38개), 누적 도장 12개를 사용한다. M10·M11의 완료 항목만 GitHub에 반영하고 M12의 실기기·운영 검증은 열린 상태로 둔다.
 
 | 마일스톤 | 목표 | 에픽·작업 |
 |---|---|---|
@@ -334,7 +334,7 @@ GitHub 마일스톤: [#9](https://github.com/quirinal36/Poketmon_goldilocks/mile
 
 GitHub: [M10](https://github.com/quirinal36/Poketmon_goldilocks/milestone/10)
 
-구현 상태: 로컬 기능·자동 검증 완료. [검증 기록](VERIFICATION.md#세-번째-장-구현과-자동-검증).
+구현 상태: 기능·자동 검증 완료. [검증 기록](VERIFICATION.md#세-번째-장-구현과-자동-검증).
 
 목표: 기존 블루배지 저장에서 금빛다리·이수재의 집을 방문해 승선권을 받고 갈색시티까지 왕복한다.
 
@@ -350,7 +350,7 @@ GitHub: [M10](https://github.com/quirinal36/Poketmon_goldilocks/milestone/10)
 
 기한·담당자: 미정. 임의 지정하지 않는다.
 
-이번 기획은 미구현이며 세 번째 배지까지를 범위로 한다. 기존 스토리·저장·학습·전투 시스템을 확장한다.
+구현 결과: 기존 스토리·저장·학습·전투 시스템을 확장해 해당 범위를 완료했다.
 
 포함 이슈:
 
@@ -366,7 +366,7 @@ GitHub: [M10](https://github.com/quirinal36/Poketmon_goldilocks/milestone/10)
 
 GitHub: [M11](https://github.com/quirinal36/Poketmon_goldilocks/milestone/11)
 
-구현 상태: 로컬 기능·자동 검증 완료. 운영 계정 저장은 M12에서 확인한다.
+구현 상태: 기능·자동 검증 완료. 운영 계정 저장은 M12에서 확인한다.
 
 목표: 선장을 돕고 마티스에게 세 번째 배지를 받으며 사건 도중 종료해도 보상 중복 없이 이어 한다.
 
@@ -383,7 +383,7 @@ GitHub: [M11](https://github.com/quirinal36/Poketmon_goldilocks/milestone/11)
 
 기한·담당자: 미정. 임의 지정하지 않는다.
 
-이번 기획은 미구현이며 세 번째 배지까지를 범위로 한다. 기존 스토리·저장·학습·전투 시스템을 확장한다.
+구현 결과: 기존 스토리·저장·학습·전투 시스템을 확장해 해당 범위를 완료했다.
 
 포함 이슈:
 
@@ -398,7 +398,7 @@ GitHub: [M11](https://github.com/quirinal36/Poketmon_goldilocks/milestone/11)
 
 GitHub: [M12](https://github.com/quirinal36/Poketmon_goldilocks/milestone/12)
 
-구현 상태: 자동 검증 진행, 실기기·운영 배포 대기.
+구현 상태: 자동 검증 일부 완료, 실기기·운영 검증 대기.
 
 목표: 학습·화면·실기기·계정 저장을 확인한 세 번째 장을 기존 운영 주소와 라운지 Play로 제공한다.
 
@@ -415,7 +415,7 @@ GitHub: [M12](https://github.com/quirinal36/Poketmon_goldilocks/milestone/12)
 
 기한·담당자: 미정. 임의 지정하지 않는다.
 
-이번 기획은 미구현이며 세 번째 배지까지를 범위로 한다. 기존 스토리·저장·학습·전투 시스템을 확장한다.
+기능 구현과 자동 검증 일부를 마쳤다. 실기기·운영 계정·배포 확인은 완료 전까지 열린 상태로 둔다.
 
 포함 이슈:
 
