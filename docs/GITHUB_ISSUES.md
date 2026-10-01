@@ -919,3 +919,409 @@ GitHub: [#69](https://github.com/quirinal36/Poketmon_goldilocks/issues/69) (T55)
 검증: Preview/운영의 자산·콘솔·네트워크 오류, 실제 로그인/계정 저장/다른 브라우저 재개, 라운지 링크와 최신 안내를 확인한다.
 
 상태: 진행 중. [PR #70](https://github.com/quirinal36/Poketmon_goldilocks/pull/70) 병합과 Production 배포는 확인했다. 계정·실기기·라운지 확인 전까지 열어 둔다.
+
+<a id="chapter4"></a>
+
+## 네 번째 장 — 돌산터널·무지개정원·네 번째 배지
+
+기준: [스토리 기획](STORY_CHAPTER_4.md) · [M13~M15](MILESTONES.md#chapter4). 상태: 계획 / 미구현. 에픽 3개, 하위 작업 12개. 기존 M9·M12 미완료 검증은 유지한다.
+
+| 에픽 | 마일스톤 | 하위 작업 |
+|---|---|---|
+| [E14 · 돌산터널·보라타운·무지개시티 연결](https://github.com/quirinal36/Poketmon_goldilocks/issues/71) | [M13](https://github.com/quirinal36/Poketmon_goldilocks/milestone/13) | T56~T60 |
+| [E15 · 무지개정원 사건·민화·네 번째 배지 완성](https://github.com/quirinal36/Poketmon_goldilocks/issues/72) | [M14](https://github.com/quirinal36/Poketmon_goldilocks/milestone/14) | T61~T64 |
+| [E16 · 네 번째 장 검증·안내·운영 출시](https://github.com/quirinal36/Poketmon_goldilocks/issues/73) | [M15](https://github.com/quirinal36/Poketmon_goldilocks/milestone/15) | T65~T67 |
+
+<a id="e14"></a>
+
+### E14 — 돌산터널·보라타운·무지개시티 연결
+
+GitHub: [#71 (E14)](https://github.com/quirinal36/Poketmon_goldilocks/issues/71)
+
+목적: 오렌지배지 저장에서 블루시티 동쪽 길을 열고 돌산터널을 거쳐 무지개시티까지 왕복한다.
+
+마일스톤: [M13](MILESTONES.md#m13). 완료 조건: 해당 마일스톤 종료 조건과 하위 작업 전체 완료.
+
+- [T56 네 번째 장 맵·진행·저장 계약 확정](https://github.com/quirinal36/Poketmon_goldilocks/issues/74)
+- [T57 9·10번도로·돌산터널 맵과 회복 동선 구현](https://github.com/quirinal36/Poketmon_goldilocks/issues/75)
+- [T58 보라타운·서쪽 지하통로·무지개시티 맵 구현](https://github.com/quirinal36/Poketmon_goldilocks/issues/76)
+- [T59 새 지역 출현·트레이너 편성·민화와 배지 자산 추가](https://github.com/quirinal36/Poketmon_goldilocks/issues/77)
+- [T60 오렌지배지 이후 안내·산길·보라타운 소개 편지 구현](https://github.com/quirinal36/Poketmon_goldilocks/issues/78)
+
+<a id="t56"></a>
+
+### T56 네 번째 장 맵·진행·저장 계약 확정
+
+GitHub: [#74 (T56)](https://github.com/quirinal36/Poketmon_goldilocks/issues/74)
+
+<!-- PLAN:T56 -->
+상위 에픽: [#71 (E14)](https://github.com/quirinal36/Poketmon_goldilocks/issues/71)
+
+마일스톤: [M13](https://github.com/quirinal36/Poketmon_goldilocks/milestone/13)
+
+선행 작업: 없음
+
+목적: 제작 전에 새 15개 맵과 기존 지역 연결, 사건·배지·저장 ID를 확정한다.
+
+작업 범위: docs/STORY_CHAPTER_4.md, src/core/types.ts, src/core/save.ts, src/maps/index.ts 및 기존 3장 계약
+
+완료 조건:
+
+- [ ] 새 MapId 15개·총 53개, AreaId 8개, 트레이너 5개, rainbow 배지와 사건 플래그를 기록한다.
+- [ ] 블루시티 동쪽 출구, 10번도로 북/남과 동굴 두 층, 실내 문·사다리·서쪽 지하통로의 양방향 좌표를 표로 확정한다.
+- [ ] 10번도로 북쪽·동굴 쉼터·보라타운 센터·무지개시티 센터의 회복/기절 복귀 좌표가 보행 가능하다.
+- [ ] 오렌지배지 진입·소개 편지·씨앗상자 반환·앞선 세 배지·도장 16개 조건과 저장 시점을 확정한다.
+- [ ] 3장 플래그 없는 배지 저장과 신규 맵 정규화 정책을 정한다. 계약만으로 미구현 맵을 런타임에 등록하지 않는다.
+
+검증: 좌표·ID를 실제 MapDef와 저장 정규화·공용 배틀·배지 화면 코드에 대조한다.
+
+상태: 계획 / 미구현. [네 번째 장 스토리·맵·학습·저장 계약](STORY_CHAPTER_4.md)을 따른다.
+
+<a id="t57"></a>
+
+### T57 9·10번도로·돌산터널 맵과 회복 동선 구현
+
+GitHub: [#75 (T57)](https://github.com/quirinal36/Poketmon_goldilocks/issues/75)
+
+<!-- PLAN:T57 -->
+상위 에픽: [#71 (E14)](https://github.com/quirinal36/Poketmon_goldilocks/issues/71)
+
+마일스톤: [M13](https://github.com/quirinal36/Poketmon_goldilocks/milestone/13)
+
+선행 작업: [#74 (T56)](https://github.com/quirinal36/Poketmon_goldilocks/issues/74)
+
+목적: 블루시티 동쪽에서 보라타운까지 이어지는 안전한 산길을 만든다.
+
+작업 범위: src/maps/cerulean.ts, 새 src/maps/chapter4.ts의 route9·route10_north·rock_tunnel_1f·rock_tunnel_b1f·route10_south, 맵/저장 등록·아트
+
+완료 조건:
+
+- [ ] 북쪽 산길 5개 맵을 추가하고 동굴을 거치지 않고 남쪽으로 우회하는 연결이 없다.
+- [ ] 오렌지배지 전에는 블루시티 동쪽 출구를 막고 획득 후 연다. 기존 서·북·남 출구는 유지한다.
+- [ ] 문·사다리와 역방향 귀환, 동굴 밖/안의 회복 및 lastHeal 복귀를 계약대로 연결한다.
+- [ ] 동굴은 밝게 표시하고 출구 표지와 고정 길을 제공한다. 플래시·풀베기·바위밀기·시간 제한을 요구하지 않는다.
+- [ ] 선택 트레이너를 피할 수 있고 벽·NPC·출구 충돌로 막히지 않는다. 새 MapId·MAPS·MAP_IDS를 함께 등록한다.
+
+검증: build, check:maps, 배지 전후 진입·사다리 왕복·회복·저장 재개 확인.
+
+상태: 계획 / 미구현. [네 번째 장 스토리·맵·학습·저장 계약](STORY_CHAPTER_4.md)을 따른다.
+
+<a id="t58"></a>
+
+### T58 보라타운·서쪽 지하통로·무지개시티 맵 구현
+
+GitHub: [#76 (T58)](https://github.com/quirinal36/Poketmon_goldilocks/issues/76)
+
+<!-- PLAN:T58 -->
+상위 에픽: [#71 (E14)](https://github.com/quirinal36/Poketmon_goldilocks/issues/71)
+
+마일스톤: [M13](https://github.com/quirinal36/Poketmon_goldilocks/milestone/13)
+
+선행 작업: [#74 (T56)](https://github.com/quirinal36/Poketmon_goldilocks/issues/74)
+
+목적: 산길 이후 쉼터와 네 번째 체육관까지의 도시 경로를 연결한다.
+
+작업 범위: src/maps/chapter4.ts의 남은 10개 맵, 맵/저장 등록 및 기존 공용 스크립트
+
+완료 조건:
+
+- [ ] lavender·lavender_center·route8·underground_path_west·route7·celadon·celadon_center·celadon_mart·celadon_garden·celadon_gym을 추가해 총 53개 맵을 만든다.
+- [ ] 보라타운↔8번도로↔서쪽 지하통로↔7번도로↔무지개시티의 왕복을 연결한다. 기존 남북 지하통로와 ID·출구를 혼동하지 않는다.
+- [ ] 센터 회복·PC·공부 게시판·상점은 공용 스크립트를 사용하고 센터 lastHeal을 등록한다.
+- [ ] 정원 사건 NPC·로켓단·반환 지점과 체육관 조건 안내 위치를 확보한다. 소개 편지 없이도 도시와 정원을 둘러볼 수 있다.
+- [ ] 포켓몬타워·로켓단 아지트·게임코너·노랑시티로 잘못 연결되지 않는다. 무지개상점은 단층 공용 상점으로 만든다.
+
+검증: build, check:maps, 모든 도시 문·귀환·회복·이전 지역 복귀 확인.
+
+상태: 계획 / 미구현. [네 번째 장 스토리·맵·학습·저장 계약](STORY_CHAPTER_4.md)을 따른다.
+
+<a id="t59"></a>
+
+### T59 새 지역 출현·트레이너 편성·민화와 배지 자산 추가
+
+GitHub: [#77 (T59)](https://github.com/quirinal36/Poketmon_goldilocks/issues/77)
+
+<!-- PLAN:T59 -->
+상위 에픽: [#71 (E14)](https://github.com/quirinal36/Poketmon_goldilocks/issues/71)
+
+마일스톤: [M13](https://github.com/quirinal36/Poketmon_goldilocks/milestone/13)
+
+선행 작업: [#74 (T56)](https://github.com/quirinal36/Poketmon_goldilocks/issues/74)
+
+목적: 기존 포켓몬과 전투 규칙으로 네 번째 장의 야생·대결을 구성한다.
+
+작업 범위: src/world/encounters.ts, src/story/trainers.ts, src/core/types.ts, src/art/characters.ts, public/assets/img/manifest.json 및 필요한 자산
+
+완료 조건:
+
+- [ ] route9·route10·rock_tunnel·lavender·route8·route7·celadon·celadon_garden의 AreaId와 서식지를 등록한다. 10번도로 북/남은 AreaId를 공유한다.
+- [ ] 산길·동굴 기준 레벨 18~21, 서쪽 도로 19~22를 초기값으로 정하고 기존 floor(stage/10) 가산·tier·obtainable=wild·낚시 필터를 유지한다.
+- [ ] route9_camper·rock_tunnel_hiker·celadon_rocket·celadon_trainee·leader_erika 5개 트레이너를 기획 편성/보상으로 추가한다.
+- [ ] 민화 초상·필드 스프라이트·무지개배지 rainbow 자산과 manifest를 추가한다. 기존 NPC·타일·음악을 우선 재사용한다.
+- [ ] 현재 학습 진도로 출제한다. 신규 포켓몬·문제은행·기술·타입 상성 시스템을 도입하지 않는다.
+
+검증: build, check:pokemon, 출현 풀·기준/실제 레벨·자산 누락 확인. 맵 연결 후 check:maps.
+
+상태: 계획 / 미구현. [네 번째 장 스토리·맵·학습·저장 계약](STORY_CHAPTER_4.md)을 따른다.
+
+<a id="t60"></a>
+
+### T60 오렌지배지 이후 안내·산길·보라타운 소개 편지 구현
+
+GitHub: [#78 (T60)](https://github.com/quirinal36/Poketmon_goldilocks/issues/78)
+
+<!-- PLAN:T60 -->
+상위 에픽: [#71 (E14)](https://github.com/quirinal36/Poketmon_goldilocks/issues/71)
+
+마일스톤: [M13](https://github.com/quirinal36/Poketmon_goldilocks/milestone/13)
+
+선행 작업: [#75 (T57)](https://github.com/quirinal36/Poketmon_goldilocks/issues/75), [#76 (T58)](https://github.com/quirinal36/Poketmon_goldilocks/issues/76), [#77 (T59)](https://github.com/quirinal36/Poketmon_goldilocks/issues/77)
+
+목적: 기존 세 번째 배지 저장에서 새 목적지를 이해하고 정원 사건을 시작하게 한다.
+
+작업 범위: 새 src/story/chapter4.ts, src/story/index.ts, src/story/chapter3.ts, 블루시티·갈색시티·보라타운 안내
+
+완료 조건:
+
+- [ ] 오렌지배지만 있으면 chapter3_complete 없는 저장도 시작한다. 오래된 마티스 배지 연출 복구를 유지한다.
+- [ ] 마티스 마무리 전화·갈색시티 준비 중 표지판·블루시티 동쪽 안내를 블루시티→돌산터널→보라타운 경로로 갱신한다.
+- [ ] 새 장 안내는 완료 후 한 번만 기록한다. 안내 중 종료 시 다시 들을 수 있고 길 진입을 막지 않는다.
+- [ ] 산길 회복 NPC와 동굴 방향 표지를 연결한다. 산길/동굴 트레이너는 선택이며 거절·패배 후에도 이동할 수 있다.
+- [ ] 보라타운 정원사와 대화하면 garden_letter_received를 저장하고 무지개정원의 다음 행동을 안내한다. 소개 편지는 소모하거나 중복 지급하는 아이템이 아니다.
+
+검증: 기존 배지 저장·플래그 누락·안내 중단·편지 전후 재대화·선택 전투 거절·회복 검사.
+
+상태: 계획 / 미구현. [네 번째 장 스토리·맵·학습·저장 계약](STORY_CHAPTER_4.md)을 따른다.
+
+<a id="e15"></a>
+
+### E15 — 무지개정원 사건·민화·네 번째 배지 완성
+
+GitHub: [#72 (E15)](https://github.com/quirinal36/Poketmon_goldilocks/issues/72)
+
+목적: 소개 편지와 씨앗상자 회수 사건을 마친 뒤 누적 도장 16개로 민화에게 무지개배지를 받는다.
+
+마일스톤: [M14](MILESTONES.md#m14). 완료 조건: 해당 마일스톤 종료 조건과 하위 작업 전체 완료.
+
+- [T61 무지개정원 씨앗상자 회수·반환·체육관 개방 구현](https://github.com/quirinal36/Poketmon_goldilocks/issues/79)
+- [T62 민화·도장 16개 조건·무지개배지 화면 구현](https://github.com/quirinal36/Poketmon_goldilocks/issues/80)
+- [T63 네 번째 장 사건·전투·배지 중단 복구와 중복 방지](https://github.com/quirinal36/Poketmon_goldilocks/issues/81)
+- [T64 기존 저장·15개 신규 맵·게스트와 계정 저장 호환 검증](https://github.com/quirinal36/Poketmon_goldilocks/issues/82)
+
+<a id="t61"></a>
+
+### T61 무지개정원 씨앗상자 회수·반환·체육관 개방 구현
+
+GitHub: [#79 (T61)](https://github.com/quirinal36/Poketmon_goldilocks/issues/79)
+
+<!-- PLAN:T61 -->
+상위 에픽: [#72 (E15)](https://github.com/quirinal36/Poketmon_goldilocks/issues/72)
+
+마일스톤: [M14](https://github.com/quirinal36/Poketmon_goldilocks/milestone/14)
+
+선행 작업: [#76 (T58)](https://github.com/quirinal36/Poketmon_goldilocks/issues/76), [#77 (T59)](https://github.com/quirinal36/Poketmon_goldilocks/issues/77), [#78 (T60)](https://github.com/quirinal36/Poketmon_goldilocks/issues/78)
+
+목적: 소개 편지를 받아 로켓단에게 씨앗상자를 되찾고 정원사에게 돌려준다.
+
+작업 범위: src/story/chapter4.ts, 무지개정원/체육관 맵, 스토리 단위 검사
+
+완료 조건:
+
+- [ ] 소개 편지 없이 로켓단에게 말하면 보라타운 정원사를 안내한다. 편지 수령 후 필수 대결을 시작한다.
+- [ ] 로켓단 승리 시 defeatedTrainers 기록을 근거로 씨앗상자를 회수한다. 승리 직후 종료해도 재대결 없이 회수 상태를 복구한다.
+- [ ] 패배·취소는 회수 완료로 처리하지 않는다. 최근 회복 지점 복귀 후 재도전하며 승리 용돈 ₩500은 한 번만 지급한다.
+- [ ] 정원사에게 반환하면 celadon_garden_helped·celadon_gym_open을 같은 저장 시점에 기록한다. 씨앗상자는 사건 플래그이며 추가 소모품 보상은 없다.
+- [ ] 반환 전/후 체육관 입구 안내와 재방문 대사를 구분한다. 사건 완료 후에도 정원과 이전 지역을 왕복할 수 있다.
+
+검증: 편지 없음·정원사 먼저 방문·전투 승패·회수/반환 중단·보상 중복·체육관 전후 경계 검사.
+
+상태: 계획 / 미구현. [네 번째 장 스토리·맵·학습·저장 계약](STORY_CHAPTER_4.md)을 따른다.
+
+<a id="t62"></a>
+
+### T62 민화·도장 16개 조건·무지개배지 화면 구현
+
+GitHub: [#80 (T62)](https://github.com/quirinal36/Poketmon_goldilocks/issues/80)
+
+<!-- PLAN:T62 -->
+상위 에픽: [#72 (E15)](https://github.com/quirinal36/Poketmon_goldilocks/issues/72)
+
+마일스톤: [M14](https://github.com/quirinal36/Poketmon_goldilocks/milestone/14)
+
+선행 작업: [#77 (T59)](https://github.com/quirinal36/Poketmon_goldilocks/issues/77), [#79 (T61)](https://github.com/quirinal36/Poketmon_goldilocks/issues/79)
+
+목적: 정원 도움과 학습 조건을 충족하면 네 번째 배지를 받게 한다.
+
+작업 범위: src/story/chapter4.ts, src/battle/index.ts, src/ui/screens/index.ts, 민화/배지 자산
+
+완료 조건:
+
+- [ ] 민화 대결에 정원 도움 완료·boulder/cascade/thunder 배지·누적 도장 16개를 모두 요구한다.
+- [ ] 스토리 안내와 공용 battle.trainer 직접 호출 모두 같은 조건을 검사하고 기존 관장 4/8/12개 조건을 유지한다.
+- [ ] 도장 15/16/16 초과, 정원 미완료, 이전 배지 부족을 구분한다. 한 과목·보호자 시작 진도를 인정한다.
+- [ ] leader_erika 승리 시 rainbow 배지와 ₩2,500을 연출 전에 한 번 저장한다. 배지 화면·트레이너 카드의 이름·이미지·대체 텍스트를 갱신한다.
+- [ ] 수련생은 선택이며 풀베기나 특정 포켓몬을 요구하지 않는다. 축하·다음 지역 준비 안내의 중단/재개 상태를 저장한다.
+
+검증: 직접 전투 호출·3장 관장 회귀·배지 네 개 표시·재방문/연출 중단 검사와 build.
+
+상태: 계획 / 미구현. [네 번째 장 스토리·맵·학습·저장 계약](STORY_CHAPTER_4.md)을 따른다.
+
+<a id="t63"></a>
+
+### T63 네 번째 장 사건·전투·배지 중단 복구와 중복 방지
+
+GitHub: [#81 (T63)](https://github.com/quirinal36/Poketmon_goldilocks/issues/81)
+
+<!-- PLAN:T63 -->
+상위 에픽: [#72 (E15)](https://github.com/quirinal36/Poketmon_goldilocks/issues/72)
+
+마일스톤: [M14](https://github.com/quirinal36/Poketmon_goldilocks/milestone/14)
+
+선행 작업: [#78 (T60)](https://github.com/quirinal36/Poketmon_goldilocks/issues/78), [#79 (T61)](https://github.com/quirinal36/Poketmon_goldilocks/issues/79), [#80 (T62)](https://github.com/quirinal36/Poketmon_goldilocks/issues/80)
+
+목적: 어느 저장 경계에서 종료해도 사건을 이어 가고 보상을 중복 지급하지 않는다.
+
+작업 범위: src/story/chapter4.ts, 기존 전투·저장 경로, tests/unit/chapter4.test.ts
+
+완료 조건:
+
+- [ ] 소개 편지·로켓단 승리/회수·상자 반환/개방·민화 승리·배지 연출·마무리 전화의 저장 경계를 표로 기록한다.
+- [ ] 각 경계 직전/직후 저장을 재개해 이미 끝난 대결을 강제하지 않고 남은 단계만 진행한다.
+- [ ] 전투 승리 기록·용돈·배지를 저장한 뒤 연출한다. 반환·대화·재접속으로 권한·용돈·배지가 중복되지 않는다.
+- [ ] 패배·취소 후 완료 플래그가 생기지 않고 최근 보행 가능한 회복 위치에서 재도전한다.
+- [ ] 날짜 변경·하루 학습 완료·로그인 전환이 사건 기록을 지우지 않는다. 기존 2·3장 복구 검사도 유지한다.
+
+검증: 최소 단위 회귀 검사와 저장 전후 flags·defeatedTrainers·money·badges 비교.
+
+상태: 계획 / 미구현. [네 번째 장 스토리·맵·학습·저장 계약](STORY_CHAPTER_4.md)을 따른다.
+
+<a id="t64"></a>
+
+### T64 기존 저장·15개 신규 맵·게스트와 계정 저장 호환 검증
+
+GitHub: [#82 (T64)](https://github.com/quirinal36/Poketmon_goldilocks/issues/82)
+
+<!-- PLAN:T64 -->
+상위 에픽: [#72 (E15)](https://github.com/quirinal36/Poketmon_goldilocks/issues/72)
+
+마일스톤: [M14](https://github.com/quirinal36/Poketmon_goldilocks/milestone/14)
+
+선행 작업: [#75 (T57)](https://github.com/quirinal36/Poketmon_goldilocks/issues/75), [#76 (T58)](https://github.com/quirinal36/Poketmon_goldilocks/issues/76), [#81 (T63)](https://github.com/quirinal36/Poketmon_goldilocks/issues/81)
+
+목적: 기존 모험과 계정별 저장이 네 번째 장에서도 보존되도록 한다.
+
+작업 범위: src/core/save.ts, tests/unit/, tests/e2e/auth.spec.ts, 새 장 저장 E2E
+
+완료 조건:
+
+- [ ] 첫째~셋째 배지 저장·chapter3_complete 없는 오렌지배지 저장·새 플래그 없는 저장을 초기화 없이 읽는다.
+- [ ] 신규 맵 15개의 위치·방향 및 각 lastHeal을 정규화·저장·새로고침·기절 복귀 후 보존한다.
+- [ ] 파티·박스·도장·기존 배지·돈·사건 상태를 로컬/모의 계정 저장 전후 비교한다.
+- [ ] 게스트→로그인·계정 전환·로그아웃과 카카오/라운지 로그인 자동 회귀를 기존 분리 정책대로 통과한다.
+- [ ] 운영 계정 실제 저장·다른 브라우저 복구는 T67에서 추적한다. 신규 MapId 저장이 있는 버전의 롤백/순방향 수정 원칙을 기록한다.
+
+검증: save 정규화 단위, auth E2E, 새 맵 저장 재개. 사용자 저장 초기화·인증/DB 구조 변경 금지.
+
+상태: 계획 / 미구현. [네 번째 장 스토리·맵·학습·저장 계약](STORY_CHAPTER_4.md)을 따른다.
+
+<a id="e16"></a>
+
+### E16 — 네 번째 장 검증·안내·운영 출시
+
+GitHub: [#73 (E16)](https://github.com/quirinal36/Poketmon_goldilocks/issues/73)
+
+목적: 전체 진행·실기기·운영 계정 저장을 확인하고 네 번째 장을 기존 운영 주소와 라운지 Play로 제공한다.
+
+마일스톤: [M15](MILESTONES.md#m15). 완료 조건: 해당 마일스톤 종료 조건과 하위 작업 전체 완료.
+
+- [T65 네 번째 장 전체 진행 E2E와 기존 세 장 회귀](https://github.com/quirinal36/Poketmon_goldilocks/issues/83)
+- [T66 동굴 길찾기·전투 균형·5개 해상도·실기기 확인](https://github.com/quirinal36/Poketmon_goldilocks/issues/84)
+- [T67 네 번째 장 안내·라운지 소개·배포·운영 계정 검증](https://github.com/quirinal36/Poketmon_goldilocks/issues/85)
+
+<a id="t65"></a>
+
+### T65 네 번째 장 전체 진행 E2E와 기존 세 장 회귀
+
+GitHub: [#83 (T65)](https://github.com/quirinal36/Poketmon_goldilocks/issues/83)
+
+<!-- PLAN:T65 -->
+상위 에픽: [#73 (E16)](https://github.com/quirinal36/Poketmon_goldilocks/issues/73)
+
+마일스톤: [M15](https://github.com/quirinal36/Poketmon_goldilocks/milestone/15)
+
+선행 작업: [#81 (T63)](https://github.com/quirinal36/Poketmon_goldilocks/issues/81), [#82 (T64)](https://github.com/quirinal36/Poketmon_goldilocks/issues/82)
+
+목적: 오렌지배지 저장에서 무지개배지까지 실제 경로와 기존 세 장을 자동 검증한다.
+
+작업 범위: tests/e2e/chapter4.spec.ts 및 관련 경계 검사, docs/VERIFICATION.md
+
+완료 조건:
+
+- [ ] 1024×768·768×1024에서 블루시티→돌산터널→보라타운→정원 사건→민화→저장 재개를 통과한다.
+- [ ] 준비 저장·debug 이동 사용 구간을 명시한다. 새 사건 플래그와 rainbow 배지를 직접 주입해 성공 처리하지 않는다.
+- [ ] 오렌지배지 없음·편지 없음·정원 미완료·이전 배지 부족·도장 15/16/초과·한 과목·선택 대결 생략을 검사한다.
+- [ ] 로켓단/민화 패배·복귀·재도전·승리 직후와 배지 연출 중단·새/기존 지역 왕복을 확인한다.
+- [ ] build·test·check:maps·check:pokemon·전체 e2e 및 기존 세 장/로그인 회귀가 통과한다. Playwright를 중복 실행해 공유 산출물을 지우지 않는다. 문제은행 변경 시 check:questions도 실행한다.
+
+검증: 명령·검사 수·생략 이유·실패 재실행·스크린샷·콘솔 오류를 기록하며 M12 #67 잔여를 함께 정리한다.
+
+상태: 계획 / 미구현. [네 번째 장 스토리·맵·학습·저장 계약](STORY_CHAPTER_4.md)을 따른다.
+
+<a id="t66"></a>
+
+### T66 동굴 길찾기·전투 균형·5개 해상도·실기기 확인
+
+GitHub: [#84 (T66)](https://github.com/quirinal36/Poketmon_goldilocks/issues/84)
+
+<!-- PLAN:T66 -->
+상위 에픽: [#73 (E16)](https://github.com/quirinal36/Poketmon_goldilocks/issues/73)
+
+마일스톤: [M15](https://github.com/quirinal36/Poketmon_goldilocks/milestone/15)
+
+선행 작업: [#80 (T62)](https://github.com/quirinal36/Poketmon_goldilocks/issues/80), [#81 (T63)](https://github.com/quirinal36/Poketmon_goldilocks/issues/81)
+
+목적: 어린이가 동굴과 사건의 다음 행동을 이해하고 태블릿에서 진행할 수 있는지 확인한다.
+
+작업 범위: 새 장 지도·대사·편성·화면·음성, docs/STORY_CHAPTER_4.md, docs/VERIFICATION.md
+
+완료 조건:
+
+- [ ] 대표 스타터 파티·도장 16개 전후·선택 대결 생략·오답 후 복귀를 실제 문제 풀이로 확인한다. 7종 스타터에 대해 검사한 표본과 미검사 범위를 명시한다.
+- [ ] 기존 정답 공격 규칙으로 균형을 판단하며 타입 상성이나 레벨 숫자만으로 통과 처리하지 않는다. 필요시 편성/보상을 조정하고 재검사한다.
+- [ ] 동굴 사다리·표지·쉼터와 정원 반환 지점의 안내가 명확하다. 어린이 길찾기 관찰과 자동 경로 검사를 구분한다.
+- [ ] 1024×768·768×1024·1280×800·820×1180·375×667에서 대화·문제·배지·카드가 잘리거나 겹치지 않는다.
+- [ ] 실제 터치 기기에서 방향키/A/B/START·키보드 초점·56px 터치 영역·TTS 재생/다시 듣기/음소거를 확인하고 기기·브라우저·결과를 기록한다.
+
+검증: M9 #51·M12 #68과 중복 증거는 연결하되 미확인 실기기/아동 검사를 자동 완료하지 않는다.
+
+상태: 계획 / 미구현. [네 번째 장 스토리·맵·학습·저장 계약](STORY_CHAPTER_4.md)을 따른다.
+
+<a id="t67"></a>
+
+### T67 네 번째 장 안내·라운지 소개·배포·운영 계정 검증
+
+GitHub: [#85 (T67)](https://github.com/quirinal36/Poketmon_goldilocks/issues/85)
+
+<!-- PLAN:T67 -->
+상위 에픽: [#73 (E16)](https://github.com/quirinal36/Poketmon_goldilocks/issues/73)
+
+마일스톤: [M15](https://github.com/quirinal36/Poketmon_goldilocks/milestone/15)
+
+선행 작업: [#83 (T65)](https://github.com/quirinal36/Poketmon_goldilocks/issues/83), [#84 (T66)](https://github.com/quirinal36/Poketmon_goldilocks/issues/84)
+
+목적: 최신 안내와 실제 계정 저장을 확인한 네 번째 장을 운영에 반영한다.
+
+작업 범위: README.md, docs/{TEACHER_GUIDE,DESIGN,STORY_CHAPTER_4,DEPLOY,VERIFICATION}.md, 기존 Vercel·운영 도메인·라운지 작품
+
+완료 조건:
+
+- [ ] 최종 53개 맵·경로·누적 도장 16개·정원 사건·저장·다음 지역 준비 상태를 실제 구현 기준으로 문서에 반영한다.
+- [ ] 인증된 Preview에서 새 자산·진행·저장을 확인하고 main 병합으로 생성된 Production의 커밋·성공 상태·poke.letscoding.kr 버전을 기록한다. SSO 리디렉션/배포 성공만으로 게임 확인을 대신하지 않는다.
+- [ ] 테스트 계정의 라운지 로그인·이름·카카오 복귀·새 맵 저장·다른 브라우저 복구를 확인한다. 모의 서버 검증과 별도로 기록한다.
+- [ ] 라운지 작품 소개를 네 번째 배지 범위로 갱신하고 Play→운영 주소 이동을 확인한다. GitHub 연동 배포를 사용하며 ZIP 업로드는 하지 않는다.
+- [ ] M9 #51~#53과 M12 #67~#69를 증거별로 대조한다. 완료한 항목만 닫고 미확인 항목은 열린 상태로 남긴다.
+- [ ] 배포 URL·커밋·계정/기기 결과·제한·신규 MapId 저장을 보존하는 장애 복구 방안을 기록한다. 사용자 저장 초기화와 공유 인증 설정 변경은 하지 않는다.
+
+검증: Preview/운영 실제 플레이·콘솔/네트워크·계정 복구·라운지 링크 및 문서/GitHub 상태 대조.
+
+상태: 계획 / 미구현. [네 번째 장 스토리·맵·학습·저장 계약](STORY_CHAPTER_4.md)을 따른다.
