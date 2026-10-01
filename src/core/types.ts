@@ -293,9 +293,12 @@ export type MapId =
   | 'cerulean' | 'cerulean_center' | 'cerulean_mart' | 'cerulean_gym'
   | 'route24' | 'route25' | 'bill_house' | 'route5' | 'underground_path' | 'route6'
   | 'vermilion' | 'vermilion_center' | 'vermilion_mart' | 'vermilion_gym'
-  | 'ss_anne_1f' | 'ss_anne_deck' | 'ss_anne_captain';
+  | 'ss_anne_1f' | 'ss_anne_deck' | 'ss_anne_captain'
+  | 'route9' | 'route10_north' | 'rock_tunnel_1f' | 'rock_tunnel_b1f' | 'route10_south'
+  | 'lavender' | 'lavender_center' | 'route8' | 'underground_path_west' | 'route7'
+  | 'celadon' | 'celadon_center' | 'celadon_mart' | 'celadon_garden' | 'celadon_gym';
 
-export type AreaId = 'route1' | 'route2' | 'forest' | 'route22' | 'route3' | 'mt_moon' | 'route4' | 'cerulean' | 'route24' | 'route25' | 'route5' | 'route6' | 'vermilion';
+export type AreaId = 'route1' | 'route2' | 'forest' | 'route22' | 'route3' | 'mt_moon' | 'route4' | 'cerulean' | 'route24' | 'route25' | 'route5' | 'route6' | 'vermilion' | 'route9' | 'route10' | 'rock_tunnel' | 'lavender' | 'route8' | 'route7' | 'celadon' | 'celadon_garden';
 
 export type TileId =
   // outdoor
@@ -326,7 +329,7 @@ export interface StructureInfo { w: number; h: number; door: { x: number; y: num
 export type NpcSpriteId =
   | 'mom' | 'oak' | 'rival' | 'sister' | 'aide' | 'nurse' | 'clerk' | 'teacher' | 'boy' | 'girl'
   | 'youngster' | 'lass' | 'oldman' | 'oldwoman' | 'bugcatcher' | 'camper' | 'leader_rock' | 'fisher'
-  | 'hiker' | 'gymguide' | 'man' | 'woman' | 'scientist' | 'rocket' | 'clefairy' | 'leader_water' | 'leader_surge';
+  | 'hiker' | 'gymguide' | 'man' | 'woman' | 'scientist' | 'rocket' | 'clefairy' | 'leader_water' | 'leader_surge' | 'leader_erika';
 
 export type ScriptId = string;
 export type FlagExpr = string;   // 'flag' | '!flag' | 'flagA&flagB' | 'a|b' (see world/flags.ts evalFlag)

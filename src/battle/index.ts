@@ -168,7 +168,11 @@ export function createBattle(): BattleService {
         if (!G.save.flag('captain_helped')) { await G.ui.say('상트앙느호의 선장을 돕고 와 주세요.'); return 'fled'; }
         if (!['boulder', 'cascade'].every(b => G.save.data.player.badges.includes(b))) { await G.ui.say('앞선 두 배지를 받고 와 주세요.'); return 'fled'; }
       }
-      const required = trainer.badge === 'thunder' ? 12 : trainer.badge === 'cascade' ? 8 : trainer.badge === 'boulder' ? 4 : 0;
+      if (trainer.badge === 'rainbow') {
+        if (!G.save.flag('celadon_garden_helped')) { await G.ui.say('무지개정원에서 씨앗상자를 돌려주고 와 주세요.'); return 'fled'; }
+        if (!['boulder', 'cascade', 'thunder'].every(b => G.save.data.player.badges.includes(b))) { await G.ui.say('앞선 세 배지를 받고 와 주세요.'); return 'fled'; }
+      }
+      const required = trainer.badge === 'rainbow' ? 16 : trainer.badge === 'thunder' ? 12 : trainer.badge === 'cascade' ? 8 : trainer.badge === 'boulder' ? 4 : 0;
       if (G.learn.stage() < required) { await G.ui.say(`공부 도장 ${required}개를 모아 다시 와 주세요.`); return 'fled'; }
       if (G.save.data.defeatedTrainers.includes(id)) { await G.ui.say(trainer.after || trainer.defeat); return 'won'; }
       return run(trainer.team, trainer);

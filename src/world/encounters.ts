@@ -26,12 +26,22 @@ export const AREA_HABITATS: Record<AreaId, { land: Habitat[]; water: Habitat[] }
   route5: { land: ['grassland', 'urban'], water: ['waters-edge'] },
   route6: { land: ['grassland', 'waters-edge'], water: ['waters-edge'] },
   vermilion: { land: ['urban', 'sea'], water: ['sea', 'waters-edge'] },
+  route9: { land: ['mountain', 'grassland'], water: ['waters-edge'] },
+  route10: { land: ['mountain', 'waters-edge'], water: ['waters-edge'] },
+  rock_tunnel: { land: ['cave', 'mountain'], water: ['waters-edge'] },
+  lavender: { land: ['urban'], water: ['waters-edge'] },
+  route8: { land: ['grassland', 'urban'], water: ['waters-edge'] },
+  route7: { land: ['grassland', 'urban'], water: ['waters-edge'] },
+  celadon: { land: ['urban'], water: ['waters-edge'] },
+  celadon_garden: { land: ['forest'], water: ['waters-edge'] },
 };
 
 export const AREA_LEVELS: Record<AreaId, [number, number]> = {
   route1: [2, 4], route2: [3, 5], forest: [3, 6], route22: [4, 7], route3: [8, 12],
   mt_moon: [9, 13], route4: [10, 14], cerulean: [10, 14],
   route24: [12, 15], route25: [13, 16], route5: [14, 17], route6: [15, 18], vermilion: [15, 18],
+  route9: [18, 21], route10: [18, 21], rock_tunnel: [18, 21], lavender: [19, 22],
+  route8: [19, 22], route7: [19, 22], celadon: [19, 22], celadon_garden: [19, 22],
 };
 
 export interface PoolEntry { species: Species; weight: number }

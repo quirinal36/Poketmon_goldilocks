@@ -79,7 +79,7 @@ vermilion.npcs = [
   { id: 'ship_guard', x: 17, y: 15, sprite: 'fisher', script: 'chapter3_ship_gate', visibleIf: '!ss_ticket_received' },
 ];
 vermilion.signs = [{ x: 20, y: 11, text: ['← 포켓몬센터·체육관', '상트앙느호 선착장 →'] },
-  { x: 22, y: 18, text: ['다음 지역은 준비 중이에요.'] }];
+  { x: 22, y: 18, text: ['오렌지배지 후 블루시티 동쪽 돌산터널로 가요.'] }];
 vermilion.onEnter = 'chapter3_vermilion_arrive';
 
 const vermilionCenter = room('vermilion_center', '갈색시티 포켓몬센터', 'center');
