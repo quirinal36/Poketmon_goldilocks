@@ -24,6 +24,7 @@ import { MAP as m_cerulean } from './cerulean';
 import { MAP as m_cerulean_center } from './cerulean_center';
 import { MAP as m_cerulean_mart } from './cerulean_mart';
 import { MAP as m_cerulean_gym } from './cerulean_gym';
+import { CHAPTER3_MAPS } from './chapter3';
 
 export const MAPS: Record<MapId, MapDef> = {
   pallet: m_pallet,
@@ -51,4 +52,5 @@ export const MAPS: Record<MapId, MapDef> = {
   cerulean_center: m_cerulean_center,
   cerulean_mart: m_cerulean_mart,
   cerulean_gym: m_cerulean_gym,
+  ...CHAPTER3_MAPS,
 };

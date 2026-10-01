@@ -12,6 +12,8 @@ export const MAP_IDS: MapId[] = [
   'route1', 'viridian', 'viridian_center', 'viridian_mart', 'viridian_school',
   'route22', 'route2', 'forest', 'pewter', 'pewter_center', 'pewter_mart', 'pewter_gym', 'route3',
   'mt_moon_front', 'mt_moon_deep', 'route4', 'cerulean', 'cerulean_center', 'cerulean_mart', 'cerulean_gym',
+  'route24', 'route25', 'bill_house', 'route5', 'underground_path', 'route6', 'vermilion',
+  'vermilion_center', 'vermilion_mart', 'vermilion_gym', 'ss_anne_1f', 'ss_anne_deck', 'ss_anne_captain',
 ];
 const DIRS: Dir[] = ['up', 'down', 'left', 'right'];
 
@@ -131,6 +133,7 @@ export function repairSave(raw: unknown): SaveData | null {
   d.dex.seen = uniqSorted(Array.isArray(d.dex.seen) ? d.dex.seen : []);
   d.dex.caught = uniqSorted(Array.isArray(d.dex.caught) ? d.dex.caught : []);
   d.player.badges = Array.isArray(d.player.badges) ? d.player.badges.filter((b) => typeof b === 'string') : [];
+  for (const badge of d.player.badges) d.flags[`badge_${badge}`] = true;
   d.defeatedTrainers = Array.isArray(d.defeatedTrainers) ? d.defeatedTrainers.filter((b) => typeof b === 'string') : [];
   if (typeof d.player.money !== 'number' || !Number.isFinite(d.player.money)) d.player.money = 500;
   d.player.money = Math.max(0, Math.floor(d.player.money));

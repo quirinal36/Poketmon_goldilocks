@@ -88,5 +88,17 @@
     "w": 64,
     "h": 64,
     "kind": "icon"
+  },
+  "leader_surge": {
+    "file": "leader_surge.svg",
+    "w": 96,
+    "h": 128,
+    "kind": "trainer"
+  },
+  "badge_thunder": {
+    "file": "badge_thunder.svg",
+    "w": 128,
+    "h": 128,
+    "kind": "badge"
   }
 }

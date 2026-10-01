@@ -8,9 +8,9 @@ import { encounterPool, rollLevel } from '../../src/world/encounters';
 import { readFileSync } from 'node:fs';
 import type { Game, Species } from '../../src/core/types';
 
-it('keeps all 25 maps connected and retains new map saves', () => {
+it('keeps all 38 maps connected and retains new map saves', () => {
   expect(validateMaps(MAPS, SCRIPTS, TRAINERS)).toEqual([]);
-  expect(Object.keys(MAPS)).toHaveLength(25);
+  expect(Object.keys(MAPS)).toHaveLength(38);
   const save = createSave();
   save.data.pos = { map: 'mt_moon_deep', x: 16, y: 12, facing: 'right' };
   save.data.lastHeal = { map: 'mt_moon_front', x: 3, y: 12 };
