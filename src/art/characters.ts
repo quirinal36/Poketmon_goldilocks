@@ -22,7 +22,7 @@ export const CHAR_OFFSET_Y = -4;
 export const NPC_SPRITE_IDS: NpcSpriteId[] = [
   'mom', 'oak', 'rival', 'sister', 'aide', 'nurse', 'clerk', 'teacher', 'boy', 'girl', 'youngster', 'lass', 'oldman',
   'oldwoman', 'bugcatcher', 'camper', 'leader_rock', 'fisher', 'hiker', 'gymguide', 'man', 'woman', 'scientist',
-  'rocket', 'clefairy', 'leader_water', 'leader_surge',
+  'rocket', 'clefairy', 'leader_water', 'leader_surge', 'leader_erika',
 ];
 
 // ------------------------------------------------------------ layers -------
@@ -635,6 +635,7 @@ const NPC_SPECS: Record<NpcSpriteId, CharSpec> = {
   clefairy: { body: 'kid', hair: 'bald', pal: basePal('#f8b8c8', '#f8b8c8', '#f8b8c8', '#e890a8') },
   leader_water: { body: 'skirt', hair: 'ponytail', pal: basePal(SKIN, '#e07030', '#50a0d8', '#2868a8') },
   leader_surge: { body: 'adult', hair: 'spiky', pal: basePal(SKIN, '#e8d050', '#d8a820', '#806030') },
+  leader_erika: { body: 'skirt', hair: 'long', pal: basePal(SKIN, '#303020', '#70b868', '#386838') },
 };
 
 const BOY_HAIR: HairStyle[] = ['short', 'spiky', 'curly'];

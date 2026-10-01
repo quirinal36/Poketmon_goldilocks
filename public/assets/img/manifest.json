@@ -100,5 +100,17 @@
     "w": 128,
     "h": 128,
     "kind": "badge"
+  },
+  "leader_erika": {
+    "file": "leader_erika.svg",
+    "w": 96,
+    "h": 128,
+    "kind": "trainer"
+  },
+  "badge_rainbow": {
+    "file": "badge_rainbow.svg",
+    "w": 128,
+    "h": 128,
+    "kind": "badge"
   }
 }

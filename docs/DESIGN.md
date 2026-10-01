@@ -8,7 +8,7 @@
 - **What**: A Pokémon-Gold-style (Game Boy Color look) top-down RPG for Korean **1st graders (초등 1학년)**, played in a **tablet browser** (iPad / Android tablet, touch first; keyboard also works).
 - **Core loop**: walk in tall grass → wild Pokémon appears → **answer math/English questions** to battle it → answer the catch question to **catch it** → fill the **도감 (Pokédex, 251 species = Gen 1+2)**.
 - **Curriculum**: math + English, progressing **1학년 1학기 → 1학년 2학기 → 2학년 1학기 → 2학년 2학기**. One lesson (차시) per subject per day by default ("매일 진도"), difficulty rising gradually.
-- **Story scope**: 태초마을 → 회색시티의 웅과 회색배지 → 3번도로 → 달맞이산 탐사 수첩 사건 → 4번도로 → 블루시티의 이슬과 블루배지 → 금빛다리·이수재 → 갈색시티·상트앙느호 → 마티스와 오렌지배지.
+- **Story scope**: 태초마을 → 회색시티의 웅과 회색배지 → 3번도로 → 달맞이산 탐사 수첩 사건 → 4번도로 → 블루시티의 이슬과 블루배지 → 금빛다리·이수재 → 갈색시티·상트앙느호 → 마티스와 오렌지배지 → 돌산터널·보라타운·무지개정원 → 민화와 무지개배지.
 - **Customization**: player appearance (gender, skin, hair color, hair style, outfit color, hat), player name, rival name, partner Pokémon (party[0] follows you on the map, HGSS-style; changeable in the party screen), nicknames.
 - **Deploy**: Vite static site on Vercel (`base: './'`). GitHub `main` push가 운영 주소 `poke.letscoding.kr`에 배포되고, 라운지 Play 버튼이 운영 주소를 연다. 설정이 없거나 로그인하지 않은 게스트는 브라우저 저장을 사용한다.
 - **Data**: questions/curriculum are data, not code. Source of truth = generator scripts in `scripts/questions/*.mjs` → `public/data/*.json` (bundled snapshot) → seeded into Supabase tables. At runtime the game uses Supabase when reachable (questions overrides + cloud save + answer logs) and silently falls back to bundled JSON + localStorage.
@@ -247,6 +247,8 @@ Flow:
 두 번째 장에 추가된 맵 7개: `mt_moon_front`, `mt_moon_deep`, `route4`, `cerulean`, `cerulean_center`, `cerulean_mart`, `cerulean_gym`. 전체 25개 맵이다.
 
 세 번째 장은 `route24`, `route25`, `bill_house`, `route5`, `underground_path`, `route6`, `vermilion`, `vermilion_center`, `vermilion_mart`, `vermilion_gym`, `ss_anne_1f`, `ss_anne_deck`, `ss_anne_captain`을 추가해 전체 38개 맵이다. 승선권·선장 도움은 기존 스토리 플래그로 저장한다. 마티스는 앞선 두 배지, 선장 도움, 누적 도장 12개를 요구한다.
+
+네 번째 장은 9·10번도로, 돌산터널 두 층, 보라타운, 서쪽 지하통로, 무지개시티와 정원·체육관 등 15개 맵을 더해 전체 53개 맵이다. 오렌지배지로 블루시티 동쪽 길이 열리고, 보라타운 소개 편지와 정원 씨앗상자 반환은 기존 플래그·트레이너 승리 기록으로 저장한다. 민화는 정원 도움, 앞선 세 배지, 누적 도장 16개를 요구한다. 상세 계약은 [네 번째 장 기획](STORY_CHAPTER_4.md)에 기록한다.
 
 ### 7.7 Trainers (`TrainerDef` in types.ts), ids
 `rival_lab`, `bug_1` (벌레잡이 소년 민준: 캐터피 Lv4, 뿔충이 Lv4), `bug_2` (벌레잡이 소년 서준: 단데기 Lv5, 캐터피 Lv5, 뿔충이 Lv6→ keep ≤2 Pokémon: 단데기 Lv6, 딱충이 Lv6), `camper_gym` (캠프보이 도윤: 모래두지 Lv7), `leader_woong` (관장 웅: 꼬마돌 Lv8, 롱스톤 Lv10, badge `boulder`).

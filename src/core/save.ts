@@ -14,6 +14,9 @@ export const MAP_IDS: MapId[] = [
   'mt_moon_front', 'mt_moon_deep', 'route4', 'cerulean', 'cerulean_center', 'cerulean_mart', 'cerulean_gym',
   'route24', 'route25', 'bill_house', 'route5', 'underground_path', 'route6', 'vermilion',
   'vermilion_center', 'vermilion_mart', 'vermilion_gym', 'ss_anne_1f', 'ss_anne_deck', 'ss_anne_captain',
+  'route9', 'route10_north', 'rock_tunnel_1f', 'rock_tunnel_b1f', 'route10_south',
+  'lavender', 'lavender_center', 'route8', 'underground_path_west', 'route7',
+  'celadon', 'celadon_center', 'celadon_mart', 'celadon_garden', 'celadon_gym',
 ];
 const DIRS: Dir[] = ['up', 'down', 'left', 'right'];
 
@@ -135,6 +138,10 @@ export function repairSave(raw: unknown): SaveData | null {
   d.player.badges = Array.isArray(d.player.badges) ? d.player.badges.filter((b) => typeof b === 'string') : [];
   for (const badge of d.player.badges) d.flags[`badge_${badge}`] = true;
   d.defeatedTrainers = Array.isArray(d.defeatedTrainers) ? d.defeatedTrainers.filter((b) => typeof b === 'string') : [];
+  if (d.defeatedTrainers.includes('celadon_rocket')) d.flags.garden_seeds_recovered = true;
+  if (d.flags.celadon_garden_helped || d.player.badges.includes('rainbow')) {
+    d.flags.celadon_garden_helped = true; d.flags.celadon_gym_open = true;
+  }
   if (typeof d.player.money !== 'number' || !Number.isFinite(d.player.money)) d.player.money = 500;
   d.player.money = Math.max(0, Math.floor(d.player.money));
   if (!MAP_IDS.includes(d.pos.map)) d.pos = { ...defaultSave().pos };

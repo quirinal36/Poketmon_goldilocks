@@ -18,8 +18,8 @@ function game() {
 }
 const ctx = { mapId: 'bill_house' } as const;
 
-it('connects 38 maps and preserves new and legacy badge saves', () => {
-  expect(Object.keys(MAPS)).toHaveLength(38);
+it('connects 53 maps and preserves new and legacy badge saves', () => {
+  expect(Object.keys(MAPS)).toHaveLength(53);
   expect(validateMaps(MAPS, SCRIPTS, TRAINERS)).toEqual([]);
   const save = createSave();
   save.data.player.badges = ['boulder', 'cascade'];

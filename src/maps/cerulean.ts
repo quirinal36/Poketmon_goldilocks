@@ -1,7 +1,7 @@
 import type { MapDef } from '../core/types';
 
 const tiles = Array.from({ length: 22 }, (_, y) =>
-  y === 12 ? `${'='.repeat(23)}T` : `T${'.'.repeat(10)}=${'.'.repeat(11)}T`);
+  y === 12 ? '='.repeat(24) : `T${'.'.repeat(10)}=${'.'.repeat(11)}T`);
 tiles[0] = tiles[21] = 'T'.repeat(24);
 tiles[0] = tiles[21] = `${'T'.repeat(11)}=${'T'.repeat(12)}`;
 for (let y = 15; y <= 18; y++) tiles[y] = `T${'.'.repeat(10)}=${'.'.repeat(3)}${'~'.repeat(5)}${'.'.repeat(3)}T`;
@@ -23,12 +23,14 @@ export const MAP: MapDef = {
     { dir: 'left', to: 'route4', from: 12, toRange: 1, offset: 0 },
     { dir: 'up', to: 'route24', from: 11, toRange: 1, offset: 0 },
     { dir: 'down', to: 'route5', from: 11, toRange: 1, offset: 0 },
+    { dir: 'right', to: 'route9', from: 12, toRange: 1, offset: 0 },
   ],
   npcs: [
     { id: 'cerulean_rival', x: 3, y: 10, sprite: 'rival', script: 'cerulean_rival' },
     { id: 'north_guard', x: 11, y: 1, sprite: 'aide', script: 'chapter3_badge_guard', visibleIf: '!badge_cascade' },
     { id: 'south_guard', x: 11, y: 20, sprite: 'aide', script: 'chapter3_badge_guard', visibleIf: '!badge_cascade' },
+    { id: 'east_guard', x: 22, y: 12, sprite: 'aide', script: 'chapter4_badge_guard', visibleIf: '!badge_thunder' },
   ],
-  signs: [{ x: 21, y: 12, text: ['금빛다리와 이수재의 집은 북쪽!', '갈색시티는 남쪽 지하통로 너머예요.'] }],
+  signs: [{ x: 20, y: 10, text: ['북쪽: 이수재의 집 · 남쪽: 갈색시티', '오렌지배지를 받으면 동쪽 돌산터널로 가요.'] }],
   onEnter: 'cerulean_arrive',
 };

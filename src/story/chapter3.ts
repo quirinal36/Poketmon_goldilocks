@@ -81,7 +81,7 @@ export const SCRIPTS_CHAPTER3: Record<string, Script> = {
     if (hasBadge(g, 'thunder')) {
       if (!g.save.flag('badge_thunder_shown')) { await g.ui.showBadge('thunder'); remember(g, 'badge_thunder_shown'); }
       if (!g.save.flag('chapter3_complete')) {
-        await g.ui.say(['세 번째 배지도 얻었구나!', '새 길이 준비될 때까지 친구들과 모험을 즐겨 보렴.'], { speaker: '오박사의 전화', portrait: 'oak' });
+        await g.ui.say(['세 번째 배지도 얻었구나!', '블루시티 동쪽 9번도로로 가 보렴. 돌산터널 너머 보라타운이 있어.'], { speaker: '오박사의 전화', portrait: 'oak' });
         remember(g, 'chapter3_complete');
       } else await g.ui.say('함께 도전해서 즐거웠어!', { speaker: '마티스' });
       return;
