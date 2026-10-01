@@ -1324,4 +1324,4 @@ GitHub: [#85 (T67)](https://github.com/quirinal36/Poketmon_goldilocks/issues/85)
 
 검증: Preview/운영 실제 플레이·콘솔/네트워크·계정 복구·라운지 링크 및 문서/GitHub 상태 대조.
 
-상태: 진행 중. [검증 기록](VERIFICATION.md#네-번째-장-구현과-자동-검증)을 참고하며 미검증 완료 조건은 열린 상태로 둔다.
+상태: 진행 중. [PR #86](https://github.com/quirinal36/Poketmon_goldilocks/pull/86) 병합과 Production 배포·게스트 시작 화면은 확인했다. Preview 실제 화면·운영 계정·실기기·라운지 확인 전까지 이슈를 열어 둔다.
