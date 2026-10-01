@@ -859,7 +859,7 @@ GitHub: [#67](https://github.com/quirinal36/Poketmon_goldilocks/issues/67) (T53)
 
 검증: 명령·검증 수·실패/수정 결과·스크린샷·콘솔 오류를 기록한다. 자동 검사 범위를 실기기 검사로 표현하지 않는다.
 
-상태: 계획 / 미구현. 상세 스토리·맵·학습·보상 기준은 상위 에픽을 따른다.
+상태: 진행 중. [검증 기록](VERIFICATION.md#세-번째-장-구현과-자동-검증)을 참고하며 미검증 완료 조건은 열어 둔다.
 
 <a id="t54"></a>
 
@@ -888,7 +888,7 @@ GitHub: [#68](https://github.com/quirinal36/Poketmon_goldilocks/issues/68) (T54)
 
 검증: 실제 플레이·화면 크기별 결과와 실기기 결과를 구분해 기록한다. 코드 조정 시 영향 받는 검사와 E2E를 재실행한다.
 
-상태: 계획 / 미구현. 상세 스토리·맵·학습·보상 기준은 상위 에픽을 따른다.
+상태: 진행 중. [검증 기록](VERIFICATION.md#세-번째-장-구현과-자동-검증)을 참고하며 미검증 완료 조건은 열어 둔다.
 
 <a id="t55"></a>
 
@@ -918,4 +918,4 @@ GitHub: [#69](https://github.com/quirinal36/Poketmon_goldilocks/issues/69) (T55)
 
 검증: Preview/운영의 자산·콘솔·네트워크 오류, 실제 로그인/계정 저장/다른 브라우저 재개, 라운지 링크와 최신 안내를 확인한다.
 
-상태: 계획 / 미구현. 상세 스토리·맵·학습·보상 기준은 상위 에픽을 따른다.
+상태: 진행 중. [PR #70](https://github.com/quirinal36/Poketmon_goldilocks/pull/70) 병합과 Production 배포는 확인했다. 계정·실기기·라운지 확인 전까지 열어 둔다.
