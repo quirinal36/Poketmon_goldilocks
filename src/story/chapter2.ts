@@ -1,6 +1,6 @@
 import type { Script } from '../core/types';
 
-const rivalSpecies = (starter: number): number => ({ 1: 4, 4: 7, 7: 1, 25: 133, 152: 155, 155: 158, 158: 152 } as Record<number, number>)[starter] ?? 133;
+export const rivalSpecies = (starter: number): number => ({ 1: 4, 4: 7, 7: 1, 25: 133, 152: 155, 155: 158, 158: 152 } as Record<number, number>)[starter] ?? 133;
 
 const finishNotebook: Script = async g => {
   if (!g.save.flag('rocket_won') || g.save.flag('notebook_returned')) return;
@@ -77,9 +77,14 @@ export const SCRIPTS_CHAPTER2: Record<string, Script> = {
     else await g.ui.say('연구원의 수첩을 찾고 로켓단을 멈춰야 지나갈 수 있어요.');
   },
   cerulean_arrive: async g => {
-    if (g.save.flag('cerulean_arrived')) return;
-    await g.ui.say('달맞이산을 넘어 블루시티에 도착했어요! 먼저 포켓몬센터에서 쉬어 가세요.');
-    g.save.setFlag('cerulean_arrived'); g.save.write('cerulean-arrive');
+    if (!g.save.flag('cerulean_arrived')) {
+      await g.ui.say('달맞이산을 넘어 블루시티에 도착했어요! 먼저 포켓몬센터에서 쉬어 가세요.');
+      g.save.setFlag('cerulean_arrived'); g.save.write('cerulean-arrive');
+    }
+    if (g.save.data.player.badges.includes('cascade') && !g.save.flag('chapter3_oak_called')) {
+      await g.ui.say(['두 번째 배지도 얻었구나! 북쪽 금빛다리 너머 이수재의 집에 가 보렴.', '남쪽 지하통로를 지나면 갈색시티도 만날 수 있단다.'], { speaker: '오박사의 전화', portrait: 'oak' });
+      g.save.setFlag('chapter3_oak_called'); g.save.write('chapter3-oak');
+    }
   },
   cerulean_rival: async g => {
     const rival = g.data.trainers.rival_cerulean;
@@ -108,7 +113,8 @@ export const SCRIPTS_CHAPTER2: Record<string, Script> = {
         g.save.setFlag('badge_cascade_shown'); g.save.write('badge-shown');
       }
       if (!g.save.flag('chapter2_complete')) {
-        await g.ui.say(['두 번째 배지도 얻었구나!', '새로운 길이 준비될 때까지 친구들과 모험을 더 즐겨 보렴.'], { speaker: '오박사의 전화', portrait: 'oak' });
+        await g.ui.say(['두 번째 배지도 얻었구나!', '북쪽 금빛다리 너머 이수재의 집에 가 보렴.'], { speaker: '오박사의 전화', portrait: 'oak' });
+        g.save.setFlag('chapter3_oak_called');
         g.save.setFlag('chapter2_complete'); g.save.write('chapter2-complete');
       } else await g.ui.say('친구들과 함께 더 모험해 봐!', { speaker: '이슬' });
       return;

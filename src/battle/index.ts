@@ -164,7 +164,11 @@ export function createBattle(): BattleService {
     async trainer(id) {
       const trainer = G.data.trainers[id]; if (!trainer) throw Error(`Unknown trainer: ${id}`);
       if (trainer.badge === 'cascade' && !G.save.data.player.badges.includes('boulder')) { await G.ui.say('회색배지를 받은 뒤 다시 와 주세요.'); return 'fled'; }
-      const required = trainer.badge === 'cascade' ? 8 : trainer.badge === 'boulder' ? 4 : 0;
+      if (trainer.badge === 'thunder') {
+        if (!G.save.flag('captain_helped')) { await G.ui.say('상트앙느호의 선장을 돕고 와 주세요.'); return 'fled'; }
+        if (!['boulder', 'cascade'].every(b => G.save.data.player.badges.includes(b))) { await G.ui.say('앞선 두 배지를 받고 와 주세요.'); return 'fled'; }
+      }
+      const required = trainer.badge === 'thunder' ? 12 : trainer.badge === 'cascade' ? 8 : trainer.badge === 'boulder' ? 4 : 0;
       if (G.learn.stage() < required) { await G.ui.say(`공부 도장 ${required}개를 모아 다시 와 주세요.`); return 'fled'; }
       if (G.save.data.defeatedTrainers.includes(id)) { await G.ui.say(trainer.after || trainer.defeat); return 'won'; }
       return run(trainer.team, trainer);

@@ -290,9 +290,12 @@ export type MapId =
   | 'route1' | 'viridian' | 'viridian_center' | 'viridian_mart' | 'viridian_school'
   | 'route22' | 'route2' | 'forest' | 'pewter' | 'pewter_center' | 'pewter_mart' | 'pewter_gym'
   | 'route3' | 'mt_moon_front' | 'mt_moon_deep' | 'route4'
-  | 'cerulean' | 'cerulean_center' | 'cerulean_mart' | 'cerulean_gym';
+  | 'cerulean' | 'cerulean_center' | 'cerulean_mart' | 'cerulean_gym'
+  | 'route24' | 'route25' | 'bill_house' | 'route5' | 'underground_path' | 'route6'
+  | 'vermilion' | 'vermilion_center' | 'vermilion_mart' | 'vermilion_gym'
+  | 'ss_anne_1f' | 'ss_anne_deck' | 'ss_anne_captain';
 
-export type AreaId = 'route1' | 'route2' | 'forest' | 'route22' | 'route3' | 'mt_moon' | 'route4' | 'cerulean';
+export type AreaId = 'route1' | 'route2' | 'forest' | 'route22' | 'route3' | 'mt_moon' | 'route4' | 'cerulean' | 'route24' | 'route25' | 'route5' | 'route6' | 'vermilion';
 
 export type TileId =
   // outdoor
@@ -323,7 +326,7 @@ export interface StructureInfo { w: number; h: number; door: { x: number; y: num
 export type NpcSpriteId =
   | 'mom' | 'oak' | 'rival' | 'sister' | 'aide' | 'nurse' | 'clerk' | 'teacher' | 'boy' | 'girl'
   | 'youngster' | 'lass' | 'oldman' | 'oldwoman' | 'bugcatcher' | 'camper' | 'leader_rock' | 'fisher'
-  | 'hiker' | 'gymguide' | 'man' | 'woman' | 'scientist' | 'rocket' | 'clefairy' | 'leader_water';
+  | 'hiker' | 'gymguide' | 'man' | 'woman' | 'scientist' | 'rocket' | 'clefairy' | 'leader_water' | 'leader_surge';
 
 export type ScriptId = string;
 export type FlagExpr = string;   // 'flag' | '!flag' | 'flagA&flagB' | 'a|b' (see world/flags.ts evalFlag)

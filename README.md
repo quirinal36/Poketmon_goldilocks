@@ -2,7 +2,9 @@
 
 플레이: https://poke.letscoding.kr
 
-초등 저학년 수학·영어 문제를 풀며 태초마을에서 블루시티의 두 번째 배지까지 모험하는 웹 게임입니다. 25개 맵, 251종 데이터, 266레슨·6,906문제를 내장합니다.
+초등 저학년 수학·영어 문제를 풀며 태초마을에서 갈색시티의 세 번째 배지까지 모험하는 웹 게임입니다. 38개 맵, 251종 데이터, 266레슨·6,906문제를 내장합니다.
+
+세 번째 장은 현재 구현 브랜치에서 검증 중입니다. 운영 주소의 반영 상태는 [검증 기록](docs/VERIFICATION.md#세-번째-장-구현과-자동-검증)을 참고하세요.
 
 ```sh
 npm install
@@ -28,7 +30,7 @@ npm run e2e
 - [서비스 배포](docs/DEPLOY.md) · [설계](docs/DESIGN.md)
 - [두 번째 장: 달맞이산~블루시티](docs/STORY_CHAPTER_2.md)
 - [두 번째 장 마일스톤](docs/MILESTONES.md#chapter2) · [GitHub 이슈](docs/GITHUB_ISSUES.md#chapter2)
-- [세 번째 장 기획: 이수재~갈색시티·마티스](docs/STORY_CHAPTER_3.md) · [마일스톤](docs/MILESTONES.md#chapter3) · [GitHub 이슈](docs/GITHUB_ISSUES.md#chapter3) — 계획 / 미구현
+- [세 번째 장: 이수재~갈색시티·마티스](docs/STORY_CHAPTER_3.md) · [마일스톤](docs/MILESTONES.md#chapter3) · [GitHub 이슈](docs/GITHUB_ISSUES.md#chapter3) — 기능 구현, 검증 중
 - [배경음악 제작·적용 기록](docs/AUDIO.md)
 
 개발용 검사: `/dev/art.html`, `/dev/audio.html`, `/dev/visuals.html`. `?debug=1`에서는 `window.__G`와 E2E 가속 도구가 활성화됩니다. 일반 실행에서는 노출하지 않습니다.

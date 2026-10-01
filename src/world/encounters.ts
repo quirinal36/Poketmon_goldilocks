@@ -21,11 +21,17 @@ export const AREA_HABITATS: Record<AreaId, { land: Habitat[]; water: Habitat[] }
   mt_moon: { land: ['cave', 'mountain'], water: ['waters-edge'] },
   route4: { land: ['grassland', 'mountain'], water: ['waters-edge'] },
   cerulean: { land: ['urban', 'waters-edge'], water: ['waters-edge', 'sea'] },
+  route24: { land: ['grassland', 'waters-edge'], water: ['waters-edge'] },
+  route25: { land: ['grassland', 'forest'], water: ['waters-edge'] },
+  route5: { land: ['grassland', 'urban'], water: ['waters-edge'] },
+  route6: { land: ['grassland', 'waters-edge'], water: ['waters-edge'] },
+  vermilion: { land: ['urban', 'sea'], water: ['sea', 'waters-edge'] },
 };
 
 export const AREA_LEVELS: Record<AreaId, [number, number]> = {
   route1: [2, 4], route2: [3, 5], forest: [3, 6], route22: [4, 7], route3: [8, 12],
   mt_moon: [9, 13], route4: [10, 14], cerulean: [10, 14],
+  route24: [12, 15], route25: [13, 16], route5: [14, 17], route6: [15, 18], vermilion: [15, 18],
 };
 
 export interface PoolEntry { species: Species; weight: number }
