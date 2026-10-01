@@ -151,6 +151,6 @@ Aside CLI/Aside Browser에서 로컬 게임 시작 화면과 새 게임 진입�
 - 단위 검사는 총 99개 통과했다. 기존 저장의 새 맵·회복 좌표 보존, 오래된 배지 저장의 플래그 보정, 이수재·선장 대화 중단 복구를 포함한다. `npm run build`, `npm run check:maps`(38개), `npm run check:pokemon`(251종·753개 아틀라스 셀)이 통과했다. 문제은행은 바꾸지 않았다.
 - Playwright 전체 실행은 54개 중 38개 통과·15개 설정상 생략·1개 추적 파일 경합 실패였다. 실패한 첫 장 전체 플레이는 다른 Playwright 실행이 산출물을 지운 환경 충돌이었고, 동일 테스트를 단독 재실행해 통과했다. 추가로 새 장 터치 입력 1개, 새 길·승선·관장 조건과 패배 복귀 3개를 단독 실행해 통과했다.
 - 새 장 도시·금빛다리·선박·체육관·오렌지배지 화면은 1024×768·768×1024·1280×800·820×1180·375×667에서 넘침 없이 표시됐다. 모바일 터치 에뮬레이션에서 북쪽 길 진입과 이수재 대화를 확인했다. 실제 터치 기기와 어린이 플레이는 아직 확인하지 않았다.
-- 카카오·비밀번호 로그인 및 계정 저장 분리는 모의 서버 E2E에서 기존 경로가 통과했다. 실제 테스트 계정의 운영 저장·새 브라우저 복구, Vercel Preview/Production, 라운지 소개·Play 링크는 아직 확인하지 않았다. [M9의 잔여 이슈](MILESTONES.md#m9)와 함께 M12에서 추적한다.
+- 카카오·비밀번호 로그인 및 계정 저장 분리는 모의 서버 E2E에서 기존 경로가 통과했다. [초안 PR #70](https://github.com/quirinal36/Poketmon_goldilocks/pull/70)의 Vercel Preview 배포 상태는 성공이다. Preview URL은 SSO 로그인으로 리디렉션되어 게임 화면은 확인하지 못했다. 실제 테스트 계정의 운영 저장·새 브라우저 복구, Preview 화면·Production, 라운지 소개·Play 링크는 [M9의 잔여 이슈](MILESTONES.md#m9)와 함께 M12에서 추적한다.
 
 검증 파일: `tests/unit/chapter3.test.ts`, `tests/e2e/chapter3.spec.ts`, `tests/e2e/chapter3-boundaries.spec.ts`, `tests/e2e/chapter3-touch.spec.ts`, `tests/e2e/chapter3-layout.spec.ts`.
