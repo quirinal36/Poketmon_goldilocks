@@ -15,7 +15,7 @@ async function fight(page: Page, flag: string) {
   for (let i = 0; i < 50; i++) {
     if (await page.evaluate(flag => (window as any).__G.save.flag(flag), flag)) return;
     const attack = page.getByRole('button', { name: '싸운다', exact: true });
-    if (await attack.isVisible()) await attack.click();
+    if (await attack.isVisible()) { await attack.click(); await page.locator('.battle-moves button').first().click(); }
     else await page.waitForTimeout(100);
   }
   await expect.poll(() => page.evaluate(flag => (window as any).__G.save.flag(flag), flag)).toBe(true);
@@ -134,7 +134,7 @@ test('losing to Rocket returns to the researcher and keeps the encounter retryab
   await page.getByRole('button', { name: '이어서 하기', exact: true }).click();
   await teleport(page, 'mt_moon_deep', 16, 12);
   await page.evaluate(() => { void (window as any).__G.world.runScript('moon_rocket'); });
-  await page.getByRole('button', { name: '싸운다', exact: true }).click();
+  await page.getByRole('button', { name: '싸운다', exact: true }).click(); await page.locator('.battle-moves button').first().click();
   await expect.poll(() => page.evaluate(() => (window as any).__G.world.mapId)).toBe('mt_moon_front');
   expect(await page.evaluate(() => (window as any).__G.save.flag('rocket_won'))).toBe(false);
   expect(await page.evaluate(() => (window as any).__G.save.data.party[0].hp)).toBe(78);

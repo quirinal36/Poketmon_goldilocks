@@ -91,7 +91,7 @@ for (const width of [1024, 768]) test(`chapter 3 journey, badge, and save resume
   while (Date.now() < battleDeadline) {
     if (await page.evaluate(() => (window as any).__G.save.flag('badge_thunder'))) break;
     const attack = page.getByRole('button', { name: '싸운다', exact: true });
-    if (await attack.isVisible()) await attack.click();
+    if (await attack.isVisible()) { await attack.click(); await page.locator('.battle-moves button').first().click(); }
     else await page.waitForTimeout(200);
   }
   await expect.poll(() => page.evaluate(() => (window as any).__G.save.flag('badge_thunder'))).toBe(true);

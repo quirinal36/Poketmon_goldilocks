@@ -30,7 +30,7 @@ async function fight(page: Page, until: () => Promise<boolean>) {
     const fight = page.getByRole('button', { name: '싸운다', exact: true });
     const badge = page.getByRole('button', { name: '모험 계속하기' });
     if (await badge.isVisible()) await badge.click();
-    else if (await fight.isVisible()) await fight.click();
+    else if (await fight.isVisible()) { await fight.click(); await page.locator('.battle-moves button').first().click(); }
     await page.waitForTimeout(350);
   }
   await expect.poll(until).toBe(true);
@@ -59,12 +59,12 @@ test('new adventure, starter, rival, catch, study, badge, restore and whiteout',
   await warp(page, 'route1', 11, 11);
   await script(page, 'route1_tip');
   await page.evaluate(() => { void (window as any).__G.world.startWildBattle('route1'); });
-  await page.getByRole('button', { name: '싸운다', exact: true }).click();
+  await page.getByRole('button', { name: '싸운다', exact: true }).click(); await page.locator('.battle-moves button').first().click();
   await expect(page.getByRole('button', { name: '싸운다', exact: true })).toBeVisible();
   // A second attack is only needed when the first roll left >50% HP.
   const hp = await page.locator('.enemy-status progress').getAttribute('value');
   const max = await page.locator('.enemy-status progress').getAttribute('max');
-  if (Number(hp) > Number(max) / 2) { await page.getByRole('button', { name: '싸운다', exact: true }).click(); }
+  if (Number(hp) > Number(max) / 2) { await page.getByRole('button', { name: '싸운다', exact: true }).click(); await page.locator('.battle-moves button').first().click(); }
   await page.getByRole('button', { name: '몬스터볼', exact: true }).click();
   await page.getByRole('button', { name: /▶\s*아니오$/ }).click();
   await expect.poll(() => page.evaluate(() => (window as any).__G.save.data.stats.caught)).toBe(1);

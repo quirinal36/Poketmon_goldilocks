@@ -1,5 +1,5 @@
-import type { AreaId, BattleOutcome, BattleService, ItemId, PokemonInstance, TrainerDef } from '../core/types';
-import { expToNext, maxHpFor, TYPE_MOVES } from '../core/types';
+import type { AreaId, BattleMove, BattleOutcome, BattleService, ItemId, PokemonInstance, Species, TrainerDef } from '../core/types';
+import { expToNext, maxHpFor } from '../core/types';
 import { G } from '../game';
 import { el, uid, josa } from '../core/util';
 import { pokemonSprite } from '../core/sprite';
@@ -7,6 +7,20 @@ import { input } from '../core/input';
 
 export const attackDamage = (maxHp: number, firstTry: boolean, roll = Math.random()): number => Math.ceil(maxHp * (.35 + roll * .15 + (firstTry ? .1 : 0)));
 export const catchChance = (hp: number, maxHp: number, firstTry: boolean, great = false): number => hp <= maxHp / 2 ? 1 : Math.min(1, .6 + (firstTry ? .2 : 0) + (great ? .2 : 0));
+/** Derive moves from species + level, so existing saves and evolutions need no migration. */
+export function movesFor(species: Species, level: number): BattleMove[] {
+  const available = (species.moves ?? []).filter(m => m.level <= level)
+    .sort((a, b) => b.level - a.level || a.id - b.id).slice(0, 4);
+  return available.length ? available : [{ id: 165, name: '몸부림', type: '노말', level: 1, kind: 'physical' }];
+}
+
+async function motion(node: HTMLElement, frames: Keyframe[], duration: number) {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const fast = G.debug && (window as any).__TEST__?.fastText;
+  const animation = node.animate(frames, { duration: fast ? 25 : duration, easing: 'ease-in-out' });
+  try { await animation.finished; } finally { animation.cancel(); }
+}
+
 const nameOf = (p: PokemonInstance) => p.nickname || G.data.speciesById(p.speciesId).name;
 function makePokemon(speciesId: number, level: number, area?: AreaId): PokemonInstance {
   return { uid: uid('p_'), speciesId, level, exp: 0, hp: maxHpFor(level), maxHp: maxHpFor(level), caughtAt: new Date().toISOString(), caughtArea: area, friendship: 70 };
@@ -55,22 +69,80 @@ export function createBattle(): BattleService {
         el('div', { class: 'ally-sprite' }, pokemonSprite(p.speciesId, 'back', 'var(--battle-sprite-size)')), status(p, 'ally-status'));
       message.textContent = !trainer && enemy.hp <= enemy.maxHp / 2 ? '지금 몬스터볼을 던져 보세요!' : `${nameOf(p)}, 함께 힘내자!`;
     };
-    const command = (): Promise<'fight' | 'ball' | 'bag' | 'flee'> => new Promise(resolve => {
-      const actions = [['싸운다', 'fight'], ['몬스터볼', 'ball'], ['가방', 'bag'], ['도망간다', 'flee']] as const;
-      const finish = (action: typeof actions[number][1]) => { off(); commands.replaceChildren(); resolve(action); };
-      const buttons = actions.map(([label, action]) => {
-        const b = el('button', { type: 'button', class: 'game-btn', onclick: () => finish(action) }, label);
-        b.disabled = !!trainer && ['ball', 'flee'].includes(action); return b;
+    type Action = 'fight' | 'ball' | 'bag' | 'flee' | 'back' | BattleMove;
+    const command = (moves?: BattleMove[]): Promise<Action> => new Promise(resolve => {
+      const actions: { label: string; value: Action; disabled?: boolean }[] = moves
+        ? [...moves.map(move => ({ label: `${move.name} · ${move.type}`, value: move })), { label: '돌아가기', value: 'back' }]
+        : [{ label: '싸운다', value: 'fight' }, { label: '몬스터볼', value: 'ball', disabled: !!trainer },
+          { label: '가방', value: 'bag' }, { label: '도망간다', value: 'flee', disabled: !!trainer }];
+      let done = false;
+      const finish = (action: Action) => { if (done) return; done = true; off(); commands.replaceChildren(); resolve(action); };
+      const buttons = actions.map(({ label, value, disabled }) => {
+        const b = el('button', { type: 'button', class: 'game-btn', onclick: () => finish(value) }, label);
+        b.disabled = !!disabled; return b;
       });
       const off = input.subscribe(ev => {
         if (ev.type !== 'down') return true;
         const enabled = buttons.filter(b => !b.disabled), index = enabled.indexOf(document.activeElement as HTMLButtonElement);
         if (ev.button === 'a') enabled[Math.max(index, 0)].click();
+        if (ev.button === 'b' && moves) finish('back');
         if (['up', 'down', 'left', 'right'].includes(ev.button)) enabled[(index + (['up', 'left'].includes(ev.button) ? enabled.length - 1 : 1)) % enabled.length].focus();
         return true;
       });
+      commands.classList.toggle('battle-moves', !!moves);
+      commands.setAttribute('aria-label', moves ? '사용할 기술' : '대결 행동');
+      commands.setAttribute('role', 'group');
+      message.textContent = moves ? '사용할 기술을 골라 주세요.' : message.textContent;
       commands.replaceChildren(...buttons); buttons[0].focus();
     });
+    const attack = async (side: 'ally' | 'enemy', move: BattleMove) => {
+      const other = side === 'ally' ? 'enemy' : 'ally', direction = side === 'ally' ? 1 : -1;
+      root.dataset.phase = 'attack';
+      message.textContent = `${nameOf(side === 'ally' ? G.save.data.party[lead] : enemy)}의 ${move.name}!`;
+      const attacker = arena.querySelector<HTMLElement>(`.${side}-sprite`)!;
+      const defender = arena.querySelector<HTMLElement>(`.${other}-sprite`)!;
+      await motion(attacker, [{ transform: 'translate(0, 0)' },
+        { transform: `translate(${direction * (move.kind === 'physical' ? 30 : 14)}px, ${-direction * 12}px) scale(1.05)` }, { transform: 'translate(0, 0)' }], 320);
+      G.audio.playSfx('hit'); root.dataset.phase = 'hit';
+      await motion(defender, [{ opacity: 1 }, { opacity: .4, transform: `translateX(${direction * 12}px)` }, { opacity: 1, transform: 'translateX(0)' }], 240);
+      root.dataset.phase = 'idle';
+    };
+    const capture = async (caught: boolean, item: 'pokeball' | 'greatball') => {
+      const foe = arena.querySelector<HTMLElement>('.enemy-sprite')!;
+      const friend = arena.querySelector<HTMLElement>('.ally-sprite')!;
+      const bounds = arena.getBoundingClientRect(), from = friend.getBoundingClientRect(), to = foe.getBoundingClientRect();
+      const x = to.left + to.width / 2 - bounds.left, y = to.top + to.height / 2 - bounds.top;
+      const dx = from.left + from.width / 2 - bounds.left - x, dy = from.top + from.height / 2 - bounds.top - y;
+      const ball = el('div', { class: `battle-ball ${item === 'greatball' ? 'great' : ''}`, 'aria-hidden': 'true', style: { left: `${x}px`, top: `${y}px` } },
+        el('div', { class: 'ball-top' }), el('div', { class: 'ball-bottom' }), el('div', { class: 'ball-button' }));
+      arena.append(ball);
+      try {
+        root.dataset.phase = 'throw'; message.textContent = '몬스터볼을 던졌어요!'; G.audio.playSfx('ball_throw');
+        await motion(ball, [{ transform: `translate(${dx}px, ${dy}px) rotate(0deg)` },
+          { transform: `translate(${dx / 2}px, ${dy / 2 - 65}px) rotate(360deg)` }, { transform: 'translate(0, 0) rotate(720deg)' }], 600);
+        root.dataset.phase = 'absorb'; message.textContent = '포켓몬이 볼 안으로 들어갔어요!';
+        await motion(foe, [{ transform: 'scale(1)', opacity: 1 }, { transform: 'scale(.05)', opacity: 0 }], 280);
+        foe.style.visibility = 'hidden';
+        await motion(ball, [{ transform: 'translateY(-12px)' }, { transform: 'translateY(0)' }], 220);
+        root.dataset.phase = 'shake'; message.textContent = '두근두근… 잡힐까요?';
+        for (let i = 0; i < 3; i++) {
+          G.audio.playSfx('ball_shake');
+          await motion(ball, [{ transform: 'rotate(0deg)' }, { transform: 'rotate(-18deg)' }, { transform: 'rotate(18deg)' }, { transform: 'rotate(0deg)' }], 380);
+        }
+        if (caught) {
+          root.dataset.phase = 'caught'; message.textContent = '잡았다!'; ball.classList.add('is-caught');
+          await G.world.wait(450);
+        } else {
+          root.dataset.phase = 'breakout'; message.textContent = '볼이 열리고 포켓몬이 나왔어요!'; G.audio.playSfx('ball_pop');
+          ball.classList.add('is-open');
+          const top = ball.querySelector<HTMLElement>('.ball-top')!;
+          await motion(top, [{ transform: 'translateY(0)', opacity: 1 }, { transform: 'translateY(-20px) rotate(-25deg)', opacity: 0 }], 220);
+          top.style.opacity = '0';
+          foe.style.visibility = '';
+          await motion(foe, [{ transform: 'scale(.2)', opacity: 0 }, { transform: 'scale(1)', opacity: 1 }], 300);
+        }
+      } finally { ball.remove(); if (!caught) foe.style.visibility = ''; }
+    };
     let outcome: BattleOutcome = 'lost';
     try {
       G.audio.playMusic(trainer?.music || (trainer ? 'battle_trainer' : 'battle_wild'));
@@ -92,6 +164,12 @@ export function createBattle(): BattleService {
           draw();
           let action = await command(); let item: ItemId | null = null;
           if (action === 'flee') return 'fled';
+          let move: BattleMove | null = null;
+          if (action === 'fight') {
+            const choice = await command(movesFor(G.data.speciesById(p.speciesId), p.level));
+            if (typeof choice === 'string') continue;
+            move = choice;
+          }
           if (action === 'bag') {
             item = await G.ui.openBag('battle'); if (!item) continue;
             if (item === 'potion') {
@@ -109,10 +187,10 @@ export function createBattle(): BattleService {
           if (result.correct) {
             p.friendship = Math.min(255, p.friendship + 1);
             if (action === 'ball') {
-              G.save.useItem(ball); G.audio.playSfx('ball_throw');
-              for (let i = 0; i < 3; i++) { root.classList.toggle('ball-shake'); G.audio.playSfx('ball_shake'); await G.world.wait(250); }
-              root.classList.remove('ball-shake');
-              if (Math.random() < catchChance(enemy.hp, enemy.maxHp, result.firstTry, ball === 'greatball')) {
+              G.save.useItem(ball);
+              const caught = Math.random() < catchChance(enemy.hp, enemy.maxHp, result.firstTry, ball === 'greatball');
+              await capture(caught, ball);
+              if (caught) {
                 enemy.hp = enemy.maxHp;
                 const destination = G.save.addPokemon(enemy); G.save.markCaught(enemy.speciesId); G.save.data.stats.caught++;
                 G.save.write('caught'); await G.audio.jingle('caught');
@@ -121,16 +199,16 @@ export function createBattle(): BattleService {
                 if (destination === 'box') await G.ui.say('친구가 여섯 마리라 PC로 보냈어요.');
                 outcome = 'caught'; return outcome;
               }
-              G.audio.playSfx('ball_pop'); await G.ui.say('아깝다! 힘을 조금 더 줄이고 다시 던져 보세요.');
+              await G.ui.say('아깝다! 힘을 조금 더 줄이고 다시 던져 보세요.');
             } else {
-              enemy.hp = Math.max(0, enemy.hp - attackDamage(enemy.maxHp, result.firstTry)); G.audio.playSfx('hit');
-              arena.classList.add('hit'); draw(); await G.world.wait(200); arena.classList.remove('hit');
-              await G.ui.say(`${nameOf(p)}의 ${TYPE_MOVES[G.data.speciesById(p.speciesId).types[0]]}!`, { auto: true });
+              await attack('ally', move!);
+              enemy.hp = Math.max(0, enemy.hp - attackDamage(enemy.maxHp, result.firstTry)); draw();
+              await G.ui.say(`${nameOf(p)}의 ${move!.name}!`, { auto: true });
               await giveExp(lead, 5 + enemy.level);
             }
           } else {
             if (action === 'ball') await G.ui.say('앗, 몬스터볼이 빗나갔어요! 공은 그대로 있어요.');
-            else { p.hp = Math.max(0, p.hp - Math.ceil(p.maxHp * (.12 + Math.random() * .06))); G.audio.playSfx(p.hp ? 'hit' : 'faint'); draw();
+            else { await attack('enemy', movesFor(G.data.speciesById(enemy.speciesId), enemy.level)[0]); p.hp = Math.max(0, p.hp - Math.ceil(p.maxHp * (.12 + Math.random() * .06))); G.audio.playSfx(p.hp ? 'hit' : 'faint'); draw();
               await G.ui.say(p.hp ? '괜찮아요! 다음 문제를 함께 풀어 봐요.' : `${josa(nameOf(p), '은/는')} 지쳐 버렸어요.`); }
           }
           G.save.write('battle-turn');

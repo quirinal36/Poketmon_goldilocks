@@ -22,11 +22,16 @@ export type Habitat =
   | 'cave' | 'forest' | 'grassland' | 'mountain' | 'rare' | 'rough-terrain'
   | 'sea' | 'urban' | 'waters-edge';
 
+export interface BattleMove {
+  id: number; name: string; type: PokeType; level: number; kind: 'physical' | 'special';
+}
+
 export interface Species {
   id: number;               // national dex 1..251
   name: string;             // Korean name  (피카츄)
   nameEn: string;           // English name (Pikachu)
   types: PokeType[];        // 1 or 2
+  moves?: BattleMove[];     // level-up attacking moves from PokeAPI
   genus: string;            // Korean 분류 e.g. '쥐포켓몬'
   flavor: string;           // Korean dex text (short, kid-readable if possible)
   height: number;           // meters
@@ -586,12 +591,6 @@ export interface Game {
 
 // ------------------------------------------------------------- constants ----
 export const TILE = 16;
-
-export const TYPE_MOVES: Record<PokeType, string> = {
-  노말: '몸통박치기', 불꽃: '불꽃세례', 물: '물대포', 풀: '덩굴채찍', 전기: '전기쇼크', 얼음: '얼다바람',
-  격투: '태권당수', 독: '독침', 땅: '진흙뿌리기', 비행: '날개치기', 에스퍼: '염동력', 벌레: '벌레먹음',
-  바위: '돌떨구기', 고스트: '핥기', 드래곤: '용의숨결', 악: '물기', 강철: '메탈크로우', 페어리: '요정의바람',
-};
 
 export const STARTERS = [1, 4, 7, 25, 152, 155, 158];
 

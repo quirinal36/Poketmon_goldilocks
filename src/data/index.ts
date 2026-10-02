@@ -51,6 +51,9 @@ export function repairSpecies(raw: Partial<Species> & { id: number }): Species {
     ...base,
     ...raw,
     types, habitats, tier, evolvesTo,
+    moves: Array.isArray(raw.moves) ? raw.moves.filter(m => m && Number.isInteger(m.id) && m.id > 0 &&
+      typeof m.name === 'string' && m.name.length > 0 && typeof m.type === 'string' &&
+      Number.isInteger(m.level) && m.level >= 0 && m.level <= 100 && (m.kind === 'physical' || m.kind === 'special')) : [],
     obtainable: raw.obtainable === 'evolve' || raw.obtainable === 'event' ? raw.obtainable : 'wild',
     isLegendary: !!raw.isLegendary,
     isBaby: !!raw.isBaby,

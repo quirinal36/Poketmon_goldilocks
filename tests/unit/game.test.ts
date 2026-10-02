@@ -1,7 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 import { defaultSave, repairSave, createSave } from '../../src/core/save';
-import { createBattle, attackDamage, catchChance } from '../../src/battle';
+import { createBattle, attackDamage, catchChance, movesFor } from '../../src/battle';
 import { G } from '../../src/game';
+import { repairSpecies } from '../../src/data';
 import { MAPS } from '../../src/maps';
 import { SCRIPTS, TRAINERS } from '../../src/story';
 import { validateMaps } from '../../src/world/validate';
@@ -95,4 +96,19 @@ it('reports local storage failure while still queuing the cloud save', () => {
   } finally {
     G.net = oldNet; G.ui = oldUI; warn.mockRestore(); vi.unstubAllGlobals();
   }
+});
+
+
+it('offers at most four learned attacks for all species, without mutating their learnsets', () => {
+  for (const s of species) for (const level of [1, 5, 25, 100]) {
+    const before = structuredClone(s.moves), moves = movesFor(s, level);
+    expect(moves.length).toBeGreaterThan(0); expect(moves.length).toBeLessThanOrEqual(4);
+    expect(moves.every(m => m.level <= level && ['physical', 'special'].includes(m.kind))).toBe(true);
+    expect(s.moves).toEqual(before);
+  }
+  expect(repairSpecies({ id: 25, moves: [null, { id: 1, level: -1 }] as any }).moves).toEqual([]);
+  const pikachu = species.find(s => s.id === 25)!;
+  expect(movesFor(pikachu, 5).map(m => m.name)).toEqual(['전기쇼크']);
+  expect(movesFor(pikachu, 26).map(m => m.name)).toContain('10만볼트');
+  expect(movesFor(species.find(s => s.id === 129)!, 5)[0].name).toBe('몸부림');
 });

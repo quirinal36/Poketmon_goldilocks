@@ -48,5 +48,6 @@ test('one-second touches never click battle commands revealed below a dialog', a
   expect(await page.evaluate(() => (window as any).__G.save.data.bag.pokeball)).toBe(5);
   // A new intentional gesture still opens a fight question.
   await fight.tap();
+  await page.locator('.battle-moves button').first().tap();
   await expect(page.locator('.qc-card')).toBeVisible();
 });

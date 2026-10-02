@@ -95,6 +95,11 @@ async function pool(items, n, fn) {
   return out;
 }
 
+// Gold/Silver level-up learnsets; cache move metadata just like species data.
+const learnset = p => p.moves.flatMap(m => m.version_group_details
+  .filter(v => v.version_group.name === 'gold-silver' && v.move_learn_method.name === 'level-up')
+  .map(v => ({ id: idFromUrl(m.move.url), level: v.level_learned_at })));
+
 // -------------------------------------------------------------- helpers ----
 const idFromUrl = (url) => Number(url.replace(/\/+$/, '').split('/').pop());
 const inRange = (id) => id >= 1 && id <= MAX_ID;
@@ -160,6 +165,10 @@ await pool(chainIds, CONCURRENCY, async (cid) => {
 
 // Per-species chain info: stage (from first non-baby ancestor), basicId, evolvesFrom, evolvesTo.
 const byId = new Map(raw.map((r) => [r.species.id, r]));
+const moveIds = [...new Set(raw.flatMap(r => learnset(r.pokemon).map(m => m.id)))];
+console.log(`Fetching ${moveIds.length} move definitions …`);
+const moveData = new Map(await pool(moveIds, CONCURRENCY, async id => [id, await cached('move', id, `${API}/move/${id}`)]));
+
 const chainInfo = new Map();
 for (const chain of chains.values()) {
   const walk = (node, parentId, stage, basicId) => {
@@ -237,6 +246,12 @@ const species = raw.map(({ species: s, pokemon: p }) => {
 
   const out = {
     id, name, nameEn, types, genus, flavor,
+    moves: learnset(p).filter(m => moveData.get(m.id)?.damage_class.name !== 'status').map(m => {
+      const data = moveData.get(m.id);
+      const name = data.names.find(n => n.language.name === 'ko')?.name;
+      if (!name || !TYPE_KO[data.type.name]) throw Error(`Move ${m.id}: missing Korean name/type`);
+      return { ...m, name, type: TYPE_KO[data.type.name], kind: data.damage_class.name };
+    }),
     height: p.height / 10, weight: p.weight / 10,
     captureRate: s.capture_rate, tier, habitats, obtainable,
     ...(info.evolvesFrom ? { evolvesFrom: info.evolvesFrom } : {}),
@@ -329,12 +344,13 @@ const evoExamples = [25, 133, 172, 236, 95, 61, 133]
 const docBody = `
 ## 데이터: public/data/pokemon.json
 
-Source: PokeAPI (\`pokemon-species\`, \`pokemon\`, \`evolution-chain\`), cached in \`.cache/pokeapi/\`.
+Source: PokeAPI (\`pokemon-species\`, \`pokemon\`, \`evolution-chain\`, \`move\`), cached in \`.cache/pokeapi/\`.
 Regenerate with \`npm run data:pokemon\` (\`-- --refresh\` re-downloads). Output = \`Species[]\` (types.ts), index 0 = id 1.
 Built ${new Date().toLocaleDateString('sv-SE')}.
 
 ### Field rules
 - \`name\` / \`genus\` / \`flavor\`: Korean (\`ko\`) PokeAPI entries. \`nameEn\`: English name.
+- \`moves\`: Gold/Silver level-up attacking moves (Korean name, type, learn level, physical/special kind). Runtime offers the latest four available at the current level; no available attack → 몸부림. Learning attacks does not change the saved Pokémon structure. Status moves and PP are not used; damage still follows the study-answer rule.
 - \`types\`: current types (e.g. 삐삐 = 페어리), keys: ${Object.entries(TYPE_KO).map(([k, v]) => `${k}→${v}`).join(', ')}.
 - \`flavor\`: the **shortest** Korean dex entry (whitespace normalized). Entries containing ${VIOLENT_WORDS.map((w) => `"${w}"`).join(', ')} are skipped when another entry exists.
 - \`height\` m, \`weight\` kg, \`captureRate\` 3..255, \`color\` = PokeAPI color name.

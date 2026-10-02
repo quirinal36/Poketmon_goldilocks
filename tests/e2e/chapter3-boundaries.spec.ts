@@ -52,7 +52,7 @@ test('losing to Surge returns to the last heal spot without awarding a badge', a
   await page.evaluate(() => { (window as any).__TEST__.fastText = true; (window as any).__TEST__.autoAnswer = 'wrong'; (window as any).__G.audio.setVolumes(0, 0); });
   await page.getByRole('button', { name: '이어서 하기', exact: true }).click();
   await page.evaluate(() => { void (window as any).__G.world.runScript('chapter3_leader'); });
-  await page.getByRole('button', { name: '싸운다', exact: true }).click();
+  await page.getByRole('button', { name: '싸운다', exact: true }).click(); await page.locator('.battle-moves button').first().click();
   await expect.poll(() => page.evaluate(() => (window as any).__G.world.mapId)).toBe('bill_house');
   expect(await page.evaluate(() => (window as any).__G.save.data.party[0].hp)).toBe(78);
   expect(await page.evaluate(() => (window as any).__G.save.flag('badge_thunder'))).toBe(false);

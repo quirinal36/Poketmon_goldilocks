@@ -25,7 +25,7 @@ for (const [width,height] of sizes) test(`10 screens fit ${width}x${height}`, as
       .filter(e => { const r = e.getBoundingClientRect(); return r.width > 0 && r.height > 0 && (r.width < 56 || r.height < 56); })
       .map(e => e.className || e.textContent?.trim()));
     expect(smallTargets, `${name} touch targets`).toEqual([]);
-    if (name === 'battle') {
+    if (name === 'battle' || name === 'moves') {
       const bounds = await page.locator('.battle-screen').evaluate(e => ({ height: e.clientHeight, content: e.scrollHeight }));
       expect(bounds.content).toBeLessThanOrEqual(bounds.height + 1);
       for (const [sprite, status] of [['.enemy-sprite', '.enemy-status'], ['.ally-sprite', '.ally-status']]) {
@@ -61,7 +61,9 @@ for (const [width,height] of sizes) test(`10 screens fit ${width}x${height}`, as
   await page.getByRole('button', { name: '닫기', exact: true }).click();
   await page.evaluate(() => { (window as any).__TEST__.fastText = true; void (window as any).__G.world.startWildBattle('route1'); });
   await expect(page.getByRole('button', { name: '싸운다', exact: true })).toBeVisible(); await shot('battle');
-  await page.getByRole('button', { name: '싸운다', exact: true }).click();
+  await page.evaluate(() => { (window as any).__G.save.data.party[0].level = 50; });
+  await page.getByRole('button', { name: '싸운다', exact: true }).click(); await shot('moves');
+  await page.locator('.battle-moves button').first().click();
   await expect(page.locator('.qc-card')).toBeVisible(); await page.waitForTimeout(300); await shot('question');
   expect(errors).toEqual([]);
 });

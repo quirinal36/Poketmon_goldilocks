@@ -6,12 +6,13 @@ Generated sections below are (re)written by `scripts/build-pokemon-data.mjs` (da
 <!-- BEGIN:data -->
 ## 데이터: public/data/pokemon.json
 
-Source: PokeAPI (`pokemon-species`, `pokemon`, `evolution-chain`), cached in `.cache/pokeapi/`.
+Source: PokeAPI (`pokemon-species`, `pokemon`, `evolution-chain`, `move`), cached in `.cache/pokeapi/`.
 Regenerate with `npm run data:pokemon` (`-- --refresh` re-downloads). Output = `Species[]` (types.ts), index 0 = id 1.
-Built 2026-09-30.
+Built 2026-10-02.
 
 ### Field rules
 - `name` / `genus` / `flavor`: Korean (`ko`) PokeAPI entries. `nameEn`: English name.
+- `moves`: Gold/Silver level-up attacking moves (Korean name, type, learn level, physical/special kind). Runtime offers the latest four available at the current level; no available attack → 몸부림. Learning attacks does not change the saved Pokémon structure. Status moves and PP are not used; damage still follows the study-answer rule.
 - `types`: current types (e.g. 삐삐 = 페어리), keys: normal→노말, fire→불꽃, water→물, grass→풀, electric→전기, ice→얼음, fighting→격투, poison→독, ground→땅, flying→비행, psychic→에스퍼, bug→벌레, rock→바위, ghost→고스트, dragon→드래곤, dark→악, steel→강철, fairy→페어리.
 - `flavor`: the **shortest** Korean dex entry (whitespace normalized). Entries containing "죽", "살해", "피를", "목숨", "시체", "잡아먹", "지옥", "저주", "사별", "영혼", "갈기갈기", "태워버", "불태워", "파괴", "기절" are skipped when another entry exists.
 - `height` m, `weight` kg, `captureRate` 3..255, `color` = PokeAPI color name.

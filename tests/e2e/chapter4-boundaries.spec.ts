@@ -56,7 +56,7 @@ test('losing to Erika returns to the last heal spot without a badge', async ({ p
   await page.evaluate(() => { (window as any).__TEST__.fastText = true; (window as any).__TEST__.autoAnswer = 'wrong'; (window as any).__G.audio.setVolumes(0, 0); });
   await page.getByRole('button', { name: '이어서 하기', exact: true }).click();
   await page.evaluate(() => { void (window as any).__G.world.runScript('chapter4_leader'); });
-  await page.getByRole('button', { name: '싸운다', exact: true }).click();
+  await page.getByRole('button', { name: '싸운다', exact: true }).click(); await page.locator('.battle-moves button').first().click();
   await expect.poll(() => page.evaluate(() => (window as any).__G.world.mapId)).toBe('rock_tunnel_1f');
   expect(await page.evaluate(() => (window as any).__G.save.flag('badge_rainbow'))).toBe(false);
   expect(await page.evaluate(() => (window as any).__G.save.data.defeatedTrainers.includes('leader_erika'))).toBe(false);
@@ -74,7 +74,7 @@ test('losing to the garden Rocket keeps the seed box retryable', async ({ page }
   await page.evaluate(() => { (window as any).__TEST__.fastText = true; (window as any).__TEST__.autoAnswer = 'wrong'; (window as any).__G.audio.setVolumes(0, 0); });
   await page.getByRole('button', { name: '이어서 하기', exact: true }).click();
   await page.evaluate(() => { void (window as any).__G.world.runScript('chapter4_rocket'); });
-  await page.getByRole('button', { name: '싸운다', exact: true }).click();
+  await page.getByRole('button', { name: '싸운다', exact: true }).click(); await page.locator('.battle-moves button').first().click();
   await expect.poll(() => page.evaluate(() => (window as any).__G.world.mapId)).toBe('lavender_center');
   expect(await page.evaluate(() => (window as any).__G.save.flag('garden_seeds_recovered'))).toBe(false);
   expect(await page.evaluate(() => (window as any).__G.save.data.defeatedTrainers.includes('celadon_rocket'))).toBe(false);

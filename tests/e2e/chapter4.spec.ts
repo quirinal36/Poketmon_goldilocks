@@ -22,7 +22,7 @@ async function battle(page: Page, id: string, flag: string) {
   while (Date.now() < deadline) {
     if (await page.evaluate(flag => (window as any).__G.save.flag(flag), flag)) break;
     const attack = page.getByRole('button', { name: '싸운다', exact: true });
-    if (await attack.isVisible()) await attack.click();
+    if (await attack.isVisible()) { await attack.click(); await page.locator('.battle-moves button').first().click(); }
     else await page.waitForTimeout(150);
   }
   await expect.poll(() => page.evaluate(flag => (window as any).__G.save.flag(flag), flag)).toBe(true);
