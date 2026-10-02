@@ -38,6 +38,23 @@ class InputManager {
   init(): void {
     if (this.inited) return;
     this.inited = true;
+    // A released press must not activate a different surface revealed underneath it.
+    let pressTarget: Element | null = null;
+    window.addEventListener('pointerdown', e => {
+      if (e.isPrimary) pressTarget = e.target instanceof Element ? e.target : null;
+    }, true);
+    window.addEventListener('pointercancel', e => { if (e.isPrimary) pressTarget = null; }, true);
+    window.addEventListener('click', e => {
+      if (e.detail === 0) return; // Native keyboard activation and programmatic clicks.
+      const origin = pressTarget;
+      pressTarget = null;
+      const target = e.target;
+      if (origin && (!origin.isConnected || !(target instanceof Node) ||
+        !(origin.contains(target) || (target instanceof Element && target.contains(origin))))) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+      }
+    }, true);
     window.addEventListener('keydown', (e) => {
       if (isEditable(e.target)) return;
       const b = KEYMAP[e.code];

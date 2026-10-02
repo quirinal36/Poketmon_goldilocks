@@ -25,7 +25,21 @@ for (const [width,height] of sizes) test(`10 screens fit ${width}x${height}`, as
       .filter(e => { const r = e.getBoundingClientRect(); return r.width > 0 && r.height > 0 && (r.width < 56 || r.height < 56); })
       .map(e => e.className || e.textContent?.trim()));
     expect(smallTargets, `${name} touch targets`).toEqual([]);
-    if (name === 'battle') { const bounds = await page.locator('.battle-screen').evaluate(e => ({ height: e.clientHeight, content: e.scrollHeight })); expect(bounds.content).toBeLessThanOrEqual(bounds.height + 1); }
+    if (name === 'battle') {
+      const bounds = await page.locator('.battle-screen').evaluate(e => ({ height: e.clientHeight, content: e.scrollHeight }));
+      expect(bounds.content).toBeLessThanOrEqual(bounds.height + 1);
+      for (const [sprite, status] of [['.enemy-sprite', '.enemy-status'], ['.ally-sprite', '.ally-status']]) {
+        const rects = await page.locator('.battle-arena').evaluate((arena, selectors) => {
+          const sprite = arena.querySelector(selectors[0] + ' .pokemon-sprite')!.getBoundingClientRect();
+          const status = arena.querySelector(selectors[1])!.getBoundingClientRect();
+          const bounds = arena.getBoundingClientRect();
+          return { size: sprite.width, fits: sprite.left >= bounds.left && sprite.right <= bounds.right + 1 && sprite.top >= bounds.top && sprite.bottom <= bounds.bottom + 1,
+            overlaps: sprite.left < status.right && sprite.right > status.left && sprite.top < status.bottom && sprite.bottom > status.top };
+        }, [sprite, status]);
+        expect(rects.size).toBeGreaterThanOrEqual(112);
+        expect(rects.fits).toBe(true); expect(rects.overlaps).toBe(false);
+      }
+    }
   }
   await shot('title');
   await page.getByRole('button', { name: '이어서 하기', exact: true }).click();

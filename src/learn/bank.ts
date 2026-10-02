@@ -1,7 +1,7 @@
-// Question/curriculum loading. Bundled JSON first (works offline), optional network overrides merged by id.
+// Bundled math is authoritative; English may use network overrides merged by id.
 // Never throws: missing files → empty results, and generateFallbackQuestion() keeps the game playable.
-import type { CurriculumData, Question, QuestionContext, Visual } from '../core/types';
-import { asset, josa, pick } from '../core/util';
+import type { CurriculumData, Question, QuestionContext } from '../core/types';
+import { asset, josa } from '../core/util';
 import { G } from '../game';
 
 export const EMPTY_CURRICULUM: CurriculumData = { version: 'none', units: [], lessons: [] };
@@ -38,11 +38,12 @@ export function mergeById<T extends { id: string }>(base: T[], over: T[]): T[] {
   return [...map.values()];
 }
 
+/** Keep the arithmetic sequence when the server still contains the former counting curriculum. */
 export function mergeCurriculum(base: CurriculumData, over: Partial<CurriculumData>): CurriculumData {
   return normalizeCurriculum({
     version: over.version || base.version,
-    units: mergeById(base.units, over.units ?? []),
-    lessons: mergeById(base.lessons, over.lessons ?? []),
+    units: mergeById(base.units, (over.units ?? []).filter(u => u.subject !== 'math')),
+    lessons: mergeById(base.lessons, (over.lessons ?? []).filter(l => l.subject !== 'math')),
   });
 }
 
@@ -85,7 +86,7 @@ export class QuestionBank {
     if (local === null) this.cache.delete(key); // transient failure → retry next time
     let qs = Array.isArray(local) ? local.filter(isQuestionLike) : [];
     const net = G.net;
-    if (net?.online) {
+    if (net?.online && !key.startsWith('m')) {
       try {
         const ids = this.getCurriculum().lessons.filter((l) => keyOf(l.id) === key).map((l) => l.id);
         const remote = ids.length ? await net.fetchQuestions(ids) : null;
@@ -110,35 +111,32 @@ export class QuestionBank {
 }
 
 // ------------------------------------------------------------- fallback ----
-const FALLBACK_EMOJI = ['🍎', '🍓', '⭐', '🎈', '🐤', '🍪'];
-
-/** Built-in simple arithmetic so the game never breaks without question data. */
-export function generateFallbackQuestion(rand: () => number = Math.random, purpose: QuestionContext['purpose'] = 'wild', stage = 0): Question {
-  const max = purpose === 'tutorial' ? 5 : stage < 3 ? 9 : stage < 8 ? 10 : 20;
-  const isAdd = purpose === 'tutorial' || rand() < 0.6;
-  let a = 1 + Math.floor(rand() * max);
-  let b = 1 + Math.floor(rand() * max);
-  if (isAdd) { while (a + b > max) { if (a > 1) a--; else b--; } }
-  else if (b > a) [a, b] = [b, a];
-  const ans = isAdd ? a + b : a - b;
-  const emoji = pick(FALLBACK_EMOJI, rand);
-  const visual: Visual = isAdd
-    ? { kind: 'groups', groups: [{ emoji, count: a }, { emoji, count: b }], op: '+' }
-    : { kind: 'groups', groups: [{ emoji, count: a, crossed: b }], op: null };
-  const expr = isAdd ? `${a} + ${b}` : `${a} - ${b}`;
+/** Arithmetic fallback uses the same 0–8 progression as the bundled math lessons. */
+export function generateFallbackQuestion(rand: () => number = Math.random, purpose: QuestionContext['purpose'] = 'wild', stage = 0, lessonId = FALLBACK_LESSON_ID): Question {
+  const level = purpose === 'tutorial' ? 0 : Math.max(0, Math.min(8, Math.floor(stage)));
+  const int = (lo: number, hi: number) => lo + Math.floor(rand() * (hi - lo + 1));
+  let a: number, b: number, op: string;
+  if (level === 0) {
+    op = rand() < 0.5 ? '+' : '-';
+    a = op === '+' ? int(1, 8) : int(2, 9);
+    b = int(1, op === '+' ? 9 - a : a - 1);
+  } else if (level === 1) {
+    op = '+'; a = int(2, 9); b = int(11 - a, 9);
+  } else if (level === 2) {
+    op = '-'; a = int(11, 18); b = int(a - 9, 9);
+  } else {
+    op = '×'; a = level === 3 ? int(2, 3) : level === 4 ? int(4, 5) : level + 1; b = int(1, 9);
+  }
+  const answer = op === '+' ? a + b : op === '-' ? a - b : a * b;
+  const expr = `${a} ${op} ${b}`, word = op === '+' ? '더하기' : op === '-' ? '빼기' : '곱하기';
   return {
-    id: `gen-${isAdd ? 'add' : 'sub'}-${a}-${b}`,
-    lessonId: FALLBACK_LESSON_ID,
-    subject: 'math',
-    type: isAdd ? 'add' : 'sub',
-    prompt: `${josa(expr, '은/는')} 얼마일까요?`,
-    speak: [{ text: `${a} ${isAdd ? '더하기' : '빼기'} ${josa(String(b), '은/는')} 얼마일까요?`, lang: 'ko-KR' }],
-    visual,
-    answerMode: 'numpad',
-    answer: String(ans),
-    hint: isAdd ? '그림을 하나씩 세어 보세요.' : '지워진 것을 빼고 세어 보세요.',
-    explain: isAdd ? `${a}과 ${b}를 모으면 ${ans}이에요.`.replace(`${a}과`, josa(String(a), '와/과')).replace(`${b}를`, josa(String(b), '을/를')).replace(`${ans}이에요`, josa(String(ans), '이에요/예요'))
-      : `${a}에서 ${josa(String(b), '을/를')} 빼면 ${josa(String(ans), '이에요/예요')}.`,
-    difficulty: 1,
+    id: `${lessonId}-fallback-${a}-${op}-${b}`,
+    lessonId, subject: 'math', type: 'equation',
+    prompt: '빈칸에 알맞은 수를 써 보세요.',
+    speak: [{ text: `${a} ${word} ${josa(String(b), '은/는')} 얼마일까요?`, lang: 'ko-KR' }],
+    visual: { kind: 'text', text: `${expr} = □`, size: 'xl' },
+    answerMode: 'numpad', answer: String(answer),
+    hint: op === '×' ? `${a}씩 더하는 구구단을 떠올려 보세요.` : '수를 모으거나 빼며 계산해 보세요.',
+    explain: `${expr} = ${answer}`, difficulty: 1,
   };
 }

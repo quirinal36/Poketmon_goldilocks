@@ -129,9 +129,14 @@ export function createLearn(): LearnService {
       const src = chooseLesson(e, ctx, subject);
       let mode: SourceMode = src.mode;
       let qs: Question[] = src.lessonId ? await bank.forLesson(src.lessonId) : [];
-      if (!qs.length) { qs = await anyQuestionsOf(subject); if (qs.length) mode = 'review'; }
+      if (!qs.length && subject !== 'math') { qs = await anyQuestionsOf(subject); if (qs.length) mode = 'review'; }
       const q = qs.length ? pickQuestion(e, ctx, qs, mode) : null;
-      if (!q) return generateFallbackQuestion(Math.random, ctx.purpose, stageOf(e.state));
+      if (!q) {
+        const lesson = src.lessonId ? lessonMap.get(src.lessonId) : undefined;
+        const level = subject === 'math' && lesson ? (unitMap.get(lesson.unitId)?.order ?? 1) - 1 : 0;
+        if (mode === 'active' && src.lessonId) markStarted(e.state, subject, src.lessonId);
+        return generateFallbackQuestion(Math.random, ctx.purpose, level, subject === 'math' ? src.lessonId ?? undefined : undefined);
+      }
       if (mode === 'active' && src.lessonId) markStarted(e.state, subject, src.lessonId);
       return q;
     },

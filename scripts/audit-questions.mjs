@@ -166,14 +166,20 @@ for (const q of english) {
     const source = textOf(q.visual).toLowerCase(); const answer = q.choices.find(c => c.id === q.answer).text.toLowerCase(); assert.equal(source, answer, q.id);
   }
 }
-// Named introductory lessons must actually teach their stated constraints.
+// Each arithmetic stage must obey its operand and result boundaries.
 for (const q of math) {
-  const t = textOf(q.visual), ns = (t.match(/\d+/g) || []).map(Number);
-  if (/^m12-u2-l[12]-/.test(q.id)) assert(ns.every(n => n % 10 === 0), `${q.id}: tens lesson`);
-  if (q.lessonId === 'm11-u3-l5') assert(ns.includes(0), `${q.id}: zero lesson`);
-  if (q.lessonId === 'm12-u1-l1') assert(Number(q.answer) >= 60 && Number(q.answer) <= 100, `${q.id}: 60–100 lesson`);
-  if (q.lessonId === 'm21-u3-l1') assert(ns[0]%10 + ns[1]%10 >= 10, `${q.id}: carrying lesson`);
-  if (q.lessonId === 'm21-u3-l2') assert(ns[0]%10 < ns[1]%10, `${q.id}: borrowing lesson`);
+  const lesson = cur.lessons.find(l => l.id === q.lessonId);
+  const stage = cur.units.find(u => u.id === lesson.unitId).order - 1;
+  const t = textOf(q.visual), [left] = t.split(' = ');
+  const [aText, op, bText] = left.split(' ');
+  const a = Number(aText), b = bText === '□' ? Number(q.answer) : Number(bText);
+  const result = op === '+' ? a + b : op === '-' ? a - b : a * b;
+  assert(q.type === 'equation' && q.visual.kind === 'text', `${q.id}: arithmetic only`);
+  assert(b >= 1 && b <= 9, `${q.id}: single-digit second operand`);
+  if (stage === 0) assert(a >= 1 && a <= 9 && ['+', '-'].includes(op) && (op === '+' ? result < 10 : result > 0), `${q.id}: stage 0`);
+  else if (stage === 1) assert(a >= 1 && a <= 9 && op === '+' && result > 10, `${q.id}: stage 1`);
+  else if (stage === 2) assert(a > 10 && op === '-' && result > 0 && result < 10, `${q.id}: stage 2`);
+  else assert(op === '×' && (stage === 3 ? [2, 3] : stage === 4 ? [4, 5] : [stage + 1]).includes(a), `${q.id}: multiplication stage ${stage}`);
 }
 const counts = cur.lessons.map(l => qs.filter(q => q.lessonId === l.id).length);
 console.log(`OK: ${math.length} math answers independently solved; ${english.length} English answers/uniqueness and speech checked; ${cur.lessons.length} lessons, minimum ${Math.min(...counts)} questions.`);

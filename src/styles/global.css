@@ -64,7 +64,7 @@ progress { accent-color: #4b9864; width: 100%; height: 16px; }.appearance-previe
 .title-screen .screen-body { flex: 1; }
 
 .battle-screen { padding: 8px; gap: 4px; }
-.battle-arena { min-height: 164px; }
+.battle-arena { min-height: 164px; container-type: size; --battle-sprite-size: min(42cqw, 80cqh, 224px); }
 .battle-commands { gap: 4px; flex-shrink: 0; }
 .battle-message { min-height: 26px; line-height: 1.4; flex-shrink: 0; }
 .battle-status { font-size: 18px; gap: 3px; padding: 6px; }

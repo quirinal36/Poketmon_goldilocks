@@ -54,8 +54,8 @@ export class Dialog {
     this.root.style.display = 'none';
     layer.append(this.root);
 
-    this.capture.addEventListener('pointerdown', (e) => { e.preventDefault(); this.advance(); });
-    this.box.addEventListener('pointerdown', (e) => { e.preventDefault(); this.advance(); });
+    this.capture.addEventListener('click', (e) => { e.preventDefault(); this.advance(); });
+    this.box.addEventListener('click', (e) => { e.preventDefault(); this.advance(); });
     this.speakBtn.addEventListener('pointerdown', (e) => { e.stopPropagation(); e.preventDefault(); });
     this.speakBtn.addEventListener('click', (e) => { e.stopPropagation(); this.speakCurrent(); });
   }

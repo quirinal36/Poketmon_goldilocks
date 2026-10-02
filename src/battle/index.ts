@@ -51,8 +51,8 @@ export function createBattle(): BattleService {
       const p = G.save.data.party[lead];
       const status = (who: PokemonInstance, cls: string) => el('div', { class: `battle-status ${cls}` }, el('strong', {}, `${nameOf(who)} Lv.${who.level}`),
         el('progress', { max: who.maxHp, value: who.hp, 'aria-label': `${nameOf(who)} HP` }), el('span', {}, `HP ${who.hp}/${who.maxHp}`));
-      arena.replaceChildren(status(enemy, 'enemy-status'), el('div', { class: 'enemy-sprite' }, pokemonSprite(enemy.speciesId, 'front', 80)),
-        el('div', { class: 'ally-sprite' }, pokemonSprite(p.speciesId, 'back', 80)), status(p, 'ally-status'));
+      arena.replaceChildren(status(enemy, 'enemy-status'), el('div', { class: 'enemy-sprite' }, pokemonSprite(enemy.speciesId, 'front', 'var(--battle-sprite-size)')),
+        el('div', { class: 'ally-sprite' }, pokemonSprite(p.speciesId, 'back', 'var(--battle-sprite-size)')), status(p, 'ally-status'));
       message.textContent = !trainer && enemy.hp <= enemy.maxHp / 2 ? '지금 몬스터볼을 던져 보세요!' : `${nameOf(p)}, 함께 힘내자!`;
     };
     const command = (): Promise<'fight' | 'ball' | 'bag' | 'flee'> => new Promise(resolve => {

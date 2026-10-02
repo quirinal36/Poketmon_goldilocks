@@ -16,7 +16,7 @@ test('parent settings, native keyboard, transfer cancel and persistence', async 
   await page.getByLabel('수학 시작 진도',{exact:true}).selectOption('2');
   await page.getByRole('button',{name:'시작 진도 적용'}).first().click();
   await page.getByRole('button',{name:/▶\s*예$/}).click();
-  expect(await page.evaluate(()=> (window as any).__G.learn.plan().math.lesson?.id)).toBe('m11-u1-l2');
+  expect(await page.evaluate(()=> (window as any).__G.learn.plan().math.lesson?.id)).toBe('m11-u101-l2');
   const previewPromise=page.context().waitForEvent('page');
   await page.getByRole('button',{name:'문제 미리보기',exact:true}).click();
   const preview=await previewPromise;
