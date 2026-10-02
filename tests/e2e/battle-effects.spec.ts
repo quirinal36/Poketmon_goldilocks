@@ -53,12 +53,12 @@ test('choose learned moves, lunge at the enemy, throw a ball and show escape or 
   await expect(fight).toBeVisible();
   await page.evaluate(() => { (window as any).__TEST__.fastText = true; Math.random = () => 0; });
   await page.getByRole('button', { name: '몬스터볼', exact: true }).click();
-  await page.getByRole('button', { name: /아니오$/ }).click();
   await expect(page.locator('.battle-screen')).toHaveCount(0);
   const phases = await page.evaluate(() => (window as any).__phases);
   for (const phase of ['attack', 'hit', 'throw', 'absorb', 'shake', 'breakout', 'caught']) expect(phases.some((p: any) => p.phase === phase)).toBe(true);
   expect(phases.some((p: any) => p.phase === 'shake' && p.ball && p.hidden)).toBe(true);
   expect(await page.evaluate(() => (window as any).__G.save.data.stats.caught)).toBe(1);
+  expect(await page.evaluate(() => (window as any).__G.save.data.party.at(-1).nickname)).toBeUndefined();
   expect(await page.evaluate(() => (window as any).__G.save.data.bag.pokeball)).toBe(3);
 });
 
@@ -78,8 +78,8 @@ test('reduced motion still completes a capture without moving sprites', async ({
     void w.__G.battle.wild(19, 5);
   });
   await page.getByRole('button', { name: '몬스터볼', exact: true }).click();
-  await page.getByRole('button', { name: /아니오$/ }).click();
   await expect(page.locator('.battle-screen')).toHaveCount(0);
   expect(await page.evaluate(() => (window as any).__animations)).toBe(0);
   expect(await page.evaluate(() => (window as any).__G.save.data.stats.caught)).toBe(1);
+  expect(await page.evaluate(() => (window as any).__G.save.data.party.at(-1).nickname)).toBeUndefined();
 });

@@ -66,7 +66,6 @@ test('new adventure, starter, rival, catch, study, badge, restore and whiteout',
   const max = await page.locator('.enemy-status progress').getAttribute('max');
   if (Number(hp) > Number(max) / 2) { await page.getByRole('button', { name: '싸운다', exact: true }).click(); await page.locator('.battle-moves button').first().click(); }
   await page.getByRole('button', { name: '몬스터볼', exact: true }).click();
-  await page.getByRole('button', { name: /▶\s*아니오$/ }).click();
   await expect.poll(() => page.evaluate(() => (window as any).__G.save.data.stats.caught)).toBe(1);
   await expect.poll(() => page.evaluate(() => (window as any).__G.world.isLocked())).toBe(false);
   // Region arrival/nurse/fishing scripts run on the actual region maps.

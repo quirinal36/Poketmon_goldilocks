@@ -195,7 +195,6 @@ export function createBattle(): BattleService {
                 const destination = G.save.addPokemon(enemy); G.save.markCaught(enemy.speciesId); G.save.data.stats.caught++;
                 G.save.write('caught'); await G.audio.jingle('caught');
                 await G.ui.say(`신난다! ${josa(nameOf(enemy), '을/를')} 잡았어요!`);
-                if (await G.ui.yesNo('별명을 지어 줄까요?')) enemy.nickname = await G.ui.openNameEntry('친구의 별명', [nameOf(enemy)]);
                 if (destination === 'box') await G.ui.say('친구가 여섯 마리라 PC로 보냈어요.');
                 outcome = 'caught'; return outcome;
               }
